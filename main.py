@@ -21,6 +21,10 @@ from data.indicators import add_indicators, clean_code
 from signal.engine import SignalEngine, SIM_NOW as SE_SIM_NOW
 from signal.position_sizer import PositionSizer
 from utils.helpers import SIM_NOW, _now, get_today_str, _default_daily_context
+from gm_bridge.writer import (
+    write_signal, write_order, write_fill, write_reject, write_risk,
+    write_heartbeat, check_kill_switch,
+)
 
 # ── 标的 ──
 STOCKS = {"000988": "SZSE.000988"}
@@ -279,6 +283,10 @@ def init(context):
     symbols = list(STOCKS.values())
     subscribe(symbols=symbols, frequency="60s", count=240,
               fields="symbol,eob,open,high,low,close,volume,amount")
+    # 确保事件桥目录存在
+    from gm_bridge.writer import BRIDGE_DIR
+    os.makedirs(BRIDGE_DIR, exist_ok=True)
+    print(f"[init] 事件桥: {BRIDGE_DIR}")
     print(f"[init] 策略初始化完成: {len(symbols)} 只标的")
 
 
@@ -300,6 +308,9 @@ def on_bar(context, bars):
         context.daily_trade_price.clear()
         context.engine._check_date_reset()
         _audit_write({"event": "date_reset", "date": str(today)})
+
+    # ── KILL_SWITCH 检查 ──
+    _killed = check_kill_switch()
 
     if t < dtime(9, 30) or (dtime(11, 30) < t < dtime(13, 0)) or t > dtime(15, 0):
         return
@@ -344,6 +355,18 @@ def on_bar(context, bars):
         except Exception as e:
             print(f"[ir] 大盘态势判定失败: {e}")
 
+    # ── 心跳（每分钟写一次） ──
+    _hb_positions = {}
+    for _s, _h in context.manual_position.items():
+        _hb_positions[_s] = {"qty": _h.get("qty", 0), "cost": _h.get("cost", 0)}
+    write_heartbeat(
+        time_str=str(now), bar=f"{now:%H:%M}",
+        positions=_hb_positions,
+        cash=INITIAL_CASH,  # 实际现金由 N3 逻辑读取
+        index_regime=context.last_index_regime,
+        index_score=context.last_index_score,
+    )
+
     for bar in bars:
         gm_sym = str(bar["symbol"])
         code = _raw_code(gm_sym)
@@ -386,6 +409,10 @@ def on_bar(context, bars):
             if base_qty < 100:
                 base_qty = 100
             try:
+                try:
+                    write_order(str(now), code, "BUY", base_qty, cp, order_id="base")
+                except Exception:
+                    pass
                 order_volume(symbol=gm_sym, volume=base_qty,
                              side=OrderSide_Buy,
                              order_type=OrderType_Market,
@@ -466,21 +493,22 @@ def on_bar(context, bars):
                 if excess >= 100:
                     qty = (excess // 100) * 100
                     try:
-                        order_volume(symbol=gm_sym, volume=qty,
-                                     side=OrderSide_Sell,
-                                     order_type=OrderType_Market,
-                                     position_effect=PositionEffect_Close)
-                        # 立即更新 manual_position 防下一分钟重复触发
-                        if gm_sym in context.manual_position:
-                            new_pos = pos_qty - qty
-                            context.manual_position[gm_sym]["qty"] = new_pos
-                            context.manual_position[gm_sym]["available"] = new_pos
-                            context.manual_position[gm_sym]["t_qty"] = new_pos
-                        print(f'[{now:%H:%M:%S}] TAIL {code} 尾盘归位 {qty}股 (pos={pos_qty}→{pos_qty-qty} target={target})')
-                        context.total_trade_count += 1
-                        context.daily_sell_count[code] = context.daily_sell_count.get(code, 0) + 1
+                        write_order(str(now), code, "SELL", qty, cp, order_id="tail")
                     except Exception:
                         pass
+                    order_volume(symbol=gm_sym, volume=qty,
+                                 side=OrderSide_Sell,
+                                 order_type=OrderType_Market,
+                                 position_effect=PositionEffect_Close)
+                    # 立即更新 manual_position 防下一分钟重复触发
+                    if gm_sym in context.manual_position:
+                        new_pos = pos_qty - qty
+                        context.manual_position[gm_sym]["qty"] = new_pos
+                        context.manual_position[gm_sym]["available"] = new_pos
+                        context.manual_position[gm_sym]["t_qty"] = new_pos
+                    print(f'[{now:%H:%M:%S}] TAIL {code} 尾盘归位 {qty}股 (pos={pos_qty}→{pos_qty-qty} target={target})')
+                    context.total_trade_count += 1
+                    context.daily_sell_count[code] = context.daily_sell_count.get(code, 0) + 1
                     continue
 
         # ── N6: 开盘5分钟拦截买入信号 ──
@@ -503,6 +531,14 @@ def on_bar(context, bars):
             })
             continue
 
+        # ── 信号事件写入 ──
+        if sig is not None:
+            try:
+                write_signal(str(now), code, sig.action, sig.score,
+                             reasons=sig.reasons, pos_qty=pos_qty)
+            except Exception:
+                pass
+
         # ── D5: 卖出地板保护 ──
         stock_params = STOCK_PARAMS.get(code, {})
         max_sells = stock_params.get("max_sell_times_per_stock", 3)
@@ -519,6 +555,11 @@ def on_bar(context, bars):
             min_hold = int(base_ref * sell_floor_ratio)
             if pos_qty - 100 < min_hold:
                 print(f"[{now:%H:%M:%S}] SELL {code} SKIP: 地板保护 base_ref={base_ref} min_hold={min_hold} pos_qty={pos_qty}")
+                try:
+                    write_risk(str(now), "floor_protection",
+                               f"base_ref={base_ref} min_hold={min_hold} pos_qty={pos_qty} action={sig.action}")
+                except Exception:
+                    pass
                 # PANIC 虽被地板挡，仍设冷却防每分钟重复触发
                 if sig.action == "PANIC_SELL":
                     context.engine.record_trade_action(code, "PANIC_SELL", 0, cp)
@@ -533,6 +574,12 @@ def on_bar(context, bars):
 
         # 执行交易
         if sig.action in ("BUY_LOW", "ADD_POS"):
+            if _killed:
+                try:
+                    write_risk(str(now), "kill_switch", f"KILL_SWITCH 阻止 {code} 买入")
+                except Exception:
+                    pass
+                continue
             bc = context.daily_buy_count.get(code, 0)
             if bc >= max_buys:
                 continue
@@ -576,6 +623,11 @@ def on_bar(context, bars):
             if qty < 100:
                 if bc == 0:
                     print(f'[{now:%H:%M:%S}] BUY {code} 现金不足跳过: 可用={available_cash:.0f}')
+                try:
+                    write_risk(str(now), "cash_insufficient",
+                               f"available={available_cash:.0f} needed={qty*cp:.0f}")
+                except Exception:
+                    pass
                 continue
 
             # N2: 仓位上限检查
@@ -584,6 +636,11 @@ def on_bar(context, bars):
             total_equity_value = available_cash + current_pos_value
             if total_equity_value > 0 and new_pos_value / total_equity_value > pos_limit_pct:
                 print(f'[{now:%H:%M:%S}] BUY {code} 仓位上限拦截: {new_pos_value/total_equity_value:.0%}>{pos_limit_pct:.0%}')
+                try:
+                    write_risk(str(now), "position_limit",
+                               f"{new_pos_value/total_equity_value:.1%}>{pos_limit_pct:.0%} qty={qty}")
+                except Exception:
+                    pass
                 continue
             try:
                 order_volume(symbol=gm_sym, volume=qty,
@@ -619,6 +676,10 @@ def on_bar(context, bars):
             if qty < 100:
                 continue
             try:
+                try:
+                    write_order(str(now), code, "SELL", qty, cp)
+                except Exception:
+                    pass
                 order_volume(symbol=gm_sym, volume=qty,
                              side=OrderSide_Sell,
                              order_type=OrderType_Market,
@@ -648,6 +709,13 @@ def on_order_status(context, order):
 
     if status == 3:  # 全部成交
         code = _raw_code(symbol)
+        _side = "BUY" if side == 1 else "SELL"
+        _pos_after = int(context.executed_orders.get(symbol, {}).get("qty", 0)) if _side == "SELL" else                      int(context.executed_orders.get(symbol, {}).get("qty", 0)) + volume if symbol in context.executed_orders else volume
+        try:
+            write_fill(str(datetime.now()), _raw_code(symbol), _side, volume, price,
+                       pos_after=_pos_after)
+        except Exception:
+            pass
         # P0-2: 成交回调接线冷却（只有真的成交了才计冷却，避免下单即计）
         if code in STOCKS:
             _action = 'BUY_LOW' if side == 1 else 'SELL_HIGH'
@@ -704,6 +772,13 @@ def on_order_status(context, order):
             else:
                 print(f'[ORDER] {code} 底仓拒单已达上限({MAX_BASE_RETRY})，停止重试')
         print(f"[ORDER] {symbol} 被拒 status={status}")
+        try:
+            _r_code = _raw_code(symbol)
+            _r_side = "BUY" if side == 1 else "SELL"
+            write_reject(str(datetime.now()), _r_code, _r_side, volume,
+                         reason=f"status={status}", raw={"status": status, "side": side, "volume": volume})
+        except Exception:
+            pass
 
 
 def on_backtest_finished(context, indicator):
