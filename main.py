@@ -27,15 +27,40 @@ from gm_bridge.writer import (
 )
 
 # ── 标的 ──
-STOCKS = {"000988": "SZSE.000988"}
-STOCK_NAMES = {"000988": "华工科技"}
+# 代码 → gm_symbol 映射
+STOCKS = {
+    "000988": "SZSE.000988",
+    "600481": "SHSE.600481",
+    "600176": "SHSE.600176",
+    "603667": "SHSE.603667",
+    "588170": "SHSE.588170",
+}
+STOCK_NAMES = {
+    "000988": "华工科技",
+    "600481": "双良节能",
+    "600176": "中国巨石",
+    "603667": "五洲新春",
+    "588170": "科创芯片ETF",
+}
 REVERSE_MAP = {v: k for k, v in STOCKS.items()}
+
+# ── 镜像持仓（与实盘账户一致） ──
+# 模拟盘建仓时按此表中的股数/成本下单
+MIRROR_HOLDINGS = {
+    "000988": {"qty": 300,  "cost": 247.29},
+    "600481": {"qty": 1400, "cost": 6.03},
+    "600176": {"qty": 300,  "cost": 67.93},
+    "603667": {"qty": 500,  "cost": 58.78},
+    "588170": {"qty": 4000, "cost": 0.92},
+}
+
 COMMISSION = PARAMS["commission_rate"]
 MIN_BARS = 25
-BASE_POSITION_PCT = 0.50           # 底仓占用资金比例
 T1_AUTO_UNLOCK_HOUR = 9
 T1_AUTO_UNLOCK_MINUTE = 31
-INITIAL_CASH = 200000
+# 镜像持仓总市值约 77,000（300×247 + 1400×6 + 300×68 + 500×59 + 4000×1 ≈ 77k）
+# 按市值×1.5 配置模拟盘资金（留足做T现金水位）
+INITIAL_CASH = 150000
 MAX_BASE_RETRY = 3
 
 
@@ -52,14 +77,6 @@ def _build_bar_df(context, code: str, gm_symbol: str) -> pd.DataFrame:
     df = add_indicators(df)
     return df
 
-
-def _calc_base_qty(cash: float, price: float) -> int:
-    """按资金反推算底仓股数（100 的倍数）"""
-    if price <= 0:
-        return 0
-    raw_qty = cash * BASE_POSITION_PCT / price
-    qty = int(raw_qty // 100) * 100
-    return max(qty, 100)
 
 
 def _get_holding(context, code: str, gm_symbol: str) -> dict:
@@ -401,13 +418,14 @@ def on_bar(context, bars):
                 print(f"[D6] 结论: volume单位为股，需移除×100")
             context._vwap_checked = True
 
-        # ── D2: 底仓（按资金反推） ──
+        # ── D2: 底仓（按镜像持仓表逐股建仓） ──
         if code not in context._base_ordered and code not in context._base_settled:
-            # 尚未下单，计算底仓
-            # 初始资金用初始化参数
-            base_qty = _calc_base_qty(INITIAL_CASH, cp)
+            mirror = MIRROR_HOLDINGS.get(code, {})
+            base_qty = mirror.get("qty", 0)
             if base_qty < 100:
-                base_qty = 100
+                print(f"[{now:%H:%M:%S}] BASE {code} 跳过: MIRROR_HOLDINGS 中无此标的或 qty<100")
+                context._base_settled.add(code)  # 标记已处理，不再尝试
+                return
             try:
                 try:
                     write_order(str(now), code, "BUY", base_qty, cp, order_id="base")
@@ -418,7 +436,7 @@ def on_bar(context, bars):
                              order_type=OrderType_Market,
                              position_effect=PositionEffect_Open)
                 context._base_ordered.add(code)
-                print(f"[{now:%H:%M:%S}] BASE {code} 下单 {base_qty}股@{cp:.2f} (资金=200000, 价格={cp:.2f})")
+                print(f"[{now:%H:%M:%S}] BASE {code} {STOCK_NAMES.get(code,code)} 下单 {base_qty}股@{cp:.2f}")
                 _audit_write({"event": "base_order", "code": code, "qty": base_qty, "price": cp, "time": str(now)})
             except Exception as e:
                 print(f"[{now:%H:%M:%S}] BASE {code} 下单失败: {e}")
@@ -799,23 +817,23 @@ def on_backtest_finished(context, indicator):
 if __name__ == "__main__":
     _AUDIT_RUN_ID = datetime.now().strftime("%Y%m%d_%H%M%S")
 
-    # ---- 回测模式 ----
-    # backtest_start = (datetime.now() - timedelta(days=90)).strftime("%Y-%m-%d %H:%M:%S")
-    # backtest_end = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    # run(strategy_id="e8bb1f4d-87ce-11f1-97f7-98fa9b8df5e7",
-    #     filename="main.py",
-    #     mode=MODE_BACKTEST,
-    #     token="480a6c84b0f43417ffcc9c15162dd7256ca9c3b0",
-    #     backtest_start_time=backtest_start,
-    #     backtest_end_time=backtest_end,
-    #     backtest_adjust=ADJUST_PREV,
-    #     backtest_initial_cash=200000,
-    #     backtest_commission_ratio=COMMISSION,
-    #     backtest_slippage_ratio=0.0001,
-    #     backtest_match_mode=1)
-
-    # ---- 模拟盘模式 ----
+    # ---- 回测模式（快速测试） ----
+    backtest_start = (datetime.now() - timedelta(days=5)).strftime("%Y-%m-%d %H:%M:%S")
+    backtest_end = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     run(strategy_id="e8bb1f4d-87ce-11f1-97f7-98fa9b8df5e7",
         filename="main.py",
         mode=MODE_LIVE,
-        token="480a6c84b0f43417ffcc9c15162dd7256ca9c3b0")
+        token="480a6c84b0f43417ffcc9c15162dd7256ca9c3b0",
+        backtest_start_time=backtest_start,
+        backtest_end_time=backtest_end,
+        backtest_adjust=ADJUST_PREV,
+        backtest_initial_cash=150000,
+        backtest_commission_ratio=COMMISSION,
+        backtest_slippage_ratio=0.0001,
+        backtest_match_mode=1)
+
+    # ---- 模拟盘模式 ----
+    # run(strategy_id="e8bb1f4d-87ce-11f1-97f7-98fa9b8df5e7",
+    #     filename="main.py",
+    #     mode=MODE_BACKTEST,
+    #     token="480a6c84b0f43417ffcc9c15162dd7256ca9b8df5e7")
