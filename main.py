@@ -18,8 +18,8 @@ if PROJECT_DIR not in sys.path:
 
 from config.params import PARAMS, STOCK_PARAMS
 from data.indicators import add_indicators, clean_code
-from signal.engine import SignalEngine, SIM_NOW as SE_SIM_NOW
-from signal.position_sizer import PositionSizer
+from signals.engine import SignalEngine, SIM_NOW as SE_SIM_NOW
+from signals.position_sizer import PositionSizer
 from utils.helpers import SIM_NOW, _now, get_today_str, _default_daily_context
 from gm_bridge.writer import (
     write_signal, write_order, write_fill, write_reject, write_risk,
@@ -294,7 +294,7 @@ def on_bar(context, bars):
     now = context.now if hasattr(context, "now") else datetime.now()
     import utils.helpers as uh
     uh.SIM_NOW = now
-    import signal.engine as se
+    import signals.engine as se
     se.SIM_NOW = now
 
     t = now.time()
