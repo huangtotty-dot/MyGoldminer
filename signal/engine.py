@@ -346,7 +346,13 @@ class FeatureExtractor:
         daily_atr = float(daily_ctx.get("daily_atr", 0) or 0)
         if daily_atr <= 0:
             daily_atr = atr * 14  # 1分钟ATR×14 ≈ 日ATR 近似
-        feats["is_deep_loss"] = cost > 0 and feats["profit_pct"] < -5 * daily_atr
+        # N9 fix: PANIC触发线带固定下限 -12%，防止暴跌中ATR自解除
+        _panic_floor = -0.12  # -12% 固定下限
+        _panic_atr_line = -5 * daily_atr
+        _panic_trigger = max(_panic_atr_line, _panic_floor)
+        feats["is_deep_loss"] = cost > 0 and feats["profit_pct"] < _panic_trigger
+        feats["panic_trigger"] = _panic_trigger
+        feats["panic_atr_line"] = _panic_atr_line
         dc = daily_ctx if isinstance(daily_ctx, dict) else {}
         for k in ["daily_status", "daily_gate", "daily_trend_bg", "daily_ma5_state",
                    "daily_support_name", "index_regime"]:

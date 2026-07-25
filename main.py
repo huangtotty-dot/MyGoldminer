@@ -485,6 +485,9 @@ def on_bar(context, bars):
                 "buy_blocks": _last_dec.get("buy_blocks", []),
                 "sell_blocks": _last_dec.get("sell_blocks", []),
                 "decision_reason": _last_dec.get("reason", ""),
+                "profit_pct": feats_cache.get("profit_pct", 0),
+                "daily_atr": feats_cache.get("daily_atr", 0),
+                "is_deep_loss": feats_cache.get("is_deep_loss", False),
             })
             continue
 
@@ -515,17 +518,43 @@ def on_bar(context, bars):
             bc = context.daily_buy_count.get(code, 0)
             if bc >= max_buys:
                 continue
-            qty = context.sizer.calc_buy_qty(code, holding, sig.score, threshold)
+            # N10: 注入 target_t（底仓参考量）使 sizer 正确计算 max_buyable
+            _base_ref = getattr(context, f'_base_ref_{code}', 0) or pos_qty
+            holding_with_target = dict(holding, target_t=_base_ref)
+            qty = context.sizer.calc_buy_qty(code, holding_with_target, sig.score, threshold)
             if qty < 100:
                 qty = 300
             # N3: 现金预检
             available_cash = 100000
+            _cash_ok = False
             try:
                 _acct = context.account()
-                if hasattr(_acct, 'cash'):
-                    available_cash = float(_acct.cash())
+                _c = getattr(_acct, 'cash', None)
+                if _c is not None:
+                    _c = _c() if callable(_c) else _c
+                    if isinstance(_c, dict):
+                        for _k in ('available', 'available_cash', 'cash', 'total'):
+                            _v = _c.get(_k)
+                            if _v is not None:
+                                available_cash = float(_v)
+                                _cash_ok = True
+                                break
+                    else:
+                        available_cash = float(_c)
+                        _cash_ok = True
             except Exception:
                 pass
+            if not _cash_ok and not getattr(context, '_cash_warned', False):
+                context._cash_warned = True
+                print(f'[N8] WARN: 无法读取可用现金, 默认={available_cash}, ' +
+                      '改 manual_position 持仓市值估算')
+                # fallback: 从持仓反估
+                _mp = context.manual_position.get(gm_sym, {})
+                _mp_qty = int(_mp.get('qty', 0) or 0)
+                _mp_cost = float(_mp.get('cost', 0) or 0)
+                _est_mv = _mp_qty * _mp_cost
+                if _est_mv > 0:
+                    available_cash = max(0, 200000 - _est_mv)
             max_by_cash = int(available_cash * 0.95 / cp / 100) * 100 if cp > 0 else 0
             qty = min(qty, max_by_cash) if max_by_cash > 0 else qty
             if qty < 100:
@@ -626,6 +655,8 @@ def on_order_status(context, order):
             if code in context._base_ordered and code not in context._base_settled:
                 context._base_settled.add(code)
                 context.manual_position[symbol] = dict(context.executed_orders[symbol])
+                # 记录底仓参考量（供 sizer/sell_floor/tail 使用）
+                setattr(context, f'_base_ref_{code}', volume)
                 print(f"[BASE] {code} 底仓成交 {volume}股@{price:.2f}")
         elif side == 2:  # 卖出
             old = context.executed_orders.get(symbol, {"qty": 0, "available": 0})

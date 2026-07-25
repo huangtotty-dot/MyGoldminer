@@ -67,11 +67,13 @@ class PositionSizer:
         else:
             pct = p.get("stock_first_add_weak_pct", 0.10)
 
+        # N10 fix: 用传入的 base_ref 作为目标T仓（外部传进 holding['target_t']）
+        target_t = int(holding.get("target_t", 0) or total_t)
         hold_qty = int(holding.get("qty", 0) or 0)
-        max_buyable = max(0, total_t - hold_qty)
+        max_buyable = max(0, target_t - hold_qty)
         if max_buyable <= 0:
             return 0
-        qty = int(total_t * pct)
+        qty = int(target_t * pct)
         qty = min(qty, max_buyable)
         qty = max(min_unit, (qty // min_unit) * min_unit)
         return qty
