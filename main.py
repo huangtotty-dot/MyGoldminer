@@ -529,7 +529,8 @@ def on_bar(context, bars):
                 except: pass
                 # 不标记 _base_settled — 等趋势恢复后重试
                 return
-            if not _dc.get("_m2_pool_pass", True):
+            # 默认 False: 数据不足时保守不放行
+            if not _dc.get("_m2_pool_pass", False):
                 print(f"[{now:%H:%M:%S}] BASE {code} {STOCK_NAMES.get(code,code)} 门槛未过→仅观察 "
                       f"(amp={_dc.get('_m2_amp20',0):.1%} amt={_dc.get('_m2_amount20',0)/1e8:.1f}亿 "
                       f"lot={_dc.get('_m2_lot_value',0):.0f}元)")
@@ -967,7 +968,7 @@ if __name__ == "__main__":
     # run(strategy_id="e8bb1f4d-87ce-11f1-97f7-98fa9b8df5e7",
     #     filename="main.py",
     #     mode=MODE_BACKTEST,
-    #     token="480a6c84b0f43417ffcc9c15162dd7256ca9c3b0",
+    #     token=os.environ.get("GM_TOKEN", ""),
     #     backtest_start_time=backtest_start,
     #     backtest_end_time=backtest_end,
     #     backtest_adjust=ADJUST_PREV,
