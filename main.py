@@ -613,6 +613,8 @@ def on_bar(context, bars):
         # ── B1/T1: TRAIL_SELL 移动止盈 ──
         # TODO(PhaseD): 寻优 ACT_LINE/k/MIN_BACK/MAX_BACK
         feats_cache = getattr(context.engine, "_last_feats", {}).get(code, {})
+        _panic_on_cooldown = (code in context.engine.sell_cooldown
+                              and now < context.engine.sell_cooldown.get(code, now))
         _profit = feats_cache.get("profit_pct", 0) if feats_cache else 0
         _trail_state = "INACTIVE"
         _trail_peak = 0.0
@@ -642,9 +644,6 @@ def on_bar(context, bars):
             context.manual_position[gm_sym]["_trail_peak"] = 0.0
 
         # ── D5/N4: 深度亏损 → PANIC_SELL ──
-        # 防重复：已进入冷却的 PANIC 不重复生成
-        _panic_on_cooldown = (code in context.engine.sell_cooldown
-                              and now < context.engine.sell_cooldown.get(code, now))
         # R3/B5: 开盘卖出缓冲 — 09:35前 SELL_HIGH 延后
         if sig and sig.action == "SELL_HIGH" and now.hour == 9 and now.minute <= 35:
             sig = None
