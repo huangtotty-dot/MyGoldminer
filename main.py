@@ -557,7 +557,7 @@ def on_bar(context, bars):
                 print(f"[{now:%H:%M:%S}] SELL {code} SKIP: 地板保护 base_ref={base_ref} min_hold={min_hold} pos_qty={pos_qty}")
                 try:
                     write_risk(str(now), "floor_protection",
-                               f"base_ref={base_ref} min_hold={min_hold} pos_qty={pos_qty} action={sig.action}")
+                               f"base_ref={base_ref} min_hold={min_hold} pos_qty={pos_qty} action={sig.action}", code=code)
                 except Exception:
                     pass
                 # PANIC 虽被地板挡，仍设冷却防每分钟重复触发
@@ -576,7 +576,7 @@ def on_bar(context, bars):
         if sig.action in ("BUY_LOW", "ADD_POS"):
             if _killed:
                 try:
-                    write_risk(str(now), "kill_switch", f"KILL_SWITCH 阻止 {code} 买入")
+                    write_risk(str(now), "kill_switch", f"KILL_SWITCH 阻止 {code} 买入", code=code)
                 except Exception:
                     pass
                 continue
@@ -625,7 +625,7 @@ def on_bar(context, bars):
                     print(f'[{now:%H:%M:%S}] BUY {code} 现金不足跳过: 可用={available_cash:.0f}')
                 try:
                     write_risk(str(now), "cash_insufficient",
-                               f"available={available_cash:.0f} needed={qty*cp:.0f}")
+                               f"available={available_cash:.0f} needed={qty*cp:.0f}", code=code)
                 except Exception:
                     pass
                 continue
@@ -638,7 +638,7 @@ def on_bar(context, bars):
                 print(f'[{now:%H:%M:%S}] BUY {code} 仓位上限拦截: {new_pos_value/total_equity_value:.0%}>{pos_limit_pct:.0%}')
                 try:
                     write_risk(str(now), "position_limit",
-                               f"{new_pos_value/total_equity_value:.1%}>{pos_limit_pct:.0%} qty={qty}")
+                               f"{new_pos_value/total_equity_value:.1%}>{pos_limit_pct:.0%} qty={qty}", code=code)
                 except Exception:
                     pass
                 continue

@@ -213,13 +213,15 @@ def handle_event(rec: dict):
     elif event == "risk":
         kind = rec.get("kind", "")
         if kind == "kill_switch":
-            _push("🛑 KILL_SWITCH 触发", rec.get("detail", ""), "red")
+            _push(f"🛑 KILL_SWITCH — {label}", rec.get("detail", ""), "red")
         elif kind in ("position_limit", "floor_protection"):
-            # 不推飞书（噪音），仅记录
-            pass
+            pass  # 不推飞书（噪音），仅记录
+        elif kind == "cash_insufficient":
+            if _should_push("risk", dk):
+                _push(f"💰 现金不足 — {label}", rec.get("detail", ""), "orange")
         else:
             if _should_push("risk", dk):
-                _push("⚠️ 风控", f"{kind}: {rec.get('detail','')}", "orange")
+                _push(f"⚠️ 风控 — {label}", f"{kind}: {rec.get('detail','')}", "orange")
 
     elif event == "order":
         pass  # 订单事件不单独推送，等 fill 再推

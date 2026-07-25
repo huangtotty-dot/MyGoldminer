@@ -131,11 +131,12 @@ def write_reject(time_str: str, code: str, side: str, qty: int,
     })
 
 
-def write_risk(time_str: str, kind: str, detail: str = ""):
+def write_risk(time_str: str, kind: str, detail: str = "", code: str = ""):
     """风控事件（仓位拦截/地板保护/PANIC/熔断/急停）"""
     _append_jsonl(_events_path(), {
         "event": "risk",
         "time": time_str,
+        "code": code,
         "kind": kind,
         "detail": detail,
     })
