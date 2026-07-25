@@ -4,6 +4,8 @@ config/params.py — 全局参数
 
 融合自 E:\06_T\config.py，仅保留回测所需参数。
 gm.api 环境下不使用飞书/系统报警/文件IO等功能。
+
+注意: signals/ 目录（非 signal/）避免覆盖 Python stdlib
 """
 
 # ==================== 核心做T参数 ====================

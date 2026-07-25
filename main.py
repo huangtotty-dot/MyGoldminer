@@ -189,7 +189,7 @@ def _refresh_daily_ctx(context, code: str, gm_symbol: str, now: datetime) -> dic
             ctx["_m2_lot_value"] = float(c.iloc[-1] * 100)
             # 门槛判定（AMP<3% 或 AMT<2亿 或 单手<2000 → 标记仅观察）
             _pass = (ctx["_m2_amp20"] >= 0.03 and ctx["_m2_amount20"] >= 200000000
-                     and ctx["_m2_lot_value"] >= 2000)
+                     and ctx["_m2_lot_value"] >= 2000)  # TODO(PhaseD): 寻优定值
             ctx["_m2_pool_pass"] = _pass
             if not _pass:
                 ctx["daily_status"] = "pool_gate_fail"
@@ -464,6 +464,14 @@ def on_bar(context, bars):
                 return
             # M2: 做T门槛检查（底仓建仓前置）
             _dc = _refresh_daily_ctx(context, code, gm_sym, now)
+            # R1/A3: 底仓也过趋势闸（方案A）——TREND_BREAKDOWN 延迟建仓
+            _trend = _dc.get("_stock_trend_state", "TREND_RANGE")
+            if _trend == "TREND_BREAKDOWN":
+                print(f'[{now:%H:%M:%S}] BASE {code} {STOCK_NAMES.get(code,code)} TREND_BREAKDOWN→延迟建仓')
+                try: write_risk(str(now), "base_deferred", f"_stock_trend_state={_trend}", code=code)
+                except: pass
+                # 不标记 _base_settled — 等趋势恢复后重试
+                return
             if not _dc.get("_m2_pool_pass", True):
                 print(f"[{now:%H:%M:%S}] BASE {code} {STOCK_NAMES.get(code,code)} 门槛未过→仅观察 "
                       f"(amp={_dc.get('_m2_amp20',0):.1%} amt={_dc.get('_m2_amount20',0)/1e8:.1f}亿 "
@@ -682,10 +690,10 @@ def on_bar(context, bars):
 
             # N10: 算 target_t（仓位上限约束下的最大仓位，供 sizer 算 max_buyable）
             pos_limit_pct = float(PARAMS.get('max_single_position_pct', 0.80))
-            # N16: 单票预算制（按 MIRROR 市值比例分配权益额度）
-            _total_mirror_value = sum(MIRROR_HOLDINGS.get(_c, {}).get("qty", 0) * cp
-                                      for _c in STOCKS)
-            _stock_budget = (MIRROR_HOLDINGS.get(code, {}).get("qty", 0) * cp) / max(_total_mirror_value, 1) * available_cash
+            # N16: 单票预算制（等权 25%/票，Phase C 全量后改趋势加权）
+            # TODO(PhaseD): 寻优预算权重
+            _n_stocks = max(len(STOCKS), 1)
+            _stock_budget = available_cash / _n_stocks
             estimated_equity = _stock_budget + pos_qty * cp
             max_pos_shares = int(estimated_equity * pos_limit_pct / cp / 100) * 100 if cp > 0 else 0
             _base_ref = getattr(context, f'_base_ref_{code}', 0) or pos_qty
@@ -899,4 +907,4 @@ if __name__ == "__main__":
     run(strategy_id="e8bb1f4d-87ce-11f1-97f7-98fa9b8df5e7",
         filename="main.py",
         mode=MODE_LIVE,
-        token="480a6c84b0f43417ffcc9c15162dd7256ca9c3b0")
+        token=os.environ.get("GM_TOKEN", ""))
