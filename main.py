@@ -445,9 +445,12 @@ def on_bar(context, bars):
         if is_tail and sig and sig.action in ("BUY_LOW", "ADD_POS"):
             sig = None
 
-        # ── D5/N4: 深度亏损 → PANIC_SELL（移除 sell_score < 40 死锁条件） ──
+        # ── D5/N4: 深度亏损 → PANIC_SELL ──
         feats_cache = getattr(context.engine, "_last_feats", {}).get(code, {})
-        if feats_cache.get("is_deep_loss"):
+        # 防重复：已进入冷却的 PANIC 不重复生成
+        _panic_on_cooldown = (code in context.engine.sell_cooldown
+                              and now < context.engine.sell_cooldown.get(code, now))
+        if feats_cache.get("is_deep_loss") and not _panic_on_cooldown:
             from data.indicators import Signal
             sig = Signal(code=code, name=STOCK_NAMES.get(code, code),
                          action="PANIC_SELL", price=cp, score=75.0,
@@ -467,7 +470,13 @@ def on_bar(context, bars):
                                      side=OrderSide_Sell,
                                      order_type=OrderType_Market,
                                      position_effect=PositionEffect_Close)
-                        print(f'[{now:%H:%M:%S}] TAIL {code} 尾盘归位 {qty}股 (pos={pos_qty} target={target})')
+                        # 立即更新 manual_position 防下一分钟重复触发
+                        if gm_sym in context.manual_position:
+                            new_pos = pos_qty - qty
+                            context.manual_position[gm_sym]["qty"] = new_pos
+                            context.manual_position[gm_sym]["available"] = new_pos
+                            context.manual_position[gm_sym]["t_qty"] = new_pos
+                        print(f'[{now:%H:%M:%S}] TAIL {code} 尾盘归位 {qty}股 (pos={pos_qty}→{pos_qty-qty} target={target})')
                         context.total_trade_count += 1
                         context.daily_sell_count[code] = context.daily_sell_count.get(code, 0) + 1
                     except Exception:
@@ -500,13 +509,19 @@ def on_bar(context, bars):
         max_buys = stock_params.get("max_buy_times_per_stock", 3)
 
         if sig.action in ("SELL_HIGH", "PANIC_SELL"):
-            sell_floor_ratio = float(PARAMS.get("sell_floor_ratio", 0.5))
-            # base_qty 跟踪（首次有持仓时记录）
             base_ref = getattr(context, f"_base_ref_{code}", pos_qty)
             setattr(context, f"_base_ref_{code}", base_ref)
+            # PANIC_SELL 地板降至 0（深亏时允许清仓），普通卖出保持 50%
+            if sig.action == "PANIC_SELL":
+                sell_floor_ratio = 0.0
+            else:
+                sell_floor_ratio = float(PARAMS.get("sell_floor_ratio", 0.5))
             min_hold = int(base_ref * sell_floor_ratio)
             if pos_qty - 100 < min_hold:
                 print(f"[{now:%H:%M:%S}] SELL {code} SKIP: 地板保护 base_ref={base_ref} min_hold={min_hold} pos_qty={pos_qty}")
+                # PANIC 虽被地板挡，仍设冷却防每分钟重复触发
+                if sig.action == "PANIC_SELL":
+                    context.engine.record_trade_action(code, "PANIC_SELL", 0, cp)
                 continue
 
         # ── D1: 引擎冷却/计数 ──
