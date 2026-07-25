@@ -33,14 +33,12 @@ STOCKS = {
     "600481": "SHSE.600481",
     "600176": "SHSE.600176",
     "603667": "SHSE.603667",
-    "588170": "SHSE.588170",
 }
 STOCK_NAMES = {
     "000988": "华工科技",
     "600481": "双良节能",
     "600176": "中国巨石",
     "603667": "五洲新春",
-    "588170": "科创芯片ETF",
 }
 REVERSE_MAP = {v: k for k, v in STOCKS.items()}
 
@@ -51,7 +49,7 @@ MIRROR_HOLDINGS = {
     "600481": {"qty": 1400, "cost": 6.03},
     "600176": {"qty": 300,  "cost": 67.93},
     "603667": {"qty": 500,  "cost": 58.78},
-    "588170": {"qty": 4000, "cost": 0.92},
+    # 588170 ETF 已移除：T+0机制/最小单位与策略不兼容，首日仅观察
 }
 
 COMMISSION = PARAMS["commission_rate"]
@@ -621,7 +619,8 @@ def on_bar(context, bars):
                 pass
             if not _cash_ok and not getattr(context, '_cash_warned', False):
                 context._cash_warned = True
-                print(f'[N8] WARN: 无法读取可用现金, 使用初始资金={INITIAL_CASH}')
+                print(f'[N8] WARN: 无法读取可用现金 → fail-closed: 禁止买入')
+                available_cash = 0  # fail-closed: 读不到现金就禁止交易
 
             # N10: 算 target_t（仓位上限约束下的最大仓位，供 sizer 算 max_buyable）
             pos_limit_pct = float(PARAMS.get('max_single_position_pct', 0.80))
@@ -817,23 +816,27 @@ def on_backtest_finished(context, indicator):
 if __name__ == "__main__":
     _AUDIT_RUN_ID = datetime.now().strftime("%Y%m%d_%H%M%S")
 
-    # ---- 回测模式（快速测试） ----
-    backtest_start = (datetime.now() - timedelta(days=5)).strftime("%Y-%m-%d %H:%M:%S")
-    backtest_end = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    run(strategy_id="e8bb1f4d-87ce-11f1-97f7-98fa9b8df5e7",
-        filename="main.py",
-        mode=MODE_LIVE,
-        token="480a6c84b0f43417ffcc9c15162dd7256ca9c3b0",
-        backtest_start_time=backtest_start,
-        backtest_end_time=backtest_end,
-        backtest_adjust=ADJUST_PREV,
-        backtest_initial_cash=150000,
-        backtest_commission_ratio=COMMISSION,
-        backtest_slippage_ratio=0.0001,
-        backtest_match_mode=1)
+    # ═══════════════════════════════════════════
+    # 切换模式：注释/取消注释对应块
+    # ═══════════════════════════════════════════
 
-    # ---- 模拟盘模式 ----
+    # ---- 回测模式 ----
+    # backtest_start = (datetime.now() - timedelta(days=90)).strftime("%Y-%m-%d %H:%M:%S")
+    # backtest_end = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     # run(strategy_id="e8bb1f4d-87ce-11f1-97f7-98fa9b8df5e7",
     #     filename="main.py",
     #     mode=MODE_BACKTEST,
-    #     token="480a6c84b0f43417ffcc9c15162dd7256ca9b8df5e7")
+    #     token="480a6c84b0f43417ffcc9c15162dd7256ca9c3b0",
+    #     backtest_start_time=backtest_start,
+    #     backtest_end_time=backtest_end,
+    #     backtest_adjust=ADJUST_PREV,
+    #     backtest_initial_cash=150000,
+    #     backtest_commission_ratio=COMMISSION,
+    #     backtest_slippage_ratio=0.0001,
+    #     backtest_match_mode=1)
+
+    # ---- 模拟盘模式 ----
+    run(strategy_id="e8bb1f4d-87ce-11f1-97f7-98fa9b8df5e7",
+        filename="main.py",
+        mode=MODE_LIVE,
+        token="480a6c84b0f43417ffcc9c15162dd7256ca9c3b0")
