@@ -553,11 +553,47 @@ def on_bar(context, bars):
         if is_tail and sig and sig.action in ("BUY_LOW", "ADD_POS"):
             sig = None
 
-        # ── D5/N4: 深度亏损 → PANIC_SELL ──
+        # ── B1/T1: TRAIL_SELL 移动止盈 ──
+        # TODO(PhaseD): 寻优 ACT_LINE/k/MIN_BACK/MAX_BACK
         feats_cache = getattr(context.engine, "_last_feats", {}).get(code, {})
+        _profit = feats_cache.get("profit_pct", 0) if feats_cache else 0
+        _trail_state = "INACTIVE"
+        _trail_peak = 0.0
+        if gm_sym in context.manual_position:
+            _trail_state = context.manual_position[gm_sym].get("_trail_state", "INACTIVE")
+            _trail_peak = context.manual_position[gm_sym].get("_trail_peak", 0.0)
+        # 激活: 浮盈 > +8%
+        if _trail_state == "INACTIVE" and _profit > 0.08:
+            _trail_state = "ARMED"
+            _trail_peak = max(cp, _trail_peak)
+        # 跟踪: 更新峰值
+        if _trail_state == "ARMED":
+            _trail_peak = max(_trail_peak, cp)
+            # 触发: 从峰值回撤 > 5%
+            _drawdown = (_trail_peak - cp) / _trail_peak if _trail_peak > 0 else 0
+            if _drawdown > 0.05 and not _panic_on_cooldown:
+                from data.indicators import Signal
+                sig = Signal(code=code, name=STOCK_NAMES.get(code, code),
+                             action="TRAIL_SELL", price=cp, score=80.0,
+                             reasons=[f"移动止盈: peak={_trail_peak:.2f} dd={_drawdown:.1%}"])
+                _trail_state = "COOLED"
+            context.manual_position[gm_sym]["_trail_state"] = _trail_state
+            context.manual_position[gm_sym]["_trail_peak"] = _trail_peak
+        # 复位: 全仓清空
+        if pos_qty <= 0 and gm_sym in context.manual_position:
+            context.manual_position[gm_sym]["_trail_state"] = "INACTIVE"
+            context.manual_position[gm_sym]["_trail_peak"] = 0.0
+
+        # ── D5/N4: 深度亏损 → PANIC_SELL ──
         # 防重复：已进入冷却的 PANIC 不重复生成
         _panic_on_cooldown = (code in context.engine.sell_cooldown
                               and now < context.engine.sell_cooldown.get(code, now))
+        # R3/B5: 开盘卖出缓冲 — 09:35前 SELL_HIGH 延后
+        if sig and sig.action == "SELL_HIGH" and now.hour == 9 and now.minute <= 35:
+            sig = None
+            _audit_write({"event": "morning_sell_blocked", "code": code, "time": str(now),
+                          "action": "SELL_HIGH", "reason": "开盘缓冲延后"})
+
         if feats_cache.get("is_deep_loss") and not _panic_on_cooldown:
             from data.indicators import Signal
             sig = Signal(code=code, name=STOCK_NAMES.get(code, code),
@@ -596,6 +632,12 @@ def on_bar(context, bars):
         if morning_no_buy and sig and sig.action in ('BUY_LOW', 'ADD_POS'):
             sig = None
 
+        # B3/R2: SELL_HIGH 成本锚定 — 亏损单不由 SELL_HIGH 通道卖出
+        _cost_anchor = 0.0  # TODO(PhaseD): 寻优 cost_anchor
+        if (sig and sig.action == "SELL_HIGH"
+                and feats_cache.get("profit_pct", 0) < _cost_anchor):
+            sig = None  # 降级：交回 PANIC/TREND_EXIT 接管
+
         if sig is None:
             _last_dec = context.engine.last_decision.get(code, {})
             _audit_write({
@@ -625,11 +667,14 @@ def on_bar(context, bars):
         max_sells = stock_params.get("max_sell_times_per_stock", 3)
         max_buys = stock_params.get("max_buy_times_per_stock", 3)
 
-        if sig.action in ("SELL_HIGH", "PANIC_SELL"):
+        # T4: TRAIL_SELL/PANIC_SELL 豁免地板 + 不占 max_sells
+        _is_protection_sell = sig.action in ("PANIC_SELL", "TRAIL_SELL")
+
+        if sig.action in ("SELL_HIGH", "PANIC_SELL", "TRAIL_SELL"):
             base_ref = getattr(context, f"_base_ref_{code}", pos_qty)
             setattr(context, f"_base_ref_{code}", base_ref)
-            # PANIC_SELL 地板降至 0（深亏时允许清仓），普通卖出保持 50%
-            if sig.action == "PANIC_SELL":
+            # 保护类卖出(PANIC/TRAIL)地板=0，SELL_HIGH保持50%
+            if _is_protection_sell:
                 sell_floor_ratio = 0.0
             else:
                 sell_floor_ratio = float(PARAMS.get("sell_floor_ratio", 0.5))
@@ -647,7 +692,7 @@ def on_bar(context, bars):
                 continue
 
         # ── D1: 引擎冷却/计数 ──
-        threshold = stock_params.get("notify_sell_threshold", 65) if sig.action in ("SELL_HIGH", "PANIC_SELL") else \
+        threshold = stock_params.get("notify_sell_threshold", 65) if sig.action in ("SELL_HIGH", "PANIC_SELL", "TRAIL_SELL") else \
                     stock_params.get("notify_buy_threshold", 43)
 
         if sig.score < threshold:
@@ -752,10 +797,10 @@ def on_bar(context, bars):
             except Exception as e:
                 print(f"[{now:%H:%M:%S}] BUY {code} 失败: {e}")
 
-        elif sig.action in ("SELL_HIGH", "PANIC_SELL"):
+        elif sig.action in ("SELL_HIGH", "PANIC_SELL", "TRAIL_SELL"):
             sc = context.daily_sell_count.get(code, 0)
-            # T4: PANIC_SELL 不占用 max_sells（止血不受节流限制）
-            _panic_exempt = sig.action == "PANIC_SELL"
+            # T4: 保护类卖出(PANIC/TRAIL)不占用 max_sells
+            _panic_exempt = _is_protection_sell
             if not _panic_exempt and sc >= max_sells:
                 continue
             qty = context.sizer.calc_sell_qty(code, holding, sig.score, threshold, used_sells=sc)
