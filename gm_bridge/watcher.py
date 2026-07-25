@@ -104,15 +104,17 @@ def _dedup_key(rec: dict) -> str:
     return f"{rec.get('event')}|{rec.get('code','')}|{rec.get('action',rec.get('side',''))}|{rec.get('time','')}"
 
 
-def _should_push(event_type: str, dedup_key: str) -> bool:
+def _should_push(event_type: str, dedup_key: str, code: str = "") -> bool:
     if dedup_key in _seen_signals:
         return False
     _seen_signals.add(dedup_key)
     now = time.time()
-    last = _last_push.get(event_type, 0)
+    # 限流键 = event_type + code（每票独立窗口，A票不挤B票）
+    _throttle_key = f"{event_type}|{code}" if code else event_type
+    last = _last_push.get(_throttle_key, 0)
     if now - last < 60:
         return False
-    _last_push[event_type] = now
+    _last_push[_throttle_key] = now
     return True
 
 
@@ -178,7 +180,7 @@ def handle_event(rec: dict):
     label = _stock_label(code)
 
     if event == "signal":
-        if _should_push("signal", dk):
+        if _should_push("signal", dk, code):
             action_cn = {"BUY_LOW": "低吸", "SELL_HIGH": "高抛", "PANIC_SELL": "恐慌卖出", "ADD_POS": "加仓"}.get(rec.get("action"), rec.get("action"))
             emoji = "🟢" if "BUY" in str(rec.get("action", "")) else "🔴"
             _push(
@@ -190,7 +192,7 @@ def handle_event(rec: dict):
 
     elif event == "fill":
         _track_position(rec)
-        if _should_push("fill", dk):
+        if _should_push("fill", dk, code):
             side = rec.get("side", "")
             emoji = "🔵" if side == "BUY" else "🔴"
             side_cn = "买入" if side == "BUY" else "卖出"
@@ -217,10 +219,10 @@ def handle_event(rec: dict):
         elif kind in ("position_limit", "floor_protection"):
             pass  # 不推飞书（噪音），仅记录
         elif kind == "cash_insufficient":
-            if _should_push("risk", dk):
+            if _should_push("risk", dk, code):
                 _push(f"💰 现金不足 — {label}", rec.get("detail", ""), "orange")
         else:
-            if _should_push("risk", dk):
+            if _should_push("risk", dk, code):
                 _push(f"⚠️ 风控 — {label}", f"{kind}: {rec.get('detail','')}", "orange")
 
     elif event == "order":

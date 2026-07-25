@@ -62,6 +62,21 @@ INITIAL_CASH = 150000
 MAX_BASE_RETRY = 3
 
 
+# ═══════════════════════════════════════════
+# T4 卖出通道仲裁器（Phase A 骨架，Phase B 搬家）
+# ═══════════════════════════════════════════
+# 优先级: P1 PANIC > P2 TRAIL > P3 TREND_EXIT > P4 TARGET > P5 SELL_HIGH > P6 TAIL
+# 当前 Phase A: 仅 P1/P5/P6 三通道，P2/P3/P4 为 Phase B 预留
+# 仲裁规则:
+#   - 高优先级通道先行判定，命中即返回
+#   - P1/P2/P3 豁免 sizer 分批与日卖出计数（止血/保护不受节流）
+#   - P4/P5/P6 占用计数
+#   - 同 bar 不重复卖出（每 bar 每票至多一个卖出动作族）
+def _sell_arbiter(context, code, sig, feats_cache, pos_qty, base_ref, now, is_tail, daily_ctx):
+    """卖出通道仲裁器（Phase B 全量搬迁后启用，当前为骨架占位）"""
+    return sig, pos_qty  # 透传，行为不变
+
+
 def _raw_code(symbol: str) -> str:
     return symbol.replace("SHSE.", "").replace("SZSE.", "").replace("BJ.", "")
 
@@ -166,6 +181,18 @@ def _refresh_daily_ctx(context, code: str, gm_symbol: str, now: datetime) -> dic
             ctx["daily_atr"] = float(tr.rolling(14).mean().iloc[-1] / c.iloc[-1]) if c.iloc[-1] > 0 else 0.02
         else:
             ctx["daily_atr"] = 0.02
+        # M2: 做T门槛指标（供标的池准入检查）
+        if len(c) >= 20 and "volume" in df.columns:
+            v = df["volume"].astype(float)
+            ctx["_m2_amp20"] = float((tr.rolling(20).mean().iloc[-1] / c.iloc[-1])) if c.iloc[-1] > 0 else 0
+            ctx["_m2_amount20"] = float((v * c).rolling(20).mean().iloc[-1]) if len(v) >= 20 else 0
+            ctx["_m2_lot_value"] = float(c.iloc[-1] * 100)
+            # 门槛判定（AMP<3% 或 AMT<2亿 或 单手<2000 → 标记仅观察）
+            _pass = (ctx["_m2_amp20"] >= 0.03 and ctx["_m2_amount20"] >= 200000000
+                     and ctx["_m2_lot_value"] >= 2000)
+            ctx["_m2_pool_pass"] = _pass
+            if not _pass:
+                ctx["daily_status"] = "pool_gate_fail"
         prev_close = float(c.iloc[-1]) if len(c) > 0 else 0
         ctx["daily_prev_close"] = prev_close
         ctx["daily_status"] = "ok"
@@ -433,7 +460,17 @@ def on_bar(context, bars):
             base_qty = mirror.get("qty", 0)
             if base_qty < 100:
                 print(f"[{now:%H:%M:%S}] BASE {code} 跳过: MIRROR_HOLDINGS 中无此标的或 qty<100")
-                context._base_settled.add(code)  # 标记已处理，不再尝试
+                context._base_settled.add(code)
+                return
+            # M2: 做T门槛检查（底仓建仓前置）
+            _dc = _refresh_daily_ctx(context, code, gm_sym, now)
+            if not _dc.get("_m2_pool_pass", True):
+                print(f"[{now:%H:%M:%S}] BASE {code} {STOCK_NAMES.get(code,code)} 门槛未过→仅观察 "
+                      f"(amp={_dc.get('_m2_amp20',0):.1%} amt={_dc.get('_m2_amount20',0)/1e8:.1f}亿 "
+                      f"lot={_dc.get('_m2_lot_value',0):.0f}元)")
+                try: write_risk(str(now), "pool_gate", f"amp={_dc.get('_m2_amp20',0):.1%} 仅观察", code=code)
+                except: pass
+                context._base_settled.add(code)
                 return
             try:
                 try:
