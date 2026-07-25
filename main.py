@@ -659,13 +659,15 @@ def on_order_status(context, order):
         elif side == 2:  # 卖出
             old = context.executed_orders.get(symbol, {"qty": 0, "available": 0})
             old_qty = int(old.get("qty", 0))
+            old_cost = old.get("cost", price)
             new_qty = max(0, old_qty - volume)
+            # cost 保持不变（买入成本），不覆写为卖出价
             context.executed_orders[symbol] = {
                 "name": STOCK_NAMES.get(code, code),
                 "qty": new_qty,
                 "available": new_qty,
                 "t_qty": new_qty,
-                "cost": price,
+                "cost": old_cost,
                 "type": "stock",
                 "pre_close": price,
             }
