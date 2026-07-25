@@ -67,9 +67,11 @@ class PositionSizer:
         else:
             pct = p.get("stock_first_add_weak_pct", 0.10)
 
+        hold_qty = int(holding.get("qty", 0) or 0)
+        max_buyable = max(0, total_t - hold_qty)
+        if max_buyable <= 0:
+            return 0
         qty = int(total_t * pct)
-        # 买入不超过已卖出/当日额度上限，此处简化为总T仓的可用比例
-        max_buyable = max(0, total_t - int(holding.get("qty", 0) or 0))
-        qty = min(qty, max_buyable) if max_buyable > 0 else qty
+        qty = min(qty, max_buyable)
         qty = max(min_unit, (qty // min_unit) * min_unit)
         return qty

@@ -32,6 +32,7 @@ BASE_POSITION_PCT = 0.50           # 底仓占用资金比例
 T1_AUTO_UNLOCK_HOUR = 9
 T1_AUTO_UNLOCK_MINUTE = 31
 INITIAL_CASH = 200000
+MAX_BASE_RETRY = 3
 
 
 def _raw_code(symbol: str) -> str:
@@ -132,9 +133,17 @@ def _refresh_daily_ctx(context, code: str, gm_symbol: str, now: datetime) -> dic
     if daily is not None and len(daily) >= 10:
         df = pd.DataFrame(daily)
         c = df["close"].astype(float)
+        h = df["high"].astype(float)
+        l = df["low"].astype(float)
         ctx["daily_ma5"] = float(c.rolling(5).mean().iloc[-1]) if len(c) >= 5 else 0
         ctx["daily_ma10"] = float(c.rolling(10).mean().iloc[-1]) if len(c) >= 10 else 0
         ctx["daily_ma20"] = float(c.rolling(20).mean().iloc[-1]) if len(c) >= 20 else 0
+        # N4: 日线 ATR（用于 PANIC_SELL）
+        if len(c) >= 14:
+            tr = pd.concat([h - l, (h - c.shift(1)).abs(), (l - c.shift(1)).abs()], axis=1).max(axis=1)
+            ctx["daily_atr"] = float(tr.rolling(14).mean().iloc[-1] / c.iloc[-1]) if c.iloc[-1] > 0 else 0.02
+        else:
+            ctx["daily_atr"] = 0.02
         prev_close = float(c.iloc[-1]) if len(c) > 0 else 0
         ctx["daily_prev_close"] = prev_close
         ctx["daily_status"] = "ok"
@@ -164,8 +173,10 @@ def _refresh_daily_ctx(context, code: str, gm_symbol: str, now: datetime) -> dic
 
 _AUDIT_LOG_PATH = os.path.join(PROJECT_DIR, "gmcache", "backtrace.jsonl")
 _audit_file = None
+_AUDIT_RUN_ID = ""
 
 def _audit_write(rec: dict):
+    rec['_run_id'] = _AUDIT_RUN_ID
     """追加一条决策审计记录"""
     global _audit_file
     try:
@@ -187,6 +198,12 @@ def _audit_close():
 # ==================== 策略生命周期 ====================
 
 def init(context):
+    # D8: 每次回测清空审计文件
+    try:
+        if os.path.exists(_AUDIT_LOG_PATH):
+            os.remove(_AUDIT_LOG_PATH)
+    except Exception:
+        pass
     context.bar_cache = {}
     context.executed_orders = {}
     context.engine = SignalEngine()
@@ -393,6 +410,9 @@ def on_bar(context, bars):
         if pos_qty <= 0:
             return
 
+        # N6: 开盘5分钟买入隔离
+        morning_no_buy = now.hour == 9 and now.minute <= 35
+
         # T+1 结转
         if now.hour == T1_AUTO_UNLOCK_HOUR and now.minute == T1_AUTO_UNLOCK_MINUTE:
             mp = context.manual_position.get(gm_sym)
@@ -422,22 +442,49 @@ def on_bar(context, bars):
         if is_tail and sig and sig.action in ("BUY_LOW", "ADD_POS"):
             sig = None
 
-        # ── D5: 深度亏损 → PANIC_SELL ──
+        # ── D5/N4: 深度亏损 → PANIC_SELL（移除 sell_score < 40 死锁条件） ──
         feats_cache = getattr(context.engine, "_last_feats", {}).get(code, {})
-        if feats_cache.get("is_deep_loss") and sell_score < 40:
-            sell_score = 40
-            sig = None  # 重新生成 panic sell
+        if feats_cache.get("is_deep_loss"):
             from data.indicators import Signal
             sig = Signal(code=code, name=STOCK_NAMES.get(code, code),
-                         action="PANIC_SELL", price=cp, score=65.0,
+                         action="PANIC_SELL", price=cp, score=75.0,
                          reasons=["深度亏损恐慌卖出", f"profit_pct={feats_cache.get('profit_pct', 0):.2%}"])
+            print(f"[{now:%H:%M:%S}] PANIC_SELL {code} {feats_cache.get('hold_qty', 0)}@{cp:.2f} "
+                  f"profit_pct={feats_cache.get('profit_pct', 0):.2%}")
+
+        # ── D5-c: 尾盘回转（14:50-15:00），超底仓部分强制卖出归位 ──
+        if is_tail and pos_qty > getattr(context, '_base_ref_' + code, pos_qty):
+            if sig is None or sig.action not in ('SELL_HIGH', 'PANIC_SELL'):
+                target = getattr(context, '_base_ref_' + code, pos_qty)
+                excess = pos_qty - target
+                if excess >= 100:
+                    qty = (excess // 100) * 100
+                    try:
+                        order_volume(symbol=gm_sym, volume=qty,
+                                     side=OrderSide_Sell,
+                                     order_type=OrderType_Market,
+                                     position_effect=PositionEffect_Close)
+                        print(f'[{now:%H:%M:%S}] TAIL {code} 尾盘归位 {qty}股 (pos={pos_qty} target={target})')
+                        context.total_trade_count += 1
+                        context.daily_sell_count[code] = context.daily_sell_count.get(code, 0) + 1
+                    except Exception:
+                        pass
+                    continue
+
+        # ── N6: 开盘5分钟拦截买入信号 ──
+        if morning_no_buy and sig and sig.action in ('BUY_LOW', 'ADD_POS'):
+            sig = None
 
         if sig is None:
+            _last_dec = context.engine.last_decision.get(code, {})
             _audit_write({
                 "event": "no_signal", "code": code, "time": str(now),
                 "buy_score": buy_score, "sell_score": sell_score,
                 "pos_qty": pos_qty, "price": cp,
                 "index_regime": context.last_index_regime,
+                "buy_blocks": _last_dec.get("buy_blocks", []),
+                "sell_blocks": _last_dec.get("sell_blocks", []),
+                "decision_reason": _last_dec.get("reason", ""),
             })
             continue
 
@@ -470,7 +517,29 @@ def on_bar(context, bars):
                 continue
             qty = context.sizer.calc_buy_qty(code, holding, sig.score, threshold)
             if qty < 100:
-                qty = 300  # fallback
+                qty = 300
+            # N3: 现金预检
+            available_cash = 100000
+            try:
+                _acct = context.account()
+                if hasattr(_acct, 'cash'):
+                    available_cash = float(_acct.cash())
+            except Exception:
+                pass
+            max_by_cash = int(available_cash * 0.95 / cp / 100) * 100 if cp > 0 else 0
+            qty = min(qty, max_by_cash) if max_by_cash > 0 else qty
+            if qty < 100:
+                if bc == 0:
+                    print(f'[{now:%H:%M:%S}] BUY {code} 现金不足跳过: 可用={available_cash:.0f}')
+                continue
+            # N2: 仓位上限检查
+            pos_limit_pct = float(PARAMS.get('max_single_position_pct', 0.30))
+            current_pos_value = pos_qty * cp
+            new_pos_value = current_pos_value + qty * cp
+            total_equity_value = available_cash + current_pos_value
+            if total_equity_value > 0 and new_pos_value / total_equity_value > pos_limit_pct:
+                print(f'[{now:%H:%M:%S}] BUY {code} 仓位上限拦截: {new_pos_value/total_equity_value:.0%}>{pos_limit_pct:.0%}')
+                continue  # fallback
             try:
                 order_volume(symbol=gm_sym, volume=qty,
                              side=OrderSide_Buy,
@@ -534,6 +603,10 @@ def on_order_status(context, order):
 
     if status == 3:  # 全部成交
         code = _raw_code(symbol)
+        # P0-2: 成交回调接线冷却（只有真的成交了才计冷却，避免下单即计）
+        if code in STOCKS:
+            _action = 'BUY_LOW' if side == 1 else 'SELL_HIGH'
+            context.engine.record_trade_action(code, _action, volume, price)
         if side == 1:  # 买入
             old = context.executed_orders.get(symbol, {"qty": 0, "available": 0, "cost": price})
             old_qty = int(old.get("qty", 0))
@@ -568,7 +641,19 @@ def on_order_status(context, order):
                 "pre_close": price,
             }
     elif status in (4, 5, 6):  # 拒单/撤单/部分成交撤单
-        context.rejected_order_count = getattr(context, "rejected_order_count", 0) + 1
+        context.rejected_order_count = getattr(context, 'rejected_order_count', 0) + 1
+        code = _raw_code(symbol)
+        # N5: 底仓拒单恢复
+        if code in getattr(context, '_base_ordered', set()):
+            if not hasattr(context, '_base_retry_count'):
+                context._base_retry_count = {}
+            retry = context._base_retry_count.get(code, 0) + 1
+            context._base_retry_count[code] = retry
+            if retry <= MAX_BASE_RETRY:
+                context._base_ordered.discard(code)
+                print(f'[ORDER] {code} 底仓拒单 status={status} 重试 #{retry}')
+            else:
+                print(f'[ORDER] {code} 底仓拒单已达上限({MAX_BASE_RETRY})，停止重试')
         print(f"[ORDER] {symbol} 被拒 status={status}")
 
 
@@ -588,6 +673,7 @@ def on_backtest_finished(context, indicator):
 
 
 if __name__ == "__main__":
+    _AUDIT_RUN_ID = datetime.now().strftime("%Y%m%d_%H%M%S")
     backtest_start = (datetime.now() - timedelta(days=90)).strftime("%Y-%m-%d %H:%M:%S")  # 90天 ~4-7min
     backtest_end = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 

@@ -22,7 +22,7 @@ PARAMS = {
     "cooldown_minutes": 30,
     "sell_floor_ratio": 0.5,
     "index_regime_intraday_lock": True,
-    "max_single_position_pct": 0.30,
+    "max_single_position_pct": 0.80,
     "repeat_signal_gap_minutes": 60,
     "repeat_signal_price_move": 0.004,
     "repeat_signal_score_boost": 10,

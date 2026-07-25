@@ -268,8 +268,9 @@ class RiskManager:
             result["sell_block"].append("dead_water")
         if feats.get("daily_breakdown_risk"):
             result["buy_block"].append("daily_breakdown_risk")
-        if feats.get("is_strong_uptrend"):
-            result["sell_block"].append("strong_uptrend")
+        # N1 fix: strong_uptrend 不再禁卖（做T策略的利润来源就是卖强），
+        # 改为在评分中降分处理。仅当 指数uni_up + 个股强趋势 双确认时才降分不禁卖
+        # (已通过 factor_weight_index_regime 在评分中体现)
         if feats.get("is_gap_down_no_reversal"):
             result["buy_block"].append("gap_down_no_reversal")
         if feats.get("daily_overheated"):
@@ -341,7 +342,11 @@ class FeatureExtractor:
         cost = float(holding.get("cost", 0) or 0)
         feats["hold_qty"] = int(holding.get("t_qty") or holding.get("qty") or 0)
         feats["profit_pct"] = (price - cost) / cost if cost > 0 else 0
-        feats["is_deep_loss"] = cost > 0 and feats["profit_pct"] < -5 * atr
+        # N4 fix: 用日线级 ATR（≈日振幅的 1/14）代替 1分钟 K 线 ATR
+        daily_atr = float(daily_ctx.get("daily_atr", 0) or 0)
+        if daily_atr <= 0:
+            daily_atr = atr * 14  # 1分钟ATR×14 ≈ 日ATR 近似
+        feats["is_deep_loss"] = cost > 0 and feats["profit_pct"] < -5 * daily_atr
         dc = daily_ctx if isinstance(daily_ctx, dict) else {}
         for k in ["daily_status", "daily_gate", "daily_trend_bg", "daily_ma5_state",
                    "daily_support_name", "index_regime"]:
@@ -372,7 +377,9 @@ class FeatureExtractor:
             c10 = df["close"].tail(10).mean()
             c20 = df["close"].tail(20).mean()
             ma_ok = c5 >= c10 * 0.995 and c10 >= c20 * 0.995
-            day_low = float(df["low"].iloc[:len(df)].min())
+            # N1 fix: 用当日最低点而非全缓存最低点（原 bug: 跨2日缓存使 low 偏太多）
+            today_df = df[df["date"] == last["date"]]
+            day_low = float(today_df["low"].min()) if not today_df.empty else 0
             rebound = (price - day_low) / day_low if day_low > 0 else 0
             feats["is_strong_uptrend"] = ma_ok and rebound > 3 * atr and price > vwap * 1.005
         feats["is_double_top"] = False
