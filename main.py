@@ -171,7 +171,7 @@ def _refresh_daily_ctx(context, code: str, gm_symbol: str, now: datetime) -> dic
         ctx["daily_status"] = "ok"
         ctx["daily_buy_t_ok"] = True
 
-        # 破位/过热简化判断
+        # 破位/过热简化判断 + R1 个股趋势状态
         if len(c) >= 20:
             ma20 = c.rolling(20).mean().iloc[-1]
             if prev_close < ma20 * 0.985:
@@ -179,6 +179,17 @@ def _refresh_daily_ctx(context, code: str, gm_symbol: str, now: datetime) -> dic
             if prev_close > ma20 * 1.08:
                 ctx["daily_overheated"] = True
             ctx["daily_ma5_state"] = "above_ma5_trend" if prev_close > ctx["daily_ma5"] else "near_ma5_chop"
+            # R1: 个股趋势状态（供趋势熔断 G3 消费）
+            _ma5_val = ctx["daily_ma5"]
+            _ma5_slope = float(c.rolling(5).mean().diff().iloc[-1]) if len(c) >= 6 else 0
+            if ctx.get("daily_breakdown_risk"):
+                ctx["_stock_trend_state"] = "TREND_BREAKDOWN"
+            elif prev_close < _ma5_val and _ma5_slope < 0:
+                ctx["_stock_trend_state"] = "TREND_DOWN"
+            elif prev_close > _ma5_val and _ma5_slope > 0:
+                ctx["_stock_trend_state"] = "TREND_UP"
+            else:
+                ctx["_stock_trend_state"] = "TREND_RANGE"
 
         # 将 latest_pre_close 暴露给 _get_holding
         context.latest_pre_close[code] = prev_close
@@ -479,8 +490,17 @@ def on_bar(context, bars):
             print(f"[{now:%H:%M:%S}] {code} evaluate err: {e}")
             continue
 
-        # ── D5: uni_down 熔断（硬性防线，不再依赖 RiskManager 链路） ──
+        # ── D5/G2: uni_down 熔断 ──
         if context.last_index_regime == "uni_down" and sig and sig.action in ("BUY_LOW", "ADD_POS"):
+            sig = None
+
+        # ── R1/G3: 个股趋势熔断（一票一闸） ──
+        _trend = daily_ctx.get("_stock_trend_state", "TREND_RANGE")
+        if _trend == "TREND_BREAKDOWN" and sig and sig.action in ("BUY_LOW", "ADD_POS"):
+            sig = None
+            try: write_risk(str(now), "stock_trend_gate", f"{_trend} 禁买", code=code)
+            except: pass
+        elif _trend == "TREND_DOWN" and sig and sig.action == "ADD_POS":
             sig = None
 
         # ── D5: 尾盘回转（14:50-15:00，先于 PANIC_SELL 检查） ──
@@ -617,14 +637,19 @@ def on_bar(context, bars):
                     _cash_ok = True
             except Exception:
                 pass
-            if not _cash_ok and not getattr(context, '_cash_warned', False):
-                context._cash_warned = True
-                print(f'[N8] WARN: 无法读取可用现金 → fail-closed: 禁止买入')
-                available_cash = 0  # fail-closed: 读不到现金就禁止交易
+            if not _cash_ok:
+                available_cash = 0  # N15: fail-closed 每 bar 生效
+                if not getattr(context, '_cash_warned', False):
+                    context._cash_warned = True
+                    print(f'[N8] WARN: 无法读取可用现金 → fail-closed: 禁止买入')
 
             # N10: 算 target_t（仓位上限约束下的最大仓位，供 sizer 算 max_buyable）
             pos_limit_pct = float(PARAMS.get('max_single_position_pct', 0.80))
-            estimated_equity = available_cash + pos_qty * cp
+            # N16: 单票预算制（按 MIRROR 市值比例分配权益额度）
+            _total_mirror_value = sum(MIRROR_HOLDINGS.get(_c, {}).get("qty", 0) * cp
+                                      for _c in STOCKS)
+            _stock_budget = (MIRROR_HOLDINGS.get(code, {}).get("qty", 0) * cp) / max(_total_mirror_value, 1) * available_cash
+            estimated_equity = _stock_budget + pos_qty * cp
             max_pos_shares = int(estimated_equity * pos_limit_pct / cp / 100) * 100 if cp > 0 else 0
             _base_ref = getattr(context, f'_base_ref_{code}', 0) or pos_qty
             target_t = max(max_pos_shares, _base_ref, pos_qty)
@@ -684,7 +709,9 @@ def on_bar(context, bars):
 
         elif sig.action in ("SELL_HIGH", "PANIC_SELL"):
             sc = context.daily_sell_count.get(code, 0)
-            if sc >= max_sells:
+            # T4: PANIC_SELL 不占用 max_sells（止血不受节流限制）
+            _panic_exempt = sig.action == "PANIC_SELL"
+            if not _panic_exempt and sc >= max_sells:
                 continue
             qty = context.sizer.calc_sell_qty(code, holding, sig.score, threshold, used_sells=sc)
             if qty < 100:
