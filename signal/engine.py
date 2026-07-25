@@ -429,6 +429,7 @@ class SignalEngine:
         self.last_decision: Dict[str, Dict[str, Any]] = {}
         self.factor_weights = factor_weights or FACTOR_WEIGHTS
         self.signals: List[Signal] = []
+        self._last_feats: Dict[str, Dict[str, Any]] = {}
 
     def _get_params(self, code: str) -> dict:
         p = dict(PARAMS)
@@ -461,6 +462,7 @@ class SignalEngine:
         if not feats:
             return 0.0, 0.0, None
 
+        self._last_feats[code] = feats
         buy_score, buy_details = ScoringEngine.calc_buy_score(feats, self.factor_weights)
         sell_score, sell_details = ScoringEngine.calc_sell_score(feats, self.factor_weights)
         risk = RiskManager.check_all(feats)
@@ -525,7 +527,22 @@ class SignalEngine:
         return buy_score, sell_score, sig
 
     def record_signal(self, code, action, price, score):
-        pass
+        self.last_signal_state[code] = {
+            "action": action, "price": price, "score": score,
+            "time": _engine_now(),
+        }
 
     def record_trade_action(self, code, action, qty=0, price=0.0):
-        pass
+        now = _engine_now()
+        p = self._get_params(code)
+        self.last_trade_state[code] = {
+            "action": action, "qty": qty, "price": price, "time": now,
+        }
+        if action in ("SELL_HIGH", "PANIC_SELL"):
+            cd = int(p.get("cooldown_minutes", 30))
+            self.sell_cooldown[code] = now + timedelta(minutes=cd)
+            self.sell_count_per_stock[code] = self.sell_count_per_stock.get(code, 0) + 1
+        elif action in ("BUY_LOW", "ADD_POS"):
+            cd = int(p.get("cooldown_minutes", 30))
+            self.buy_cooldown[code] = now + timedelta(minutes=cd)
+            self.buy_count_per_stock[code] = self.buy_count_per_stock.get(code, 0) + 1

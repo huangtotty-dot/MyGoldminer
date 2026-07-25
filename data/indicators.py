@@ -89,7 +89,7 @@ def add_indicators(df: pd.DataFrame) -> pd.DataFrame:
     df["date"] = parsed_time.dt.date
 
     if "amount" in df.columns and df["amount"].notna().sum() > 0:
-        df["vwap"] = df.groupby("date")["amount"].cumsum() / (df.groupby("date")["volume"].cumsum() * 100.0)
+        df["vwap"] = df.groupby("date")["amount"].cumsum() / df.groupby("date")["volume"].cumsum()
     else:
         df["vwap"] = df.groupby("date")["tp_vol"].cumsum() / df.groupby("date")["volume"].cumsum()
     df["vwap"] = df["vwap"].ffill().fillna(df["close"])
