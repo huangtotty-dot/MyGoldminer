@@ -63,18 +63,75 @@ MAX_BASE_RETRY = 3
 
 
 # ═══════════════════════════════════════════
-# T4 卖出通道仲裁器（Phase A 骨架，Phase B 搬家）
+# T4 卖出通道仲裁器
 # ═══════════════════════════════════════════
 # 优先级: P1 PANIC > P2 TRAIL > P3 TREND_EXIT > P4 TARGET > P5 SELL_HIGH > P6 TAIL
-# 当前 Phase A: 仅 P1/P5/P6 三通道，P2/P3/P4 为 Phase B 预留
-# 仲裁规则:
-#   - 高优先级通道先行判定，命中即返回
-#   - P1/P2/P3 豁免 sizer 分批与日卖出计数（止血/保护不受节流）
-#   - P4/P5/P6 占用计数
-#   - 同 bar 不重复卖出（每 bar 每票至多一个卖出动作族）
-def _sell_arbiter(context, code, sig, feats_cache, pos_qty, base_ref, now, is_tail, daily_ctx):
-    """卖出通道仲裁器（Phase B 全量搬迁后启用，当前为骨架占位）"""
-    return sig, pos_qty  # 透传，行为不变
+# 当前: P1/P2/P5/P6 四通道，P3/P4 为 Phase B 预留
+#   - P1/P2 豁免 sizer 分批与日卖出计数（止血/保护不受节流）
+#   - P5/P6 占用计数
+def _sell_arbiter(context, code, sig, pos_qty, cp, now, holding, threshold,
+                  stock_params, gm_sym):
+    """执行卖出：地板检查 + sizer + 下单 + 持仓更新 + 审计。
+    返回 True=已执行, False=被拦截/跳过。"""
+    sc = context.daily_sell_count.get(code, 0)
+    max_sells = stock_params.get("max_sell_times_per_stock", 3)
+
+    # 地板检查
+    base_ref = getattr(context, f"_base_ref_{code}", pos_qty)
+    setattr(context, f"_base_ref_{code}", base_ref)
+    _is_protection = sig.action in ("PANIC_SELL", "TRAIL_SELL", "TREND_EXIT")
+    sell_floor_ratio = 0.0 if _is_protection else float(PARAMS.get("sell_floor_ratio", 0.5))
+    min_hold = int(base_ref * sell_floor_ratio)
+    if pos_qty - 100 < min_hold:
+        try:
+            write_risk(str(now), "floor_protection",
+                       f"base_ref={base_ref} min_hold={min_hold} pos_qty={pos_qty} action={sig.action}", code=code)
+        except Exception: pass
+        if sig.action == "PANIC_SELL":
+            context.engine.record_trade_action(code, "PANIC_SELL", 0, cp)
+        return False
+
+    # 阈值检查
+    if sig.score < threshold:
+        return False
+
+    # 日计数检查（保护类卖出豁免）
+    if not _is_protection and sc >= max_sells:
+        return False
+
+    # sizer 计算卖出量
+    qty = context.sizer.calc_sell_qty(code, holding, sig.score, threshold, used_sells=sc)
+    if qty < 100:
+        qty = min(300, pos_qty)
+    qty = min(qty, pos_qty)
+    if qty < 100:
+        return False
+
+    # 下单 + 持仓更新 + 审计
+    try:
+        write_order(str(now), code, "SELL", qty, cp)
+    except Exception: pass
+    try:
+        order_volume(symbol=gm_sym, volume=qty,
+                     side=OrderSide_Sell,
+                     order_type=OrderType_Market,
+                     position_effect=PositionEffect_Close)
+        context.daily_sell_count[code] = sc + 1
+        context.total_trade_count += 1
+        new_pos = max(0, pos_qty - qty)
+        if gm_sym in context.manual_position:
+            context.manual_position[gm_sym]["qty"] = new_pos
+            context.manual_position[gm_sym]["available"] = new_pos
+            context.manual_position[gm_sym]["t_qty"] = new_pos
+        context.engine.sell_count_per_stock[code] = context.daily_sell_count.get(code, 0)
+        print(f"[{now:%H:%M:%S}] SELL {code} {qty}@{cp:.2f} score={sig.score:.0f} regime={context.last_index_regime}")
+        _audit_write({"event": "sell", "code": code, "qty": qty, "price": cp, "score": sig.score,
+                      "time": str(now), "regime": context.last_index_regime,
+                      "pos_after_sell": new_pos, "sell_count": sc + 1, "action": sig.action})
+        return True
+    except Exception as e:
+        print(f"[{now:%H:%M:%S}] SELL {code} 失败: {e}")
+        return False
 
 
 def _raw_code(symbol: str) -> str:
@@ -594,6 +651,34 @@ def on_bar(context, bars):
             _audit_write({"event": "morning_sell_blocked", "code": code, "time": str(now),
                           "action": "SELL_HIGH", "reason": "开盘缓冲延后"})
 
+        # B2/T3: 趋势破坏止盈 TREND_EXIT
+        _profit = feats_cache.get("profit_pct", 0)
+        _base_ref = getattr(context, f'_base_ref_{code}', 0) or pos_qty
+        if (_profit > 0 and not _panic_on_cooldown and
+                daily_ctx.get("_stock_trend_state") in ("TREND_DOWN", "TREND_BREAKDOWN")):
+            from data.indicators import Signal as _Sig
+            _excess = max(0, pos_qty - _base_ref) if _base_ref else 0
+            if _excess >= 100:
+                sig = _Sig(code=code, name=STOCK_NAMES.get(code, code),
+                           action="TREND_EXIT", price=cp, score=78.0,
+                           reasons=[f"趋势破坏止盈: profit={_profit:.1%} trend={daily_ctx.get('_stock_trend_state')}"])
+
+        # B4/T2: 分批目标止盈 TARGET_SELL
+        # TODO(PhaseD): 寻优分档 L1/L2/L3 及批次比例
+        if (_profit > 0.10 and not _panic_on_cooldown
+                and not (sig and sig.action in ("TREND_EXIT", "PANIC_SELL"))):
+            _filled = context.manual_position.get(gm_sym, {}).get("_target_filled_l1", False) if gm_sym in context.manual_position else False
+            if not _filled:
+                from data.indicators import Signal as _Sig
+                sig = _Sig(code=code, name=STOCK_NAMES.get(code, code),
+                           action="TARGET_SELL", price=cp, score=75.0,
+                           reasons=[f"目标止盈L1: profit={_profit:.1%}"])
+                if gm_sym in context.manual_position:
+                    context.manual_position[gm_sym]["_target_filled_l1"] = True
+        # 复位: 全仓清空时重置目标位图
+        if pos_qty <= 0 and gm_sym in context.manual_position:
+            context.manual_position[gm_sym]["_target_filled_l1"] = False
+
         if feats_cache.get("is_deep_loss") and not _panic_on_cooldown:
             from data.indicators import Signal
             sig = Signal(code=code, name=STOCK_NAMES.get(code, code),
@@ -662,37 +747,12 @@ def on_bar(context, bars):
             except Exception:
                 pass
 
-        # ── D5: 卖出地板保护 ──
+        # ── 参数准备 ──
         stock_params = STOCK_PARAMS.get(code, {})
-        max_sells = stock_params.get("max_sell_times_per_stock", 3)
         max_buys = stock_params.get("max_buy_times_per_stock", 3)
 
-        # T4: TRAIL_SELL/PANIC_SELL 豁免地板 + 不占 max_sells
-        _is_protection_sell = sig.action in ("PANIC_SELL", "TRAIL_SELL")
-
-        if sig.action in ("SELL_HIGH", "PANIC_SELL", "TRAIL_SELL"):
-            base_ref = getattr(context, f"_base_ref_{code}", pos_qty)
-            setattr(context, f"_base_ref_{code}", base_ref)
-            # 保护类卖出(PANIC/TRAIL)地板=0，SELL_HIGH保持50%
-            if _is_protection_sell:
-                sell_floor_ratio = 0.0
-            else:
-                sell_floor_ratio = float(PARAMS.get("sell_floor_ratio", 0.5))
-            min_hold = int(base_ref * sell_floor_ratio)
-            if pos_qty - 100 < min_hold:
-                print(f"[{now:%H:%M:%S}] SELL {code} SKIP: 地板保护 base_ref={base_ref} min_hold={min_hold} pos_qty={pos_qty}")
-                try:
-                    write_risk(str(now), "floor_protection",
-                               f"base_ref={base_ref} min_hold={min_hold} pos_qty={pos_qty} action={sig.action}", code=code)
-                except Exception:
-                    pass
-                # PANIC 虽被地板挡，仍设冷却防每分钟重复触发
-                if sig.action == "PANIC_SELL":
-                    context.engine.record_trade_action(code, "PANIC_SELL", 0, cp)
-                continue
-
         # ── D1: 引擎冷却/计数 ──
-        threshold = stock_params.get("notify_sell_threshold", 65) if sig.action in ("SELL_HIGH", "PANIC_SELL", "TRAIL_SELL") else \
+        threshold = stock_params.get("notify_sell_threshold", 65) if sig.action in ("SELL_HIGH", "PANIC_SELL", "TRAIL_SELL", "TREND_EXIT", "TARGET_SELL") else \
                     stock_params.get("notify_buy_threshold", 43)
 
         if sig.score < threshold:
@@ -797,41 +857,10 @@ def on_bar(context, bars):
             except Exception as e:
                 print(f"[{now:%H:%M:%S}] BUY {code} 失败: {e}")
 
-        elif sig.action in ("SELL_HIGH", "PANIC_SELL", "TRAIL_SELL"):
-            sc = context.daily_sell_count.get(code, 0)
-            # T4: 保护类卖出(PANIC/TRAIL)不占用 max_sells
-            _panic_exempt = _is_protection_sell
-            if not _panic_exempt and sc >= max_sells:
-                continue
-            qty = context.sizer.calc_sell_qty(code, holding, sig.score, threshold, used_sells=sc)
-            if qty < 100:
-                qty = min(300, pos_qty)
-            qty = min(qty, pos_qty)
-            if qty < 100:
-                continue
-            try:
-                try:
-                    write_order(str(now), code, "SELL", qty, cp)
-                except Exception:
-                    pass
-                order_volume(symbol=gm_sym, volume=qty,
-                             side=OrderSide_Sell,
-                             order_type=OrderType_Market,
-                             position_effect=PositionEffect_Close)
-                context.daily_sell_count[code] = sc + 1
-                context.total_trade_count += 1
-                new_pos = max(0, pos_qty - qty)
-                if gm_sym in context.manual_position:
-                    context.manual_position[gm_sym]["qty"] = new_pos
-                    context.manual_position[gm_sym]["available"] = new_pos
-                    context.manual_position[gm_sym]["t_qty"] = new_pos
-                context.engine.sell_count_per_stock[code] = context.daily_sell_count.get(code, 0)
-                print(f"[{now:%H:%M:%S}] SELL {code} {qty}@{cp:.2f} score={sig.score:.0f} regime={context.last_index_regime}")
-                _audit_write({"event": "sell", "code": code, "qty": qty, "price": cp, "score": sig.score,
-                              "time": str(now), "regime": context.last_index_regime,
-                              "pos_after_sell": new_pos, "sell_count": sc + 1})
-            except Exception as e:
-                print(f"[{now:%H:%M:%S}] SELL {code} 失败: {e}")
+        elif sig.action in ("SELL_HIGH", "PANIC_SELL", "TRAIL_SELL", "TREND_EXIT", "TARGET_SELL"):
+            # T4: 仲裁器统一处理（地板 + 阈值 + sizer + 下单 + 审计）
+            _sell_arbiter(context, code, sig, pos_qty, cp, now, holding,
+                          threshold, stock_params, gm_sym)
 
 
 def on_order_status(context, order):
