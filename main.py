@@ -91,7 +91,10 @@ def _get_holding(context, code: str, gm_symbol: str) -> dict:
                 mp = context.manual_position.get(gm_symbol)
                 if mp and abs(int(mp.get("qty", 0)) - int(p.volume)) > 0:
                     context.manual_position[gm_symbol] = gm_pos
-                return gm_pos
+                # qty 一致时返回 manual_position（我们跟踪的成本），不返回 gm_pos
+                # gm_pos 的 vwap 可能含前复权调整，与真实买入成本不一致
+                if mp and int(mp.get("qty", 0) or 0) > 0:
+                    return mp
         except Exception:
             pass
 
