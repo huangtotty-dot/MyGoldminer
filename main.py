@@ -518,14 +518,9 @@ def on_bar(context, bars):
             bc = context.daily_buy_count.get(code, 0)
             if bc >= max_buys:
                 continue
-            # N10: 注入 target_t（底仓参考量）使 sizer 正确计算 max_buyable
-            _base_ref = getattr(context, f'_base_ref_{code}', 0) or pos_qty
-            holding_with_target = dict(holding, target_t=_base_ref)
-            qty = context.sizer.calc_buy_qty(code, holding_with_target, sig.score, threshold)
-            if qty < 100:
-                qty = 300
-            # N3: 现金预检
-            available_cash = 100000
+
+            # N3: 现金预检（移到 sizer 之前，供 target_t 计算）
+            available_cash = INITIAL_CASH
             _cash_ok = False
             try:
                 _acct = context.account()
@@ -533,42 +528,45 @@ def on_bar(context, bars):
                 if _c is not None:
                     _c = _c() if callable(_c) else _c
                     if isinstance(_c, dict):
-                        for _k in ('available', 'available_cash', 'cash', 'total'):
-                            _v = _c.get(_k)
-                            if _v is not None:
-                                available_cash = float(_v)
-                                _cash_ok = True
-                                break
+                        # gm3 account().cash 返回 dict，键名可能是 available/available_cash/total
+                        _v = _c.get('available') or _c.get('available_cash') or _c.get('cash') or _c.get('total') or 0
+                        available_cash = float(_v)
                     else:
                         available_cash = float(_c)
-                        _cash_ok = True
+                    _cash_ok = True
             except Exception:
                 pass
             if not _cash_ok and not getattr(context, '_cash_warned', False):
                 context._cash_warned = True
-                print(f'[N8] WARN: 无法读取可用现金, 默认={available_cash}, ' +
-                      '改 manual_position 持仓市值估算')
-                # fallback: 从持仓反估
-                _mp = context.manual_position.get(gm_sym, {})
-                _mp_qty = int(_mp.get('qty', 0) or 0)
-                _mp_cost = float(_mp.get('cost', 0) or 0)
-                _est_mv = _mp_qty * _mp_cost
-                if _est_mv > 0:
-                    available_cash = max(0, 200000 - _est_mv)
+                print(f'[N8] WARN: 无法读取可用现金, 使用初始资金={INITIAL_CASH}')
+
+            # N10: 算 target_t（仓位上限约束下的最大仓位，供 sizer 算 max_buyable）
+            pos_limit_pct = float(PARAMS.get('max_single_position_pct', 0.80))
+            estimated_equity = available_cash + pos_qty * cp
+            max_pos_shares = int(estimated_equity * pos_limit_pct / cp / 100) * 100 if cp > 0 else 0
+            _base_ref = getattr(context, f'_base_ref_{code}', 0) or pos_qty
+            target_t = max(max_pos_shares, _base_ref, pos_qty)
+            holding_with_target = dict(holding, target_t=target_t)
+
+            qty = context.sizer.calc_buy_qty(code, holding_with_target, sig.score, threshold)
+            if qty <= 0:
+                qty = 300  # sizer 返回 0 时的最小交易量
+
+            # N3: 现金预检
             max_by_cash = int(available_cash * 0.95 / cp / 100) * 100 if cp > 0 else 0
             qty = min(qty, max_by_cash) if max_by_cash > 0 else qty
             if qty < 100:
                 if bc == 0:
                     print(f'[{now:%H:%M:%S}] BUY {code} 现金不足跳过: 可用={available_cash:.0f}')
                 continue
+
             # N2: 仓位上限检查
-            pos_limit_pct = float(PARAMS.get('max_single_position_pct', 0.30))
             current_pos_value = pos_qty * cp
             new_pos_value = current_pos_value + qty * cp
             total_equity_value = available_cash + current_pos_value
             if total_equity_value > 0 and new_pos_value / total_equity_value > pos_limit_pct:
                 print(f'[{now:%H:%M:%S}] BUY {code} 仓位上限拦截: {new_pos_value/total_equity_value:.0%}>{pos_limit_pct:.0%}')
-                continue  # fallback
+                continue
             try:
                 order_volume(symbol=gm_sym, volume=qty,
                              side=OrderSide_Buy,
@@ -705,7 +703,7 @@ def on_backtest_finished(context, indicator):
 
 if __name__ == "__main__":
     _AUDIT_RUN_ID = datetime.now().strftime("%Y%m%d_%H%M%S")
-    backtest_start = (datetime.now() - timedelta(days=90)).strftime("%Y-%m-%d %H:%M:%S")  # 90天 ~4-7min
+    backtest_start = (datetime.now() - timedelta(days=90)).strftime("%Y-%m-%d %H:%M:%S")
     backtest_end = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     run(strategy_id="e8bb1f4d-87ce-11f1-97f7-98fa9b8df5e7",

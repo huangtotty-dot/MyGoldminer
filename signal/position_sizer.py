@@ -67,9 +67,13 @@ class PositionSizer:
         else:
             pct = p.get("stock_first_add_weak_pct", 0.10)
 
-        # N10 fix: 用传入的 base_ref 作为目标T仓（外部传进 holding['target_t']）
-        target_t = int(holding.get("target_t", 0) or total_t)
+        # N10 fix: 从外部传入 target_t（最大允许仓位，由仓位上限/资金约束算出）
+        # target_t 应 > 当前持仓，给 T 交易留出空间
         hold_qty = int(holding.get("qty", 0) or 0)
+        target_t = int(holding.get("target_t", 0) or 0)
+        if target_t <= hold_qty:
+            # 未传入 target_t 或 target_t 不合理时，至少给 hold_qty*1.3 的 T 仓空间
+            target_t = max(total_t, int(hold_qty * 1.5))
         max_buyable = max(0, target_t - hold_qty)
         if max_buyable <= 0:
             return 0
