@@ -25,6 +25,22 @@ _06T_BRIDGE = r"E:\06_T\t_io\gm_bridge"
 _LOCAL = os.path.dirname(os.path.abspath(__file__))
 BRIDGE_DIR = _06T_BRIDGE if os.path.exists(r"E:\06_T") else _LOCAL
 
+# ── 股票名称映射 ──
+STOCK_NAMES = {
+    "000988": "华工科技",
+    "600481": "双良节能",
+    "600176": "中国巨石",
+    "603667": "五洲新春",
+    "588170": "科创芯片ETF",
+    "300153": "科泰电源",
+    "300364": "中文在线",
+}
+
+
+def _stock_label(code: str) -> str:
+    name = STOCK_NAMES.get(code, "")
+    return f"{name}({code})" if name else code
+
 
 def _events_path(date_str: str = None) -> str:
     if date_str is None:
@@ -158,13 +174,18 @@ def handle_event(rec: dict):
     event = rec.get("event", "")
     dk = _dedup_key(rec)
 
+    code = rec.get("code", "")
+    label = _stock_label(code)
+
     if event == "signal":
         if _should_push("signal", dk):
+            action_cn = {"BUY_LOW": "低吸", "SELL_HIGH": "高抛", "PANIC_SELL": "恐慌卖出", "ADD_POS": "加仓"}.get(rec.get("action"), rec.get("action"))
+            emoji = "🟢" if "BUY" in str(rec.get("action", "")) else "🔴"
             _push(
-                f"📡 信号触发 {rec.get('action')}",
-                f"{rec['code']} {rec['action']} score={rec.get('score',0):.0f} "
-                f"pos={rec.get('pos_qty',0)}",
-                "green" if "BUY" in str(rec.get('action', '')) else "orange"
+                f"{emoji} {action_cn}信号 — {label}",
+                f"动作: {rec['action']} | 评分: {rec.get('score',0):.0f}分 | "
+                f"持仓: {rec.get('pos_qty',0)}股",
+                "green" if "BUY" in str(rec.get("action", "")) else "orange"
             )
 
     elif event == "fill":
@@ -172,17 +193,19 @@ def handle_event(rec: dict):
         if _should_push("fill", dk):
             side = rec.get("side", "")
             emoji = "🔵" if side == "BUY" else "🔴"
+            side_cn = "买入" if side == "BUY" else "卖出"
             _push(
-                f"{emoji} 成交 {side}",
-                f"{rec['code']} {side} {rec.get('qty',0)}@{rec.get('price',0):.2f} "
-                f"pos→{rec.get('pos_after', '?')}",
+                f"{emoji} 成交 — {label}",
+                f"{side_cn} {rec.get('qty',0)}股 @ {rec.get('price',0):.2f} | "
+                f"成交后持仓: {rec.get('pos_after', '?')}股",
                 "green"
             )
 
     elif event == "reject":
+        side_cn = "买入" if rec.get("side") == "BUY" else "卖出"
         _push(
-            "❌ 委托被拒",
-            f"{rec['code']} {rec.get('side','')} {rec.get('qty',0)}股 "
+            f"❌ 委托被拒 — {label}",
+            f"{side_cn} {rec.get('qty',0)}股 | "
             f"原因: {rec.get('reason','未知')}",
             "red"
         )
