@@ -816,10 +816,6 @@ def on_backtest_finished(context, indicator):
 if __name__ == "__main__":
     _AUDIT_RUN_ID = datetime.now().strftime("%Y%m%d_%H%M%S")
 
-    # ═══════════════════════════════════════════
-    # 切换模式：注释/取消注释对应块
-    # ═══════════════════════════════════════════
-
     # ---- 回测模式 ----
     # backtest_start = (datetime.now() - timedelta(days=90)).strftime("%Y-%m-%d %H:%M:%S")
     # backtest_end = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
