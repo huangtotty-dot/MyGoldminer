@@ -597,8 +597,13 @@ def on_bar(context, bars):
         _holding_cost = float(holding.get("cost", 0) or 0)
         _last_f = context.engine._last_feats.get(code, {})
         if _last_f and _holding_cost > 0:
-            _last_f["profit_pct"] = (cp - _holding_cost) / _holding_cost
             _last_f["price"] = cp
+            _last_f["profit_pct"] = (cp - _holding_cost) / _holding_cost
+            _last_f["vwap"] = cp
+            _daily_atr = float(daily_ctx.get("daily_atr", 0.02) or 0.02)
+            _panic_trigger = max(-5 * _daily_atr, -0.12)
+            _last_f["is_deep_loss"] = _holding_cost > 0 and _last_f["profit_pct"] < _panic_trigger
+            _last_f["panic_trigger"] = _panic_trigger
 
         # ── D5/G2: uni_down 熔断 ──
         if context.last_index_regime == "uni_down" and sig and sig.action in ("BUY_LOW", "ADD_POS"):
