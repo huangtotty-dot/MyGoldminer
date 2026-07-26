@@ -986,7 +986,6 @@ def on_backtest_finished(context, indicator):
 if __name__ == "__main__":
     _AUDIT_RUN_ID = datetime.now().strftime("%Y%m%d_%H%M%S")
 
-    # ---- 模拟盘模式 ----
     run(strategy_id="e8bb1f4d-87ce-11f1-97f7-98fa9b8df5e7",
         filename="main.py",
         mode=MODE_LIVE,
