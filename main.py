@@ -532,13 +532,15 @@ def on_bar(context, bars):
                 return
             # M2: 做T门槛检查（底仓建仓前置）
             _dc = _refresh_daily_ctx(context, code, gm_sym, now)
-            # R1/A3: 底仓也过趋势闸（方案A）——TREND_BREAKDOWN 延迟建仓
+            # R1/A3: 底仓过趋势闸——TREND_BREAKDOWN 延迟到次日
             _trend = _dc.get("_stock_trend_state", "TREND_RANGE")
             if _trend == "TREND_BREAKDOWN":
-                print(f'[{now:%H:%M:%S}] BASE {code} {STOCK_NAMES.get(code,code)} TREND_BREAKDOWN→延迟建仓')
-                try: write_risk(str(now), "base_deferred", f"_stock_trend_state={_trend}", code=code)
-                except: pass
-                # 不标记 _base_settled — 等趋势恢复后重试
+                _defer_key = f'_base_deferred_{code}'
+                if getattr(context, _defer_key, '') != now.strftime("%Y-%m-%d"):
+                    setattr(context, _defer_key, now.strftime("%Y-%m-%d"))
+                    print(f'[{now:%H:%M:%S}] BASE {code} {STOCK_NAMES.get(code,code)} TREND_BREAKDOWN→延迟建仓')
+                    try: write_risk(str(now), "base_deferred", f"_stock_trend_state={_trend}", code=code)
+                    except: pass
                 return
             # 默认 False: 数据不足时保守不放行
             if not _dc.get("_m2_pool_pass", False):
