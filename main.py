@@ -127,7 +127,10 @@ def _sell_arbiter(context, code, sig, pos_qty, cp, now, holding, threshold,
             context.manual_position[gm_sym]["t_qty"] = new_pos
         context.engine.sell_count_per_stock[code] = context.daily_sell_count.get(code, 0)
         print(f"[{now:%H:%M:%S}] SELL {code} {qty}@{cp:.2f} score={sig.score:.0f} regime={context.last_index_regime}")
-        # N26: sell审计改在 on_order_status(status==3)成交时写入，避免幻影事件
+        # N28: 挂接通道信息，成交回调写入action/score
+        if not hasattr(context, "_pending_sell_action"):
+            context._pending_sell_action = {}
+        context._pending_sell_action[gm_sym] = (sig.action, sig.score)
         return True
     except Exception as e:
         print(f"[{now:%H:%M:%S}] SELL {code} 失败: {e}")
@@ -738,6 +741,9 @@ def on_bar(context, bars):
                         context.manual_position[gm_sym]["available"] = new_pos
                         context.manual_position[gm_sym]["t_qty"] = new_pos
                     print(f'[{now:%H:%M:%S}] TAIL {code} 尾盘归位 {qty}股 (pos={pos_qty}→{pos_qty-qty} target={target})')
+                    if not hasattr(context, "_pending_sell_action"):
+                        context._pending_sell_action = {}
+                    context._pending_sell_action[gm_sym] = ("TAIL", 0)
                     context.total_trade_count += 1
                     context.daily_sell_count[code] = context.daily_sell_count.get(code, 0) + 1
                     continue
@@ -921,7 +927,8 @@ def on_order_status(context, order):
             context.executed_orders[symbol] = {
                 "name": STOCK_NAMES.get(code, code),
                 "qty": new_qty,
-                "available": new_qty,
+                # N25-2: 当日买入不解锁(T+1), available保持旧值
+                "available": int(old.get("available", 0)),
                 "t_qty": new_qty,
                 "cost": new_cost,
                 "type": "stock",
@@ -949,9 +956,11 @@ def on_order_status(context, order):
                 "type": "stock",
                 "pre_close": price,
             }
-            # N26: 成交时写入审计（替代订单时的幻影事件）
+            # N26+N28: 成交时写入审计(含通道信息)
+            _act, _sc = getattr(context, "_pending_sell_action", {}).pop(symbol, ("", 0))
             _audit_write({"event": "sell", "code": code, "qty": volume, "price": price,
-                          "time": str(datetime.now()), "pos_after_sell": new_qty})
+                          "time": str(datetime.now()), "pos_after_sell": new_qty,
+                          "action": _act, "score": _sc})
     elif status in (4, 5, 6):  # 拒单/撤单/部分成交撤单
         context.rejected_order_count = getattr(context, 'rejected_order_count', 0) + 1
         code = _raw_code(symbol)
@@ -967,11 +976,19 @@ def on_order_status(context, order):
             else:
                 print(f'[ORDER] {code} 底仓拒单已达上限({MAX_BASE_RETRY})，停止重试')
         print(f"[ORDER] {symbol} 被拒 status={status}")
+        # N25-2: 卖出拒单回滚manual_position(下单时已虚减)
+        if side == 2 and symbol in context.manual_position:
+            mp = context.manual_position[symbol]
+            mp["qty"] = mp.get("qty", 0) + volume
+            mp["available"] = mp.get("available", 0) + volume
+            mp["t_qty"] = mp.get("t_qty", 0) + volume
+            _audit_write({"event": "sell_rollback", "code": code, "qty": volume, "time": str(datetime.now())})
         try:
             _r_code = _raw_code(symbol)
             _r_side = "BUY" if side == 1 else "SELL"
             write_reject(str(datetime.now()), _r_code, _r_side, volume,
                          reason=f"status={status}", raw={"status": status, "side": side, "volume": volume})
+            write_risk(str(datetime.now()), "order_rejected", f"{_r_side} {volume}股被拒", code=_r_code)
         except Exception:
             pass
 
