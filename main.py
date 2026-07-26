@@ -103,7 +103,9 @@ def _sell_arbiter(context, code, sig, pos_qty, cp, now, holding, threshold,
     qty = context.sizer.calc_sell_qty(code, holding, sig.score, threshold, used_sells=sc)
     if qty < 100:
         qty = min(300, pos_qty)
-    qty = min(qty, pos_qty)
+    # N25: T+1 可用量检查 — 当日买入的股票不可卖
+    _avail = int(holding.get("available", pos_qty) or pos_qty)
+    qty = min(qty, pos_qty, _avail)
     if qty < 100:
         return False
 
@@ -125,9 +127,7 @@ def _sell_arbiter(context, code, sig, pos_qty, cp, now, holding, threshold,
             context.manual_position[gm_sym]["t_qty"] = new_pos
         context.engine.sell_count_per_stock[code] = context.daily_sell_count.get(code, 0)
         print(f"[{now:%H:%M:%S}] SELL {code} {qty}@{cp:.2f} score={sig.score:.0f} regime={context.last_index_regime}")
-        _audit_write({"event": "sell", "code": code, "qty": qty, "price": cp, "score": sig.score,
-                      "time": str(now), "regime": context.last_index_regime,
-                      "pos_after_sell": new_pos, "sell_count": sc + 1, "action": sig.action})
+        # N26: sell审计改在 on_order_status(status==3)成交时写入，避免幻影事件
         return True
     except Exception as e:
         print(f"[{now:%H:%M:%S}] SELL {code} 失败: {e}")
@@ -944,6 +944,9 @@ def on_order_status(context, order):
                 "type": "stock",
                 "pre_close": price,
             }
+            # N26: 成交时写入审计（替代订单时的幻影事件）
+            _audit_write({"event": "sell", "code": code, "qty": volume, "price": price,
+                          "time": str(datetime.now()), "pos_after_sell": new_qty})
     elif status in (4, 5, 6):  # 拒单/撤单/部分成交撤单
         context.rejected_order_count = getattr(context, 'rejected_order_count', 0) + 1
         code = _raw_code(symbol)
