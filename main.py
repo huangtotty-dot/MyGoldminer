@@ -974,21 +974,6 @@ def on_backtest_finished(context, indicator):
 if __name__ == "__main__":
     _AUDIT_RUN_ID = datetime.now().strftime("%Y%m%d_%H%M%S")
 
-    # ---- 回测模式 ----
-    # backtest_start = (datetime.now() - timedelta(days=90)).strftime("%Y-%m-%d %H:%M:%S")
-    # backtest_end = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    # run(strategy_id="e8bb1f4d-87ce-11f1-97f7-98fa9b8df5e7",
-    #     filename="main.py",
-    #     mode=MODE_BACKTEST,
-    #     token=os.environ.get("GM_TOKEN", ""),
-    #     backtest_start_time=backtest_start,
-    #     backtest_end_time=backtest_end,
-    #     backtest_adjust=ADJUST_PREV,
-    #     backtest_initial_cash=150000,
-    #     backtest_commission_ratio=COMMISSION,
-    #     backtest_slippage_ratio=0.0001,
-    #     backtest_match_mode=1)
-
     # ---- 模拟盘模式 ----
     run(strategy_id="e8bb1f4d-87ce-11f1-97f7-98fa9b8df5e7",
         filename="main.py",
