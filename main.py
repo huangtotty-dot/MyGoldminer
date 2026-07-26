@@ -187,7 +187,12 @@ def _get_holding(context, code: str, gm_symbol: str) -> dict:
                 }
                 mp = context.manual_position.get(gm_symbol)
                 if mp and abs(int(mp.get("qty", 0)) - int(p.volume)) > 0:
+                    # F2: 保留我方cost, gm的vwap含前复权不可靠
+                    _my_cost = mp.get("cost", gm_pos["cost"])
                     context.manual_position[gm_symbol] = gm_pos
+                    context.manual_position[gm_symbol]["cost"] = _my_cost
+                    _audit_write({"event": "reconcile_fix", "code": code, "time": str(now),
+                                  "old_qty": mp.get("qty"), "new_qty": gm_pos["qty"]})
                 # qty 一致时返回 manual_position（我们跟踪的成本），不返回 gm_pos
                 # gm_pos 的 vwap 可能含前复权调整，与真实买入成本不一致
                 if mp and int(mp.get("qty", 0) or 0) > 0:
@@ -988,8 +993,6 @@ def on_backtest_finished(context, indicator):
 
 if __name__ == "__main__":
     _AUDIT_RUN_ID = datetime.now().strftime("%Y%m%d_%H%M%S")
-
     run(strategy_id="e8bb1f4d-87ce-11f1-97f7-98fa9b8df5e7",
-        filename="main.py",
-        mode=MODE_LIVE,
+        filename="main.py", mode=MODE_LIVE,
         token=os.environ.get("GM_TOKEN", ""))
