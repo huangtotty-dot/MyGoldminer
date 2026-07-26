@@ -103,8 +103,9 @@ def _sell_arbiter(context, code, sig, pos_qty, cp, now, holding, threshold,
     qty = context.sizer.calc_sell_qty(code, holding, sig.score, threshold, used_sells=sc)
     if qty < 100:
         qty = min(300, pos_qty)
-    # N25: T+1 可用量检查 — 当日买入的股票不可卖
-    _avail = int(holding.get("available", pos_qty) or pos_qty)
+    # N25-3: T+1 可用量检查 — 区分 None(缺key兜底) 与 0(合法当日全锁)
+    _avail_raw = holding.get("available")
+    _avail = pos_qty if _avail_raw is None else int(_avail_raw)
     qty = min(qty, pos_qty, _avail)
     if qty < 100:
         return False
@@ -661,9 +662,11 @@ def on_bar(context, bars):
         # 跟踪: 更新峰值
         if _trail_state == "ARMED":
             _trail_peak = max(_trail_peak, cp)
-            # 触发: 从峰值回撤 > 5%
+            # N23/B1': TRAIL k×ATR带界 — 防止回撤阈值自解除
+            _daily_atr = daily_ctx.get("daily_atr", 0.02) or 0.02
+            _back = max(0.03, min(1.5 * _daily_atr, 0.08))  # TODO(PhaseD): MIN_BACK/k/MAX_BACK
             _drawdown = (_trail_peak - cp) / _trail_peak if _trail_peak > 0 else 0
-            if _drawdown > 0.05 and not _panic_on_cooldown:
+            if _drawdown > _back and not _panic_on_cooldown:
                 from data.indicators import Signal
                 sig = Signal(code=code, name=STOCK_NAMES.get(code, code),
                              action="TRAIL_SELL", price=cp, score=80.0,
@@ -678,7 +681,7 @@ def on_bar(context, bars):
 
         # ── D5/N4: 深度亏损 → PANIC_SELL ──
         # R3/B5: 开盘卖出缓冲 — 09:35前 SELL_HIGH 延后
-        if sig and sig.action == "SELL_HIGH" and now.hour == 9 and now.minute <= 35:
+        if sig and sig.action in ("SELL_HIGH", "TARGET_SELL") and now.hour == 9 and now.minute <= 35:
             sig = None
             _audit_write({"event": "morning_sell_blocked", "code": code, "time": str(now),
                           "action": "SELL_HIGH", "reason": "开盘缓冲延后"})
@@ -686,8 +689,10 @@ def on_bar(context, bars):
         # B2/T3: 趋势破坏止盈 TREND_EXIT
         _profit = feats_cache.get("profit_pct", 0)
         _base_ref = getattr(context, f'_base_ref_{code}', 0) or pos_qty
-        if (_profit > 0 and not _panic_on_cooldown and
-                daily_ctx.get("_stock_trend_state") in ("TREND_DOWN", "TREND_BREAKDOWN")):
+        # N20: 不得覆盖更高优先级信号(P1 PANIC/P2 TRAIL)
+        if ((sig is None or sig.action not in ("PANIC_SELL", "TRAIL_SELL"))
+                and _profit > 0 and not _panic_on_cooldown
+                and daily_ctx.get("_stock_trend_state") in ("TREND_DOWN", "TREND_BREAKDOWN")):
             from data.indicators import Signal as _Sig
             _excess = max(0, pos_qty - _base_ref) if _base_ref else 0
             if _excess >= 100:
@@ -698,7 +703,8 @@ def on_bar(context, bars):
         # B4/T2: 分批目标止盈 TARGET_SELL
         # TODO(PhaseD): 寻优分档 L1/L2/L3 及批次比例
         if (_profit > 0.10 and not _panic_on_cooldown
-                and not (sig and sig.action in ("TREND_EXIT", "PANIC_SELL"))):
+                # N20: 不得覆盖更高优先级信号(P1/P2/P3)
+                and not (sig and sig.action in ("PANIC_SELL", "TRAIL_SELL", "TREND_EXIT"))):
             _filled = context.manual_position.get(gm_sym, {}).get("_target_filled_l1", False) if gm_sym in context.manual_position else False
             if not _filled:
                 from data.indicators import Signal as _Sig
