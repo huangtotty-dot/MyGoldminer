@@ -164,7 +164,12 @@ def _get_holding(context, code: str, gm_symbol: str) -> dict:
     # 1. 每30分钟跟 gm.api positions 对账一次
     reconcile_interval = 1800
     last_rec = getattr(context, "_last_position_reconcile", None)
-    _skip_reconcile = True
+    # F2: 模拟盘模式启用对账，回测模式跳过
+    try:
+        _is_live = context.mode == MODE_LIVE
+    except Exception:
+        _is_live = False
+    _skip_reconcile = not _is_live
     if not _skip_reconcile and (last_rec is None or (now - last_rec).total_seconds() > reconcile_interval):
         context._last_position_reconcile = now
         try:
@@ -210,8 +215,11 @@ def _refresh_daily_ctx(context, code: str, gm_symbol: str, now: datetime) -> dic
     关键：显式传 end_time=昨日收盘，避免当日未收盘数据污染。
     """
     today_str = now.strftime("%Y-%m-%d")
-    if getattr(context, "_daily_ctx_date", None) == today_str and hasattr(context, "daily_ctx_cache"):
-        return context.daily_ctx_cache
+    _cache_key = f"{today_str}|{code}"
+    if not hasattr(context, "_daily_ctx_cache_map"):
+        context._daily_ctx_cache_map = {}
+    if _cache_key in context._daily_ctx_cache_map:
+        return context._daily_ctx_cache_map[_cache_key]
 
     # 取 120 个交易日日线
     try:
@@ -253,7 +261,7 @@ def _refresh_daily_ctx(context, code: str, gm_symbol: str, now: datetime) -> dic
                 ctx["daily_status"] = "pool_gate_fail"
         prev_close = float(c.iloc[-1]) if len(c) > 0 else 0
         ctx["daily_prev_close"] = prev_close
-        ctx["daily_status"] = "ok"
+        ctx.setdefault("daily_status", "ok")  # F7: 不覆盖 pool_gate_fail
         ctx["daily_buy_t_ok"] = True
 
         # 破位/过热简化判断 + R1 个股趋势状态
@@ -282,8 +290,7 @@ def _refresh_daily_ctx(context, code: str, gm_symbol: str, now: datetime) -> dic
         context.latest_pre_close[code] = 0
         ctx["daily_status"] = "unavailable"
 
-    context.daily_ctx_cache = ctx
-    context._daily_ctx_date = today_str
+    context._daily_ctx_cache_map[_cache_key] = ctx
     return ctx
 
 
@@ -316,6 +323,8 @@ def _audit_close():
 # ==================== 策略生命周期 ====================
 
 def init(context):
+    global _AUDIT_RUN_ID
+    _AUDIT_RUN_ID = datetime.now().strftime("%Y%m%d_%H%M%S")
     # D8: 每次回测清空审计文件
     try:
         if os.path.exists(_AUDIT_LOG_PATH):
@@ -335,6 +344,7 @@ def init(context):
     context._base_ordered = set()
     context._base_settled = set()
     context.cur_date = None
+    context._daily_ctx_cache_map = {}
     context.total_trade_cost = 0.0
     context.total_trade_count = 0
     context.rejected_order_count = 0
