@@ -45,10 +45,10 @@ REVERSE_MAP = {v: k for k, v in STOCKS.items()}
 # ── 镜像持仓（与实盘账户一致） ──
 # 模拟盘建仓时按此表中的股数/成本下单
 MIRROR_HOLDINGS = {
-    "000988": {"qty": 300,  "cost": 247.29},
-    "600481": {"qty": 1400, "cost": 6.03},
-    "600176": {"qty": 300,  "cost": 67.93},
-    "603667": {"qty": 500,  "cost": 58.78},
+    "000988": {"qty": 300,  "cost": 0},
+    "600481": {"qty": 1400, "cost": 0},
+    "600176": {"qty": 300,  "cost": 0},
+    "603667": {"qty": 500,  "cost": 0},
     # 588170 ETF 已移除：T+0机制/最小单位与策略不兼容，首日仅观察
 }
 
@@ -164,7 +164,8 @@ def _get_holding(context, code: str, gm_symbol: str) -> dict:
     # 1. 每30分钟跟 gm.api positions 对账一次
     reconcile_interval = 1800
     last_rec = getattr(context, "_last_position_reconcile", None)
-    if last_rec is None or (now - last_rec).total_seconds() > reconcile_interval:
+    _skip_reconcile = True
+    if not _skip_reconcile and (last_rec is None or (now - last_rec).total_seconds() > reconcile_interval):
         context._last_position_reconcile = now
         try:
             pos = context.account().positions(symbol=gm_symbol, side=PositionSide_Long)
@@ -592,6 +593,12 @@ def on_bar(context, bars):
         except Exception as e:
             print(f"[{now:%H:%M:%S}] {code} evaluate err: {e}")
             continue
+        # 修正 profit_pct: engine 读 DataFrame 最后一行可能不是当前 bar
+        _holding_cost = float(holding.get("cost", 0) or 0)
+        _last_f = context.engine._last_feats.get(code, {})
+        if _last_f and _holding_cost > 0:
+            _last_f["profit_pct"] = (cp - _holding_cost) / _holding_cost
+            _last_f["price"] = cp
 
         # ── D5/G2: uni_down 熔断 ──
         if context.last_index_regime == "uni_down" and sig and sig.action in ("BUY_LOW", "ADD_POS"):
