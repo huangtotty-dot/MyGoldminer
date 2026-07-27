@@ -120,16 +120,24 @@ def gui_main():
     ttk.Entry(param_frame, textvariable=cash_var, width=8).grid(row=0, column=7, sticky="w")
 
     ttk.Label(param_frame, text="策略:").grid(row=1, column=0, sticky="e", padx=5)
-    strategy_var = tk.StringVar(value="equal_weight")
-    ttk.Combobox(param_frame, textvariable=strategy_var,
-                 values=["equal_weight", "risk_weighted", "sector_constrained"],
-                 state="readonly", width=18).grid(row=1, column=1, sticky="w")
+    strategy_var = tk.StringVar(value="等权重分配")
+    STRATEGY_MAP = {"等权重分配": "equal_weight", "风险加权分配": "risk_weighted", "板块控制分配": "sector_constrained"}
+    strategy_combo = ttk.Combobox(param_frame, textvariable=strategy_var,
+                 values=list(STRATEGY_MAP.keys()), state="readonly", width=18)
+    strategy_combo.grid(row=1, column=1, sticky="w")
+    strategy_combo.bind("<<ComboboxSelected>>", lambda e: hint_var.set(
+        {"等权重分配": "每只股票平均分配资金,简单公平",
+         "风险加权分配": "低风险多配(×1.5),高风险少配(×0.5)",
+         "板块控制分配": "单板块不超30%,超限自动再分配"}.get(strategy_var.get(), "")))
 
-    ttk.Label(param_frame, text="输出文件:").grid(row=1, column=2, sticky="e", padx=5)
+    hint_var = tk.StringVar(value="每只股票平均分配资金,简单公平")
+    ttk.Label(param_frame, textvariable=hint_var, foreground="gray").grid(row=2, column=0, columnspan=8, sticky="w", padx=5)
+
+    ttk.Label(param_frame, text="输出文件:").grid(row=3, column=2, sticky="e", padx=5)
     output_var = tk.StringVar(value="仓位建议.xlsx")
-    ttk.Entry(param_frame, textvariable=output_var, width=20).grid(row=1, column=3, columnspan=3, sticky="w")
+    ttk.Entry(param_frame, textvariable=output_var, width=20).grid(row=3, column=3, columnspan=3, sticky="w")
     ttk.Button(param_frame, text="浏览", command=lambda: output_var.set(
-        filedialog.asksaveasfilename(defaultextension=".xlsx", filetypes=[("Excel", "*.xlsx"), ("CSV", "*.csv")]))).grid(row=1, column=6, sticky="w")
+        filedialog.asksaveasfilename(defaultextension=".xlsx", filetypes=[("Excel", "*.xlsx"), ("CSV", "*.csv")]))).grid(row=3, column=6, sticky="w")
 
     # ── 持仓表格 ──
     table_frame = ttk.LabelFrame(root, text="持仓股票列表 (双击编辑)", padding=5)
@@ -201,7 +209,9 @@ def gui_main():
         if not holdings:
             messagebox.showerror("错误", "至少需要一只股票"); return
         try:
-            results, path = run_calculation(cap, br, ar, cr, strategy_var.get(), holdings, output_var.get())
+            strat_cn = strategy_var.get()
+            strat_en = STRATEGY_MAP.get(strat_cn, "equal_weight")
+            results, path = run_calculation(cap, br, ar, cr, strat_en, holdings, output_var.get())
         except Exception as e:
             messagebox.showerror("计算失败", str(e)); return
         result_text.delete("1.0", "end")
