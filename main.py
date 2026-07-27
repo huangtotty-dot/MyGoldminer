@@ -135,6 +135,8 @@ def _sell_arbiter(context, code, sig, pos_qty, cp, now, holding, threshold,
         return True
     except Exception as e:
         print(f"[{now:%H:%M:%S}] SELL {code} 失败: {e}")
+        try: write_risk(str(now), "order_failed", f"SELL {qty}@{cp:.2f} err={e}", code=code)
+        except Exception: pass
         return False
 
 
@@ -191,12 +193,16 @@ def _get_holding(context, code: str, gm_symbol: str) -> dict:
                 }
                 mp = context.manual_position.get(gm_symbol)
                 if mp and abs(int(mp.get("qty", 0)) - int(p.volume)) > 0:
-                    # F2: 保留我方cost, gm的vwap含前复权不可靠
                     _my_cost = mp.get("cost", gm_pos["cost"])
                     context.manual_position[gm_symbol] = gm_pos
                     context.manual_position[gm_symbol]["cost"] = _my_cost
                     _audit_write({"event": "reconcile_fix", "code": code, "time": str(now),
                                   "old_qty": mp.get("qty"), "new_qty": gm_pos["qty"]})
+                # ①-1: manual_position cost=0时用gm vwap修正(市价单price=0兜底)
+                if mp and float(mp.get("cost", 0) or 0) <= 0 and float(gm_pos.get("cost", 0) or 0) > 0:
+                    mp["cost"] = gm_pos["cost"]
+                    _audit_write({"event": "cost_fix", "code": code, "time": str(now),
+                                  "cost": gm_pos["cost"]})
                 # qty 一致时返回 manual_position（我们跟踪的成本），不返回 gm_pos
                 # gm_pos 的 vwap 可能含前复权调整，与真实买入成本不一致
                 if mp and int(mp.get("qty", 0) or 0) > 0:
@@ -489,10 +495,23 @@ def on_bar(context, bars):
     _hb_positions = {}
     for _s, _h in context.manual_position.items():
         _hb_positions[_s] = {"qty": _h.get("qty", 0), "cost": _h.get("cost", 0)}
+    # ①-3: 实时读取可用现金
+    _hb_cash = INITIAL_CASH
+    try:
+        _acct = context.account()
+        _c = getattr(_acct, 'cash', None)
+        if _c is not None:
+            _c = _c() if callable(_c) else _c
+            if isinstance(_c, dict):
+                _hb_cash = float(_c.get('available', _c.get('total', INITIAL_CASH)))
+            else:
+                _hb_cash = float(_c)
+    except Exception:
+        pass
     write_heartbeat(
         time_str=str(now), bar=f"{now:%H:%M}",
         positions=_hb_positions,
-        cash=INITIAL_CASH,  # 实际现金由 N3 逻辑读取
+        cash=_hb_cash,
         index_regime=context.last_index_regime,
         index_score=context.last_index_score,
     )
@@ -900,7 +919,10 @@ def on_order_status(context, order):
     symbol = order["symbol"]
     status = order["status"]
     volume = order["volume"]
-    price = order["price"]
+    # ①-1: 市价单回调price=0 → vwap或昨收兜底
+    price = order.get("price") or order.get("filled_vwap") or order.get("vwap") or 0
+    if price <= 0:
+        price = context.latest_pre_close.get(code, 0)
     side = order["side"]
 
     if status == 3:  # 全部成交

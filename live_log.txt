@@ -2,9 +2,15 @@
 python sdk version: 3.0.185
 c sdk version: 3.8.18
 ----------------------------------------
-2026-07-27 08:54:38,150 INFO [callback.py:569] 连接行情服务成功
-2026-07-27 08:54:38,423 INFO [callback.py:557] 连接交易服务成功
+2026-07-27 09:27:09,941 INFO [callback.py:569] 连接行情服务成功
+2026-07-27 09:27:10,211 INFO [callback.py:557] 连接交易服务成功
 [init] 大盘日线已缓存: 900 行, 2022-11-08 ~ 2026-07-24
 [init] 事件桥: E:\06_T\t_io\gm_bridge
 [init] 策略初始化完成: 4 只标的
+[ir] 2026-07-27 regime=uni_down score=-8.8
+[D6] amount/volume=37.49 close=37.72 → VWAP单位比=0.9940
+[09:30:57] BASE 600176 中国巨石 TREND_BREAKDOWN→延迟建仓
+[09:30:57] BASE 000988 华工科技 TREND_BREAKDOWN→延迟建仓
+[09:30:58] BASE 603667 五洲新春 TREND_BREAKDOWN→延迟建仓
+[09:30:59] BASE 600481 双良节能 TREND_BREAKDOWN→延迟建仓
 !~~~~~~~~~~~!停止策略!~~~~~~~~~~~!

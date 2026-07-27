@@ -144,8 +144,8 @@ def write_risk(time_str: str, kind: str, detail: str = "", code: str = ""):
 
 def write_heartbeat(time_str: str, bar: str, positions: Dict[str, Any],
                     cash: float = 0.0, index_regime: str = "", index_score: float = 0.0):
-    """每分钟心跳"""
-    _write_json(_heartbeat_path(), {
+    """每分钟心跳（同时写实时覆盖文件 + 追加历史jsonl）"""
+    rec = {
         "event": "heartbeat",
         "time": time_str,
         "bar": bar,
@@ -153,7 +153,10 @@ def write_heartbeat(time_str: str, bar: str, positions: Dict[str, Any],
         "cash": cash,
         "index_regime": index_regime,
         "index_score": index_score,
-    })
+    }
+    _write_json(_heartbeat_path(), rec)
+    # L3: 追加历史时序快照(不覆盖)
+    _append_jsonl(os.path.join(BRIDGE_DIR, f"heartbeat_{time_str[:10]}.jsonl"), rec)
 
 
 # ── 公开 API：风控文件 ──
