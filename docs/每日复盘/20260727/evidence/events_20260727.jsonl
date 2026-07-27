@@ -1,0 +1,13 @@
+{"event": "risk", "time": "2026-07-27 09:30:57.442000+08:00", "code": "600176", "kind": "base_deferred", "detail": "_stock_trend_state=TREND_BREAKDOWN", "_ts": 1785115857.9401047}
+{"event": "risk", "time": "2026-07-27 09:30:57.941000+08:00", "code": "000988", "kind": "base_deferred", "detail": "_stock_trend_state=TREND_BREAKDOWN", "_ts": 1785115858.1098027}
+{"event": "risk", "time": "2026-07-27 09:30:58.878000+08:00", "code": "603667", "kind": "base_deferred", "detail": "_stock_trend_state=TREND_BREAKDOWN", "_ts": 1785115859.0111537}
+{"event": "risk", "time": "2026-07-27 09:30:59.012000+08:00", "code": "600481", "kind": "base_deferred", "detail": "_stock_trend_state=TREND_BREAKDOWN", "_ts": 1785115859.1714146}
+{"event": "order", "time": "2026-07-27 10:26:57.373000+08:00", "code": "600176", "side": "BUY", "qty": 300, "price": 39.63, "order_id": "base", "order_type": "MKT", "_ts": 1785119217.5679343}
+{"event": "order", "time": "2026-07-27 10:26:57.577000+08:00", "code": "000988", "side": "BUY", "qty": 300, "price": 110.58, "order_id": "base", "order_type": "MKT", "_ts": 1785119217.62176}
+{"event": "fill", "time": "2026-07-27 10:26:57.642815", "code": "600176", "side": "BUY", "qty": 300, "price": 41.07, "order_id": "", "pos_after": 300, "_ts": 1785119217.6428156}
+{"event": "fill", "time": "2026-07-27 10:26:57.691726", "code": "000988", "side": "BUY", "qty": 300, "price": 0.0, "order_id": "", "pos_after": 300, "_ts": 1785119217.6917264}
+{"event": "order", "time": "2026-07-27 10:26:58.947000+08:00", "code": "603667", "side": "BUY", "qty": 500, "price": 50.7, "order_id": "base", "order_type": "MKT", "_ts": 1785119219.014532}
+{"event": "order", "time": "2026-07-27 10:26:59.033000+08:00", "code": "600481", "side": "BUY", "qty": 1400, "price": 3.91, "order_id": "base", "order_type": "MKT", "_ts": 1785119219.0999477}
+{"event": "fill", "time": "2026-07-27 10:26:59.117005", "code": "603667", "side": "BUY", "qty": 500, "price": 54.08, "order_id": "", "pos_after": 500, "_ts": 1785119219.1170056}
+{"event": "fill", "time": "2026-07-27 10:26:59.193693", "code": "600481", "side": "BUY", "qty": 1400, "price": 4.2, "order_id": "", "pos_after": 1400, "_ts": 1785119219.1936936}
+{"event": "signal", "time": "2026-07-27 14:45:57.298000+08:00", "code": "000988", "action": "SELL_HIGH", "score": 71.0, "reasons": ["评分达标"], "pos_qty": 300, "_ts": 1785134757.322812}
