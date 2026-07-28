@@ -1,0 +1,15 @@
+{"event": "order", "time": "2026-07-28 09:30:56.562000+08:00", "code": "600481", "side": "BUY", "qty": 1400, "price": 3.93, "order_id": "base", "order_type": "MKT", "_ts": 1785202258.3720844}
+{"event": "order", "time": "2026-07-28 09:30:58.390000+08:00", "code": "000988", "side": "BUY", "qty": 300, "price": 108.23, "order_id": "base", "order_type": "MKT", "_ts": 1785202258.7250202}
+{"event": "order", "time": "2026-07-28 09:30:58.729000+08:00", "code": "603667", "side": "BUY", "qty": 500, "price": 51.15, "order_id": "base", "order_type": "MKT", "_ts": 1785202258.965976}
+{"event": "order", "time": "2026-07-28 09:30:58.971000+08:00", "code": "600176", "side": "BUY", "qty": 300, "price": 39.76, "order_id": "base", "order_type": "MKT", "_ts": 1785202259.2246633}
+{"event": "fill", "time": "2026-07-28 09:30:59.234829", "code": "600481", "side": "BUY", "qty": 1400, "price": 4.33, "order_id": "", "pos_after": 1400, "_ts": 1785202259.2348294}
+{"event": "order", "time": "2026-07-28 09:41:56.401000+08:00", "code": "600481", "side": "BUY", "qty": 1400, "price": 3.97, "order_id": "base", "order_type": "MKT", "_ts": 1785202916.5983694}
+{"event": "fill", "time": "2026-07-28 09:41:56.652087", "code": "600481", "side": "BUY", "qty": 1400, "price": 4.33, "order_id": "", "pos_after": 1400, "_ts": 1785202916.6520872}
+{"event": "order", "time": "2026-07-28 09:41:56.856000+08:00", "code": "000988", "side": "BUY", "qty": 300, "price": 108.26, "order_id": "base", "order_type": "MKT", "_ts": 1785202916.8898048}
+{"event": "order", "time": "2026-07-28 09:41:56.891000+08:00", "code": "603667", "side": "BUY", "qty": 500, "price": 51.7, "order_id": "base", "order_type": "MKT", "_ts": 1785202916.9484613}
+{"event": "order", "time": "2026-07-28 09:44:56.407000+08:00", "code": "600481", "side": "BUY", "qty": 1400, "price": 3.96, "order_id": "base", "order_type": "MKT", "_ts": 1785203096.5493875}
+{"event": "fill", "time": "2026-07-28 09:44:56.608374", "code": "600481", "side": "BUY", "qty": 1400, "price": 4.33, "order_id": "", "pos_after": 1400, "_ts": 1785203096.6083744}
+{"event": "order", "time": "2026-07-28 09:44:56.983000+08:00", "code": "603667", "side": "BUY", "qty": 500, "price": 52.38, "order_id": "base", "order_type": "MKT", "_ts": 1785203097.0254335}
+{"event": "order", "time": "2026-07-28 09:44:57.102000+08:00", "code": "000988", "side": "BUY", "qty": 300, "price": 108.53, "order_id": "base", "order_type": "MKT", "_ts": 1785203097.1512723}
+{"event": "order", "time": "2026-07-28 09:44:57.420000+08:00", "code": "600176", "side": "BUY", "qty": 300, "price": 39.51, "order_id": "base", "order_type": "MKT", "_ts": 1785203097.509095}
+{"event": "order", "time": "2026-07-28 14:50:56.395000+08:00", "code": "600481", "side": "SELL", "qty": 4200, "price": 3.91, "order_id": "tail", "order_type": "MKT", "_ts": 1785221456.42042}
