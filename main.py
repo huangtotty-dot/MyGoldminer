@@ -919,6 +919,7 @@ def on_order_status(context, order):
     symbol = order["symbol"]
     status = order["status"]
     volume = order["volume"]
+    code = _raw_code(symbol)  # 提前到price兜底之前
     # ①-1: 市价单回调price=0 → vwap或昨收兜底
     price = order.get("price") or order.get("filled_vwap") or order.get("vwap") or 0
     if price <= 0:
@@ -926,7 +927,6 @@ def on_order_status(context, order):
     side = order["side"]
 
     if status == 3:  # 全部成交
-        code = _raw_code(symbol)
         _side = "BUY" if side == 1 else "SELL"
         _pos_after = int(context.executed_orders.get(symbol, {}).get("qty", 0)) if _side == "SELL" else                      int(context.executed_orders.get(symbol, {}).get("qty", 0)) + volume if symbol in context.executed_orders else volume
         try:
@@ -983,7 +983,6 @@ def on_order_status(context, order):
                           "action": _act, "score": _sc})
     elif status in (4, 5, 6):  # 拒单/撤单/部分成交撤单
         context.rejected_order_count = getattr(context, 'rejected_order_count', 0) + 1
-        code = _raw_code(symbol)
         # N5: 底仓拒单恢复
         if code in getattr(context, '_base_ordered', set()):
             if not hasattr(context, '_base_retry_count'):
