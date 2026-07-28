@@ -337,6 +337,54 @@ def _audit_close():
 
 # ==================== 策略生命周期 ====================
 
+def _reconcile_positions_at_init(context):
+    """F1: 启动全量持仓对账（2026-07-28 日复盘 P0）
+
+    重启后 _base_ordered/_base_settled 为纯内存空集，若不从账户拉取真实持仓，
+    已持有标的会被重发底仓单（2026-07-28 600481 三轮重复建仓至 5600 股事故）。
+    本函数在 init 末尾执行：
+      1. 逐票查询 account().positions()，有持仓则灌入 executed_orders/manual_position
+      2. 已持仓标的直接入 _base_settled（跳过重发底仓单）并设 _base_ref_
+      3. 每票写 reconcile_init 审计事件
+    仅 MODE_LIVE 执行；回测模式跳过。
+    """
+    try:
+        _is_live = context.mode == MODE_LIVE
+    except Exception:
+        _is_live = False
+    if not _is_live:
+        return
+    for code, sym in STOCKS.items():
+        try:
+            pos = context.account().positions(symbol=sym, side=PositionSide_Long)
+            if not pos or len(pos) == 0:
+                continue
+            p = pos[0]
+            vol = int(p.volume)
+            if vol <= 0:
+                continue
+            _cost = float(p.vwap or 0)
+            context.executed_orders[sym] = {
+                "name": STOCK_NAMES.get(code, code),
+                "qty": vol,
+                "available": int(p.available),
+                "t_qty": vol,
+                "cost": _cost,
+                "type": "stock",
+                "pre_close": _cost,
+            }
+            context.manual_position[sym] = dict(context.executed_orders[sym])
+            context._base_settled.add(code)
+            setattr(context, f'_base_ref_{code}', vol)
+            _audit_write({"event": "reconcile_init", "code": code, "qty": vol,
+                          "available": int(p.available), "cost": _cost,
+                          "time": str(datetime.now())})
+            print(f"[INIT] {code} {STOCK_NAMES.get(code, code)} 持仓对账: "
+                  f"{vol}股 可用{int(p.available)} 成本{_cost:.2f}")
+        except Exception as e:
+            print(f"[INIT] {code} 持仓对账失败: {e}")
+
+
 def init(context):
     global _AUDIT_RUN_ID
     _AUDIT_RUN_ID = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -365,6 +413,9 @@ def init(context):
     context.rejected_order_count = 0
     context.audit_records = []
     context.sizer = PositionSizer(params=PARAMS)
+
+    # F1: 启动全量持仓对账——已持仓标的入 _base_settled，防止重启重发底仓单
+    _reconcile_positions_at_init(context)
 
     # 预取分钟数据
     for code, sym in STOCKS.items():
@@ -585,6 +636,10 @@ def on_bar(context, bars):
                 _audit_write({"event": "base_order", "code": code, "qty": base_qty, "price": cp, "time": str(now)})
             except Exception as e:
                 print(f"[{now:%H:%M:%S}] BASE {code} 下单失败: {e}")
+                try:
+                    write_risk(str(now), "order_failed", f"BASE BUY {base_qty}@{cp:.2f} err={e}", code=code)
+                except Exception:
+                    pass
             return
 
         if code not in context._base_settled and code in context._base_ordered:
@@ -747,11 +802,19 @@ def on_bar(context, bars):
                         write_order(str(now), code, "SELL", qty, cp, order_id="tail")
                     except Exception:
                         pass
-                    order_volume(symbol=gm_sym, volume=qty,
-                                 side=OrderSide_Sell,
-                                 order_type=OrderType_Market,
-                                 position_effect=PositionEffect_Close)
-                    # 立即更新 manual_position 防下一分钟重复触发
+                    try:
+                        order_volume(symbol=gm_sym, volume=qty,
+                                     side=OrderSide_Sell,
+                                     order_type=OrderType_Market,
+                                     position_effect=PositionEffect_Close)
+                    except Exception as e:
+                        print(f'[{now:%H:%M:%S}] TAIL {code} 下单失败: {e}')
+                        try:
+                            write_risk(str(now), "order_failed", f"TAIL SELL {qty}@{cp:.2f} err={e}", code=code)
+                        except Exception:
+                            pass
+                        continue
+                    # 立即更新 manual_position 防下一分钟重复触发（仅下单成功后；拒单由 status=8 分支回滚）
                     if gm_sym in context.manual_position:
                         new_pos = pos_qty - qty
                         context.manual_position[gm_sym]["qty"] = new_pos
@@ -981,7 +1044,12 @@ def on_order_status(context, order):
             _audit_write({"event": "sell", "code": code, "qty": volume, "price": price,
                           "time": str(datetime.now()), "pos_after_sell": new_qty,
                           "action": _act, "score": _sc})
-    elif status in (4, 5, 6):  # 拒单/撤单/部分成交撤单
+    elif status in (4, 5, 6, 8, 12):  # 拒单/撤单/待撤/已拒绝(8)/已过期(12) —— F2修复: 2026-07-28前漏掉8导致所有拒单静默
+        _rej_detail = ""
+        try:
+            _rej_detail = order.get("ord_rej_reason_detail", "") or ""
+        except Exception:
+            pass
         context.rejected_order_count = getattr(context, 'rejected_order_count', 0) + 1
         # N5: 底仓拒单恢复
         if code in getattr(context, '_base_ordered', set()):
@@ -991,10 +1059,10 @@ def on_order_status(context, order):
             context._base_retry_count[code] = retry
             if retry <= MAX_BASE_RETRY:
                 context._base_ordered.discard(code)
-                print(f'[ORDER] {code} 底仓拒单 status={status} 重试 #{retry}')
+                print(f'[ORDER] {code} 底仓拒单 status={status} 重试 #{retry} {_rej_detail}')
             else:
                 print(f'[ORDER] {code} 底仓拒单已达上限({MAX_BASE_RETRY})，停止重试')
-        print(f"[ORDER] {symbol} 被拒 status={status}")
+        print(f"[ORDER] {symbol} 被拒 status={status} {_rej_detail}")
         # N25-2: 卖出拒单回滚manual_position(下单时已虚减)
         if side == 2 and symbol in context.manual_position:
             mp = context.manual_position[symbol]
@@ -1006,8 +1074,11 @@ def on_order_status(context, order):
             _r_code = _raw_code(symbol)
             _r_side = "BUY" if side == 1 else "SELL"
             write_reject(str(datetime.now()), _r_code, _r_side, volume,
-                         reason=f"status={status}", raw={"status": status, "side": side, "volume": volume})
-            write_risk(str(datetime.now()), "order_rejected", f"{_r_side} {volume}股被拒", code=_r_code)
+                         reason=f"status={status} {_rej_detail}",
+                         raw={"status": status, "side": side, "volume": volume,
+                              "rej_detail": _rej_detail})
+            write_risk(str(datetime.now()), "order_rejected",
+                         f"{_r_side} {volume}股被拒 status={status} {_rej_detail}", code=_r_code)
         except Exception:
             pass
 
