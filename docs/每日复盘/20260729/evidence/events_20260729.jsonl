@@ -1,0 +1,6 @@
+{"event": "signal", "time": "2026-07-29 10:03:01.087000+08:00", "code": "000988", "action": "PANIC_SELL", "score": 75.0, "reasons": ["深度亏损恐慌卖出", "profit_pct=-12.52%"], "pos_qty": 400, "_ts": 1785290581.1141038}
+{"event": "order", "time": "2026-07-29 10:03:01.087000+08:00", "code": "000988", "side": "SELL", "qty": 100, "price": 95.34, "order_id": "", "order_type": "MKT", "_ts": 1785290581.1150994}
+{"event": "fill", "time": "2026-07-29 10:03:01.163534", "code": "000988", "side": "SELL", "qty": 100, "price": 95.3499984741211, "order_id": "", "pos_after": 400, "_ts": 1785290581.1635349}
+{"event": "signal", "time": "2026-07-29 13:17:02.409000+08:00", "code": "600481", "action": "SELL_HIGH", "score": 67.0, "reasons": ["评分达标"], "pos_qty": 1400, "_ts": 1785302222.4567358}
+{"event": "order", "time": "2026-07-29 13:17:02.409000+08:00", "code": "600481", "side": "SELL", "qty": 200, "price": 4.0, "order_id": "", "order_type": "MKT", "_ts": 1785302222.4577346}
+{"event": "fill", "time": "2026-07-29 13:17:02.507232", "code": "600481", "side": "SELL", "qty": 200, "price": 3.52, "order_id": "", "pos_after": 1400, "_ts": 1785302222.5072322}

@@ -1,0 +1,1 @@
+{"event": "heartbeat", "time": "2026-07-29 14:58:02.594000+08:00", "bar": "14:58", "positions": {"SZSE.000988": {"qty": 300, "cost": 108.9833}, "SHSE.600481": {"qty": 1200, "cost": 3.945}, "SHSE.600176": {"qty": 500, "cost": 39.7}, "SHSE.603667": {"qty": 800, "cost": 50.94}}, "cash": 93416.12600160565, "index_regime": "uni_down", "index_score": -8.783999999999999}
