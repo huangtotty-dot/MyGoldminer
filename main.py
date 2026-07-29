@@ -46,7 +46,8 @@ REVERSE_MAP = {v: k for k, v in STOCKS.items()}
 # 模拟盘建仓时按此表中的股数/成本下单
 MIRROR_HOLDINGS = {
     # 2026-07-28 owner决策(N2): 事故超配减仓后新基线
-    "000988": {"qty": 500,  "cost": 0},
+    # 2026-07-29 F7: 000988 盘前人工减至400+PANIC卖100→300, 基线对齐实际持仓
+    "000988": {"qty": 300,  "cost": 0},
     "600481": {"qty": 1400, "cost": 0},
     "600176": {"qty": 500,  "cost": 0},
     "603667": {"qty": 800,  "cost": 0},
@@ -992,8 +993,9 @@ def on_order_status(context, order):
     status = order["status"]
     volume = order["volume"]
     code = _raw_code(symbol)  # 提前到price兜底之前
-    # ①-1: 市价单回调price=0 → vwap或昨收兜底
-    price = order.get("price") or order.get("filled_vwap") or order.get("vwap") or 0
+    # ①-1/F6: 成交价优先 filled_vwap —— 掘金市价单 order["price"] 携带涨跌停保护价
+    # (2026-07-29 C1: 600481卖出真实成交4.01被记为跌停价3.52；买入路径会用此价计算cost，错误价会毒化成本)
+    price = order.get("filled_vwap") or order.get("vwap") or order.get("price") or 0
     if price <= 0:
         price = context.latest_pre_close.get(code, 0)
     side = order["side"]

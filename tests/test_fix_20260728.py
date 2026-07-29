@@ -157,6 +157,43 @@ check("T5d reconcile_init审计落盘",
       any(a.get("event") == "reconcile_init" and a.get("code") == "600481" for a in read_audit()))
 check("T5e 无持仓标的不入_base_settled", len(ctx._base_settled) == 1)
 
+# ── T6: F6 市价单price=涨跌停保护价 → 成交价优先filled_vwap ──
+if os.path.exists(EVENTS_PATH):
+    os.remove(EVENTS_PATH)
+ctx = fresh_ctx()
+ctx.manual_position["SHSE.600481"] = {"name": "双良节能", "qty": 1400, "available": 1400, "t_qty": 1400, "cost": 3.945}
+ctx.executed_orders["SHSE.600481"] = {"name": "双良节能", "qty": 1400, "available": 1400, "t_qty": 1400, "cost": 3.945, "type": "stock", "pre_close": 3.91}
+# 卖出：price=3.52(跌停保护价) filled_vwap=4.01(真实成交)
+order = {"symbol": "SHSE.600481", "status": 3, "volume": 200, "side": 2,
+         "price": 3.52, "filled_vwap": 4.01}
+main.on_order_status(ctx, order)
+ev = read_events()
+fills = [e for e in ev if e.get("event") == "fill"]
+check("T6a MKT卖出fill价=真实成交4.01(非跌停价3.52)",
+      len(fills) == 1 and abs(fills[0].get("price", 0) - 4.01) < 1e-9,
+      f"fill_price={fills[0].get('price') if fills else None}")
+# 买入：price=4.32(涨停保护价) filled_vwap=3.98(真实成交) → 成本不得毒化
+if os.path.exists(EVENTS_PATH):
+    os.remove(EVENTS_PATH)
+ctx = fresh_ctx()
+order = {"symbol": "SHSE.600481", "status": 3, "volume": 1400, "side": 1,
+         "price": 4.32, "filled_vwap": 3.98}
+main.on_order_status(ctx, order)
+cost = ctx.executed_orders.get("SHSE.600481", {}).get("cost", 0)
+check("T6b MKT买入成本=真实成交3.98(非涨停价4.32)",
+      abs(cost - 3.98) < 1e-9, f"cost={cost}")
+# 无filled_vwap时回退vwap→price→昨收 链仍可用
+if os.path.exists(EVENTS_PATH):
+    os.remove(EVENTS_PATH)
+ctx = fresh_ctx()
+order = {"symbol": "SZSE.000988", "status": 3, "volume": 100, "side": 1, "price": 0, "filled_vwap": 0, "vwap": 0}
+main.on_order_status(ctx, order)
+ev = read_events()
+fills = [e for e in ev if e.get("event") == "fill"]
+check("T6c 全零价回退昨收110.0(①-1回归)",
+      len(fills) == 1 and fills[0].get("price") == 110.0,
+      f"fill={fills}")
+
 # ── 汇总 ──
 failed = [r for r in results if not r[1]]
 print("\n" + "=" * 50)
