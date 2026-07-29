@@ -46,8 +46,8 @@ REVERSE_MAP = {v: k for k, v in STOCKS.items()}
 # 模拟盘建仓时按此表中的股数/成本下单
 MIRROR_HOLDINGS = {
     # 2026-07-28 owner决策(N2): 事故超配减仓后新基线
-    # 2026-07-29 F7: 000988 盘前人工减至400+PANIC卖100→300, 基线对齐实际持仓
-    "000988": {"qty": 300,  "cost": 0},
+    # 2026-07-29 F7返工: MIRROR语义=目标底仓。000988维持500, 缺口200由_base_topup_qty择时回补
+    "000988": {"qty": 500,  "cost": 0},
     "600481": {"qty": 1400, "cost": 0},
     "600176": {"qty": 500,  "cost": 0},
     "603667": {"qty": 800,  "cost": 0},
@@ -377,7 +377,9 @@ def _reconcile_positions_at_init(context):
             }
             context.manual_position[sym] = dict(context.executed_orders[sym])
             context._base_settled.add(code)
-            setattr(context, f'_base_ref_{code}', vol)
+            # F7: _base_ref_ 语义=目标底仓(镜像表)，非实际持仓——缺口由 _base_topup_qty 择时回补
+            setattr(context, f'_base_ref_{code}',
+                    int(MIRROR_HOLDINGS.get(code, {}).get("qty", 0) or vol))
             _audit_write({"event": "reconcile_init", "code": code, "qty": vol,
                           "available": int(p.available), "cost": _cost,
                           "time": str(datetime.now())})
@@ -385,6 +387,33 @@ def _reconcile_positions_at_init(context):
                   f"{vol}股 可用{int(p.available)} 成本{_cost:.2f}")
         except Exception as e:
             print(f"[INIT] {code} 持仓对账失败: {e}")
+
+
+def _base_topup_qty(context, code, gm_sym):
+    """F7: 底仓择时回补量（2026-07-29 owner定调：基线维持，缺口择时买回）
+
+    语义: MIRROR_HOLDINGS 是目标底仓而非现状快照。已建仓标的实际持仓低于目标
+    100 股以上时，返回回补量(向下100取整)，由 on_bar 底仓块走既有 M2/趋势闸
+    择时买入；否则返回 0。
+
+    反绞肉门控（本函数内，on_bar 的 M2/趋势闸仍照常叠加）:
+      - 当日已有任意卖出成交(如PANIC止损) → 当日不反补，防恐慌-回补来回打脸
+      - 指数 uni_down → 不补（防御日不加重敞口）
+    """
+    if code not in getattr(context, "_base_settled", set()):
+        return 0  # 未建仓标的走原建仓路径
+    _mirror = int(MIRROR_HOLDINGS.get(code, {}).get("qty", 0) or 0)
+    if _mirror <= 0:
+        return 0
+    _held = int(context.manual_position.get(gm_sym, {}).get("qty", 0) or 0)
+    _short = ((_mirror - _held) // 100) * 100
+    if _short < 100:
+        return 0
+    if context.daily_sell_count.get(code, 0):
+        return 0
+    if getattr(context, "last_index_regime", "range") == "uni_down":
+        return 0
+    return _short
 
 
 def init(context):
@@ -603,10 +632,11 @@ def on_bar(context, bars):
                 print(f"[D6] 结论: volume单位为股，需移除×100")
             context._vwap_checked = True
 
-        # ── D2: 底仓（按镜像持仓表逐股建仓） ──
-        if code not in context._base_ordered and code not in context._base_settled:
+        # ── D2: 底仓（按镜像持仓表逐股建仓 + F7择时回补缺口） ──
+        _topup_qty = _base_topup_qty(context, code, gm_sym)
+        if code not in context._base_ordered and (code not in context._base_settled or _topup_qty >= 100):
             mirror = MIRROR_HOLDINGS.get(code, {})
-            base_qty = mirror.get("qty", 0)
+            base_qty = mirror.get("qty", 0) if code not in context._base_settled else _topup_qty
             if base_qty < 100:
                 print(f"[{now:%H:%M:%S}] BASE {code} 跳过: MIRROR_HOLDINGS 中无此标的或 qty<100")
                 context._base_settled.add(code)
@@ -1028,12 +1058,14 @@ def on_order_status(context, order):
                 "type": "stock",
                 "pre_close": price,
             }
-            # 底仓确认
-            if code in context._base_ordered and code not in context._base_settled:
+            # 底仓确认（含F7回补单：已settled标的回补成交同样同步台账并释放_base_ordered）
+            if code in context._base_ordered:
                 context._base_settled.add(code)
                 context.manual_position[symbol] = dict(context.executed_orders[symbol])
-                # 记录底仓参考量（供 sizer/sell_floor/tail 使用）
-                setattr(context, f'_base_ref_{code}', volume)
+                # 底仓参考量=镜像目标值（供 sizer/sell_floor/tail 使用）
+                setattr(context, f'_base_ref_{code}',
+                        int(MIRROR_HOLDINGS.get(code, {}).get("qty", 0) or volume))
+                context._base_ordered.discard(code)
                 print(f"[BASE] {code} 底仓成交 {volume}股@{price:.2f}")
         elif side == 2:  # 卖出
             old = context.executed_orders.get(symbol, {"qty": 0, "available": 0})

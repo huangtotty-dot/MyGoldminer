@@ -151,8 +151,8 @@ check("T5a 持仓对账→manual_position灌入真实持仓",
       f"qty={mp.get('qty')} avail={mp.get('available')}")
 check("T5b 成本取gm vwap=4.3025", abs(mp.get("cost", 0) - 4.3025) < 1e-9,
       f"cost={mp.get('cost')}")
-check("T5c 已持仓标的入_base_settled(跳过重发底仓单)",
-      "600481" in ctx._base_settled and getattr(ctx, "_base_ref_600481", 0) == 5600)
+check("T5c 已持仓标的入_base_settled(跳过重发底仓单), _base_ref_=镜像目标1400(F7语义)",
+      "600481" in ctx._base_settled and getattr(ctx, "_base_ref_600481", 0) == 1400)
 check("T5d reconcile_init审计落盘",
       any(a.get("event") == "reconcile_init" and a.get("code") == "600481" for a in read_audit()))
 check("T5e 无持仓标的不入_base_settled", len(ctx._base_settled) == 1)
@@ -193,6 +193,35 @@ fills = [e for e in ev if e.get("event") == "fill"]
 check("T6c 全零价回退昨收110.0(①-1回归)",
       len(fills) == 1 and fills[0].get("price") == 110.0,
       f"fill={fills}")
+
+# ── T7: F7 择时回补量门控 ──
+ctx = fresh_ctx()
+ctx._base_settled.add("000988")
+ctx.manual_position["SZSE.000988"] = {"qty": 300, "available": 300}
+ctx.daily_sell_count = {}
+ctx.last_index_regime = "range"
+check("T7a 缺口200且无卖出+非uni_down→回补200",
+      main._base_topup_qty(ctx, "000988", "SZSE.000988") == 200,
+      f"qty={main._base_topup_qty(ctx, '000988', 'SZSE.000988')}")
+ctx.daily_sell_count = {"000988": 1}
+check("T7b 当日有卖出(如PANIC)→当日不反补=0",
+      main._base_topup_qty(ctx, "000988", "SZSE.000988") == 0)
+ctx.daily_sell_count = {}
+ctx.last_index_regime = "uni_down"
+check("T7c uni_down防御日→不补=0",
+      main._base_topup_qty(ctx, "000988", "SZSE.000988") == 0)
+ctx.last_index_regime = "range"
+ctx.manual_position["SZSE.000988"] = {"qty": 350, "available": 350}
+check("T7d 缺口150→向下取整补100",
+      main._base_topup_qty(ctx, "000988", "SZSE.000988") == 100)
+ctx.manual_position["SZSE.000988"] = {"qty": 450, "available": 450}
+check("T7e 缺口<100→不补=0",
+      main._base_topup_qty(ctx, "000988", "SZSE.000988") == 0)
+ctx2 = fresh_ctx()
+ctx2.daily_sell_count = {}
+ctx2.last_index_regime = "range"
+check("T7f 未建仓标的→不走回补(走原建仓路径)=0",
+      main._base_topup_qty(ctx2, "600176", "SHSE.600176") == 0)
 
 # ── 汇总 ──
 failed = [r for r in results if not r[1]]
