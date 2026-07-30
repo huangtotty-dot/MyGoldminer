@@ -637,14 +637,17 @@ def on_bar(context, bars):
         if code not in context._base_ordered and (code not in context._base_settled or _topup_qty >= 100):
             mirror = MIRROR_HOLDINGS.get(code, {})
             base_qty = mirror.get("qty", 0) if code not in context._base_settled else _topup_qty
+            _is_topup = code in context._base_settled  # F8: 已持仓标的走回补路径——闸门拦截不得中断持仓信号评估(0730盲区事故)
             if base_qty < 100:
                 print(f"[{now:%H:%M:%S}] BASE {code} 跳过: MIRROR_HOLDINGS 中无此标的或 qty<100")
                 context._base_settled.add(code)
-                return
+                if not _is_topup:
+                    return
             # M2: 做T门槛检查（底仓建仓前置）
             _dc = _refresh_daily_ctx(context, code, gm_sym, now)
             # R1/A3: 底仓过趋势闸——TREND_BREAKDOWN 延迟到次日（F5: 回退61a19e6激进模式）
             _trend = _dc.get("_stock_trend_state", "TREND_RANGE")
+            _topup_blocked = False
             if _trend == "TREND_BREAKDOWN":
                 _defer_key = f'_base_deferred_{code}'
                 if getattr(context, _defer_key, '') != now.strftime("%Y-%m-%d"):
@@ -652,35 +655,41 @@ def on_bar(context, bars):
                     print(f'[{now:%H:%M:%S}] BASE {code} {STOCK_NAMES.get(code,code)} TREND_BREAKDOWN→延迟建仓')
                     try: write_risk(str(now), "base_deferred", f"_stock_trend_state={_trend}", code=code)
                     except: pass
-                return
+                if not _is_topup:
+                    return
+                _topup_blocked = True  # F8: 回补被趋势闸拦截，但持仓信号评估照常落地
             # 默认 False: 数据不足时保守不放行（F5: 恢复M2门槛）
-            if not _dc.get("_m2_pool_pass", False):
+            if not _topup_blocked and not _dc.get("_m2_pool_pass", False):
                 print(f"[{now:%H:%M:%S}] BASE {code} {STOCK_NAMES.get(code,code)} 门槛未过→仅观察 "
                       f"(amp={_dc.get('_m2_amp20',0):.1%} amt={_dc.get('_m2_amount20',0)/1e8:.1f}亿 "
                       f"lot={_dc.get('_m2_lot_value',0):.0f}元)")
                 try: write_risk(str(now), "pool_gate", f"amp={_dc.get('_m2_amp20',0):.1%} 仅观察", code=code)
                 except: pass
-                context._base_settled.add(code)
+                if not _is_topup:
+                    context._base_settled.add(code)
+                    return
+                _topup_blocked = True  # F8: 回补被M2闸拦截，信号评估照常
+            if not _topup_blocked:
+                try:
+                    try:
+                        write_order(str(now), code, "BUY", base_qty, cp, order_id="base")
+                    except Exception:
+                        pass
+                    order_volume(symbol=gm_sym, volume=base_qty,
+                                 side=OrderSide_Buy,
+                                 order_type=OrderType_Market,
+                                 position_effect=PositionEffect_Open)
+                    context._base_ordered.add(code)
+                    print(f"[{now:%H:%M:%S}] BASE {code} {STOCK_NAMES.get(code,code)} 下单 {base_qty}股@{cp:.2f}")
+                    _audit_write({"event": "base_order", "code": code, "qty": base_qty, "price": cp, "time": str(now)})
+                except Exception as e:
+                    print(f"[{now:%H:%M:%S}] BASE {code} 下单失败: {e}")
+                    try:
+                        write_risk(str(now), "order_failed", f"BASE BUY {base_qty}@{cp:.2f} err={e}", code=code)
+                    except Exception:
+                        pass
                 return
-            try:
-                try:
-                    write_order(str(now), code, "BUY", base_qty, cp, order_id="base")
-                except Exception:
-                    pass
-                order_volume(symbol=gm_sym, volume=base_qty,
-                             side=OrderSide_Buy,
-                             order_type=OrderType_Market,
-                             position_effect=PositionEffect_Open)
-                context._base_ordered.add(code)
-                print(f"[{now:%H:%M:%S}] BASE {code} {STOCK_NAMES.get(code,code)} 下单 {base_qty}股@{cp:.2f}")
-                _audit_write({"event": "base_order", "code": code, "qty": base_qty, "price": cp, "time": str(now)})
-            except Exception as e:
-                print(f"[{now:%H:%M:%S}] BASE {code} 下单失败: {e}")
-                try:
-                    write_risk(str(now), "order_failed", f"BASE BUY {base_qty}@{cp:.2f} err={e}", code=code)
-                except Exception:
-                    pass
-            return
+            # F8: _topup_blocked=True 时不下单，继续走下方信号评估流程
 
         if code not in context._base_settled and code in context._base_ordered:
             # 已下单未成交，跳过
