@@ -1,0 +1,2 @@
+{"event": "risk", "time": "2026-07-30 09:31:00.463000+08:00", "code": "000988", "kind": "base_deferred", "detail": "_stock_trend_state=TREND_BREAKDOWN", "_ts": 1785375060.7876763}
+{"event": "risk", "time": "2026-07-30 09:31:00.789000+08:00", "code": "600481", "kind": "base_deferred", "detail": "_stock_trend_state=TREND_BREAKDOWN", "_ts": 1785375060.9433265}
