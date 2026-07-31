@@ -113,6 +113,11 @@ def _sell_arbiter(context, code, sig, pos_qty, cp, now, holding, threshold,
     qty = context.sizer.calc_sell_qty(code, holding, sig.score, threshold, used_sells=sc)
     if qty < 100:
         qty = min(300, pos_qty)
+    # F13: TREND_EXIT 量封顶到超 base_ref 部分——设计语义"只卖利润仓/超额仓，
+    # 底仓本体永不触发"(WP-F8)，sizer 定量可能越界(WP-B回放包fix4实证:
+    # pos600/base_ref500/excess100 却卖出200→底仓被啃100)
+    if sig.action == "TREND_EXIT":
+        qty = min(qty, max(0, pos_qty - base_ref))
     # N25-3: T+1 可用量检查 — 区分 None(缺key兜底) 与 0(合法当日全锁)
     _avail_raw = holding.get("available")
     _avail = pos_qty if _avail_raw is None else int(_avail_raw)

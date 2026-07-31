@@ -179,6 +179,40 @@ check("T12b _target_filled_l1 不被清空", mp12.get("_target_filled_l1") is Tr
 check("T12c _trail_state/_trail_peak 不被清空",
       mp12.get("_trail_state") == "ARMED" and mp12.get("_trail_peak") == 175.0)
 
+# ── T13: F13 TREND_EXIT 卖出量封顶到超 base_ref 部分 ──
+placed13 = []
+main.order_volume = lambda **kw: placed13.append(kw)
+ctx13 = SimpleNamespace(
+    daily_sell_count={},
+    total_trade_count=0,
+    manual_position={"SZSE.000988": {"name": "华工科技", "qty": 600, "available": 600, "t_qty": 600, "cost": 120.0}},
+    executed_orders={},
+    engine=SimpleNamespace(sell_cooldown={}, sell_count_per_stock={},
+                           record_trade_action=lambda *a, **k: None,
+                           _get_params=lambda code: {"cooldown_minutes": 30}),
+    sizer=SimpleNamespace(calc_sell_qty=lambda *a, **k: 200),
+    last_index_regime="range",
+    _pending_sell_action={},
+    _inflight_sell={},
+    latest_pre_close={"000988": 125.0},
+    mode=None,
+)
+setattr(ctx13, "_base_ref_000988", 500)
+sig13 = SimpleNamespace(action="TREND_EXIT", score=78.0, reasons=["趋势破坏止盈"])
+r13 = main._sell_arbiter(ctx13, "000988", sig13, 600, 130.0, now,
+                         {"qty": 600, "available": 600, "cost": 120.0}, 65, {}, "SZSE.000988")
+check("T13a pos600/base_ref500/excess100 → 实际卖出封顶100(非sizer的200)",
+      r13 is True and placed13 and placed13[0].get("volume") == 100,
+      f"placed={placed13}")
+# excess<100 时整体不触发
+placed13.clear()
+ctx13._inflight_sell = {}
+ctx13.manual_position["SZSE.000988"]["qty"] = 550
+r13b = main._sell_arbiter(ctx13, "000988", sig13, 550, 130.0, now,
+                          {"qty": 550, "available": 550, "cost": 120.0}, 65, {}, "SZSE.000988")
+check("T13b excess=50<100 → TREND_EXIT不下单", r13b is False and not placed13)
+main.order_volume = _orig_order_volume
+
 # ── 汇总 ──
 passed = sum(1 for _, ok, _ in results if ok)
 print(f"\n===== {passed}/{len(results)} PASS =====")
