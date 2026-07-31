@@ -78,6 +78,14 @@ def _sell_arbiter(context, code, sig, pos_qty, cp, now, holding, threshold,
     sc = context.daily_sell_count.get(code, 0)
     max_sells = stock_params.get("max_sell_times_per_stock", 3)
 
+    # F9: 在途卖单守卫（2026-07-31 PANIC 0.33秒内连发4单、5单超可用持仓事故）
+    # 成交回报到达前冷却未生效（P0-2设计），在途期间禁止再发任何卖单
+    _inflight = int(getattr(context, "_inflight_sell", {}).get(gm_sym, 0) or 0)
+    if _inflight >= 100:
+        _audit_write({"event": "inflight_skip", "code": code, "action": sig.action,
+                      "inflight": _inflight, "time": str(now)})
+        return False
+
     # 地板检查
     base_ref = getattr(context, f"_base_ref_{code}", pos_qty)
     setattr(context, f"_base_ref_{code}", base_ref)
@@ -109,6 +117,8 @@ def _sell_arbiter(context, code, sig, pos_qty, cp, now, holding, threshold,
     _avail_raw = holding.get("available")
     _avail = pos_qty if _avail_raw is None else int(_avail_raw)
     qty = min(qty, pos_qty, _avail)
+    # F9: 扣除在途量，委托总量不得超可用持仓
+    qty = min(qty, max(0, min(pos_qty, _avail) - _inflight))
     if qty < 100:
         return False
 
@@ -121,6 +131,19 @@ def _sell_arbiter(context, code, sig, pos_qty, cp, now, holding, threshold,
                      side=OrderSide_Sell,
                      order_type=OrderType_Market,
                      position_effect=PositionEffect_Close)
+        # F9: 登记在途量（fill/reject 回调释放）
+        if not hasattr(context, "_inflight_sell") or context._inflight_sell is None:
+            context._inflight_sell = {}
+        context._inflight_sell[gm_sym] = _inflight + qty
+        # F9: 下单即计虚冷却——成交回调 record_trade_action 再确认；
+        # 拒单不补冷却属保守可接受（当日不再卖，次日 D1 重置）
+        try:
+            if not hasattr(context.engine, "sell_cooldown") or context.engine.sell_cooldown is None:
+                context.engine.sell_cooldown = {}
+            _cd = int(context.engine._get_params(code).get("cooldown_minutes", 30))
+        except Exception:
+            _cd = 30
+        context.engine.sell_cooldown[code] = now + timedelta(minutes=_cd)
         context.daily_sell_count[code] = sc + 1
         context.total_trade_count += 1
         new_pos = max(0, pos_qty - qty)
@@ -144,6 +167,41 @@ def _sell_arbiter(context, code, sig, pos_qty, cp, now, holding, threshold,
 
 def _raw_code(symbol: str) -> str:
     return symbol.replace("SHSE.", "").replace("SZSE.", "").replace("BJ.", "")
+
+
+def _dedup_bar(context, gm_sym: str, eob: str) -> bool:
+    """F9: 同 eob 重复 bar 判定（True=重复应跳过）。
+
+    2026-07-31 模拟盘同秒 4 次重复投递 000988 bar，导致 PANIC 连发 4 单；
+    同时防止 bar_cache 重复累积。"""
+    _eob_map = getattr(context, "_last_bar_eob", None)
+    if _eob_map is None:
+        _eob_map = {}
+        context._last_bar_eob = _eob_map
+    if _eob_map.get(gm_sym) == eob:
+        return True
+    _eob_map[gm_sym] = eob
+    return False
+
+
+def _maybe_clear_audit_log(context):
+    """D8/F10: 仅回测模式清空审计文件；模拟盘(MODE_LIVE)保留追加。
+
+    2026-07-31 上午段 backtrace 被 13:09 重启清空——回测设计误伤模拟盘审计。"""
+    try:
+        _is_live = context.mode == MODE_LIVE
+    except Exception:
+        _is_live = False
+    if _is_live:
+        return False
+    try:
+        _audit_close()  # 先释放句柄，否则 Windows 下 remove 失败
+        if os.path.exists(_AUDIT_LOG_PATH):
+            os.remove(_AUDIT_LOG_PATH)
+            return True
+    except Exception:
+        pass
+    return False
 
 
 def _build_bar_df(context, code: str, gm_symbol: str) -> pd.DataFrame:
@@ -209,6 +267,18 @@ def _get_holding(context, code: str, gm_symbol: str) -> dict:
                 # gm_pos 的 vwap 可能含前复权调整，与真实买入成本不一致
                 if mp and int(mp.get("qty", 0) or 0) > 0:
                     return mp
+            else:
+                # F11: 终端已无持仓而台账仍有余量 → 向下对账归零
+                # (2026-07-31 PANIC清仓000988后 心跳仍报300股：空仓查询返回空列表
+                # 走不到向上对账分支，台账残影永远不自愈)
+                mp = context.manual_position.get(gm_symbol)
+                if mp and int(mp.get("qty", 0) or 0) > 0:
+                    _old_q = int(mp.get("qty", 0))
+                    mp["qty"] = 0
+                    mp["available"] = 0
+                    mp["t_qty"] = 0
+                    _audit_write({"event": "reconcile_fix", "code": code, "time": str(now),
+                                  "old_qty": _old_q, "new_qty": 0})
         except Exception:
             pass
 
@@ -419,12 +489,8 @@ def _base_topup_qty(context, code, gm_sym):
 def init(context):
     global _AUDIT_RUN_ID
     _AUDIT_RUN_ID = datetime.now().strftime("%Y%m%d_%H%M%S")
-    # D8: 每次回测清空审计文件
-    try:
-        if os.path.exists(_AUDIT_LOG_PATH):
-            os.remove(_AUDIT_LOG_PATH)
-    except Exception:
-        pass
+    # D8/F10: 仅回测模式清空审计文件（模拟盘重启不丢当日段）
+    _maybe_clear_audit_log(context)
     context.bar_cache = {}
     context.executed_orders = {}
     context.engine = SignalEngine()
@@ -437,6 +503,8 @@ def init(context):
     context.latest_pre_close = {}
     context._base_ordered = set()
     context._base_settled = set()
+    context._inflight_sell = {}   # F9: 在途卖单台账 {gm_sym: qty}
+    context._last_bar_eob = {}    # F9: 重复bar去重 {gm_sym: eob}
     context.cur_date = None
     context._daily_ctx_cache_map = {}
     context.total_trade_cost = 0.0
@@ -574,9 +642,17 @@ def on_bar(context, bars):
             print(f"[ir] 大盘态势判定失败: {e}")
 
     # ── 心跳（每分钟写一次） ──
+    # F11: 心跳持仓改走 _get_holding 多源对账（含终端空仓向下同步），
+    # 不再裸读 manual_position（0731 心跳报000988=300 实际=0 事故）
     _hb_positions = {}
-    for _s, _h in context.manual_position.items():
-        _hb_positions[_s] = {"qty": _h.get("qty", 0), "cost": _h.get("cost", 0)}
+    for _hc, _hs in STOCKS.items():
+        try:
+            _h = _get_holding(context, _hc, _hs)
+        except Exception:
+            continue
+        if int(_h.get("qty", 0) or 0) > 0:
+            _hb_positions[_hs] = {"qty": int(_h.get("qty", 0)),
+                                  "cost": float(_h.get("cost", 0) or 0)}
     # ①-3: 实时读取可用现金
     _hb_cash = INITIAL_CASH
     try:
@@ -602,6 +678,11 @@ def on_bar(context, bars):
         gm_sym = str(bar["symbol"])
         code = _raw_code(gm_sym)
         if code not in STOCKS:
+            continue
+
+        # F9: 同 eob 重复 bar 去重（2026-07-31 模拟盘同秒 4 次重复投递
+        # 导致 PANIC 连发 4 单；同时防止 bar_cache 重复累积）
+        if _dedup_bar(context, gm_sym, str(bar["eob"])):
             continue
 
         # 累积 bar
@@ -847,6 +928,11 @@ def on_bar(context, bars):
                 excess = pos_qty - target
                 if excess >= 100:
                     qty = (excess // 100) * 100
+                    # F9: 在途卖单守卫（与仲裁器同口径）
+                    _tif = int(getattr(context, "_inflight_sell", {}).get(gm_sym, 0) or 0)
+                    qty = min(qty, max(0, pos_qty - _tif))
+                    if qty < 100:
+                        continue
                     try:
                         write_order(str(now), code, "SELL", qty, cp, order_id="tail")
                     except Exception:
@@ -863,6 +949,9 @@ def on_bar(context, bars):
                         except Exception:
                             pass
                         continue
+                    if not hasattr(context, "_inflight_sell") or context._inflight_sell is None:
+                        context._inflight_sell = {}
+                    context._inflight_sell[gm_sym] = _tif + qty
                     # 立即更新 manual_position 防下一分钟重复触发（仅下单成功后；拒单由 status=8 分支回滚）
                     if gm_sym in context.manual_position:
                         new_pos = pos_qty - qty
@@ -1038,6 +1127,12 @@ def on_order_status(context, order):
     if price <= 0:
         price = context.latest_pre_close.get(code, 0)
     side = order["side"]
+
+    # F9: 在途卖单释放（成交/拒单/撤单/过期均归还额度）
+    if side == 2 and status in (3, 4, 5, 6, 8, 12):
+        _ifl = getattr(context, "_inflight_sell", None)
+        if _ifl and symbol in _ifl:
+            _ifl[symbol] = max(0, int(_ifl[symbol]) - int(volume))
 
     if status == 3:  # 全部成交
         _side = "BUY" if side == 1 else "SELL"
