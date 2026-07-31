@@ -641,38 +641,43 @@ def on_bar(context, bars):
         except Exception as e:
             print(f"[ir] 大盘态势判定失败: {e}")
 
-    # ── 心跳（每分钟写一次） ──
-    # F11: 心跳持仓改走 _get_holding 多源对账（含终端空仓向下同步），
-    # 不再裸读 manual_position（0731 心跳报000988=300 实际=0 事故）
-    _hb_positions = {}
-    for _hc, _hs in STOCKS.items():
-        try:
-            _h = _get_holding(context, _hc, _hs)
-        except Exception:
-            continue
-        if int(_h.get("qty", 0) or 0) > 0:
-            _hb_positions[_hs] = {"qty": int(_h.get("qty", 0)),
-                                  "cost": float(_h.get("cost", 0) or 0)}
-    # ①-3: 实时读取可用现金
-    _hb_cash = INITIAL_CASH
+    # ── 心跳（每分钟写一次；仅模拟盘/实盘，回测跳过省I/O——纯监控产物不参与决策） ──
     try:
-        _acct = context.account()
-        _c = getattr(_acct, 'cash', None)
-        if _c is not None:
-            _c = _c() if callable(_c) else _c
-            if isinstance(_c, dict):
-                _hb_cash = float(_c.get('available', _c.get('total', INITIAL_CASH)))
-            else:
-                _hb_cash = float(_c)
+        _hb_live = context.mode == MODE_LIVE
     except Exception:
-        pass
-    write_heartbeat(
-        time_str=str(now), bar=f"{now:%H:%M}",
-        positions=_hb_positions,
-        cash=_hb_cash,
-        index_regime=context.last_index_regime,
-        index_score=context.last_index_score,
-    )
+        _hb_live = False
+    if _hb_live:
+        # F11: 心跳持仓改走 _get_holding 多源对账（含终端空仓向下同步），
+        # 不再裸读 manual_position（0731 心跳报000988=300 实际=0 事故）
+        _hb_positions = {}
+        for _hc, _hs in STOCKS.items():
+            try:
+                _h = _get_holding(context, _hc, _hs)
+            except Exception:
+                continue
+            if int(_h.get("qty", 0) or 0) > 0:
+                _hb_positions[_hs] = {"qty": int(_h.get("qty", 0)),
+                                      "cost": float(_h.get("cost", 0) or 0)}
+        # ①-3: 实时读取可用现金
+        _hb_cash = INITIAL_CASH
+        try:
+            _acct = context.account()
+            _c = getattr(_acct, 'cash', None)
+            if _c is not None:
+                _c = _c() if callable(_c) else _c
+                if isinstance(_c, dict):
+                    _hb_cash = float(_c.get('available', _c.get('total', INITIAL_CASH)))
+                else:
+                    _hb_cash = float(_c)
+        except Exception:
+            pass
+        write_heartbeat(
+            time_str=str(now), bar=f"{now:%H:%M}",
+            positions=_hb_positions,
+            cash=_hb_cash,
+            index_regime=context.last_index_regime,
+            index_score=context.last_index_score,
+        )
 
     for bar in bars:
         gm_sym = str(bar["symbol"])
@@ -1165,7 +1170,12 @@ def on_order_status(context, order):
             # 底仓确认（含F7回补单：已settled标的回补成交同样同步台账并释放_base_ordered）
             if code in context._base_ordered:
                 context._base_settled.add(code)
-                context.manual_position[symbol] = dict(context.executed_orders[symbol])
+                # F12: 同步台账时保留做T状态键——直接整体替换会清空
+                # _target_filled_l1/_trail_state/_trail_peak，导致同一持仓期内
+                # TARGET 同档重复触发、TRAIL 状态机重置（WP-B 回放包 fix3 实证）
+                _keep = {k: v for k, v in context.manual_position.get(symbol, {}).items()
+                         if k.startswith("_target_") or k.startswith("_trail_")}
+                context.manual_position[symbol] = dict(context.executed_orders[symbol], **_keep)
                 # 底仓参考量=镜像目标值（供 sizer/sell_floor/tail 使用）
                 setattr(context, f'_base_ref_{code}',
                         int(MIRROR_HOLDINGS.get(code, {}).get("qty", 0) or volume))
@@ -1188,8 +1198,10 @@ def on_order_status(context, order):
             }
             # N26+N28: 成交时写入审计(含通道信息)
             _act, _sc = getattr(context, "_pending_sell_action", {}).pop(symbol, ("", 0))
+            # WP-B回放包: 回测下用仿真时钟(context.now)，否则验收无法对齐窗口日期
+            _ts_now = str(getattr(context, "now", None) or datetime.now())
             _audit_write({"event": "sell", "code": code, "qty": volume, "price": price,
-                          "time": str(datetime.now()), "pos_after_sell": new_qty,
+                          "time": _ts_now, "pos_after_sell": new_qty,
                           "action": _act, "score": _sc})
     elif status in (4, 5, 6, 8, 12):  # 拒单/撤单/待撤/已拒绝(8)/已过期(12) —— F2修复: 2026-07-28前漏掉8导致所有拒单静默
         _rej_detail = ""
@@ -1216,7 +1228,8 @@ def on_order_status(context, order):
             mp["qty"] = mp.get("qty", 0) + volume
             mp["available"] = mp.get("available", 0) + volume
             mp["t_qty"] = mp.get("t_qty", 0) + volume
-            _audit_write({"event": "sell_rollback", "code": code, "qty": volume, "time": str(datetime.now())})
+            _audit_write({"event": "sell_rollback", "code": code, "qty": volume,
+                          "time": str(getattr(context, "now", None) or datetime.now())})
         try:
             _r_code = _raw_code(symbol)
             _r_side = "BUY" if side == 1 else "SELL"

@@ -157,6 +157,28 @@ cleared = main._maybe_clear_audit_log(SimpleNamespace(mode=None))
 check("T11b 回测模式→审计文件清空",
       cleared is True and not os.path.exists(main._AUDIT_LOG_PATH))
 
+# ── T12: F12 底仓/回补成交同步台账时保留做T状态键 ──
+ctx12 = SimpleNamespace(
+    manual_position={"SZSE.000988": {"name": "华工科技", "qty": 600, "available": 600, "t_qty": 600,
+                                     "cost": 150.0, "_target_filled_l1": True,
+                                     "_trail_state": "ARMED", "_trail_peak": 175.0}},
+    executed_orders={"SZSE.000988": {"name": "华工科技", "qty": 600, "available": 600, "t_qty": 600, "cost": 150.0}},
+    latest_pre_close={"000988": 150.0},
+    _base_ordered={"000988"},
+    _base_settled={"000988"},
+    engine=SimpleNamespace(record_trade_action=lambda *a, **k: None),
+    rejected_order_count=0,
+    mode=None,
+)
+main.on_order_status(ctx12, {"symbol": "SZSE.000988", "status": 3, "volume": 200,
+                             "side": 1, "price": 160.0, "filled_vwap": 160.0})
+mp12 = ctx12.manual_position["SZSE.000988"]
+check("T12a 回补成交后台账量更新(600+200=800)", mp12.get("qty") == 800,
+      f"qty={mp12.get('qty')}")
+check("T12b _target_filled_l1 不被清空", mp12.get("_target_filled_l1") is True)
+check("T12c _trail_state/_trail_peak 不被清空",
+      mp12.get("_trail_state") == "ARMED" and mp12.get("_trail_peak") == 175.0)
+
 # ── 汇总 ──
 passed = sum(1 for _, ok, _ in results if ok)
 print(f"\n===== {passed}/{len(results)} PASS =====")
