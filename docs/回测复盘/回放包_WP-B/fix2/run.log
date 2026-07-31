@@ -1,0 +1,206 @@
+[replay] 场景=fix2 窗口=2026-04-26 08:00:00~2026-07-24 16:00:00 资金=200000 标的=['000988']
+[replay] 产物目录=C:\Users\Lenovo\.goldminer3\projects\e8bb1f4d-87ce-11f1-97f7-98fa9b8df5e7\docs\回测复盘\回放包_WP-B\fix2
+----------------------------------------
+python sdk version: 3.0.186
+c sdk version: 3.8.19
+----------------------------------------
+
+回测开始，正下载数据到本地...
+
+提示：
+1. 如果请求数据量较大，首次准备数据可能需要较长时间，请耐心等待。
+2. 可预先下载数据以加速回测，功能入口：掘金终端->量化研究->数据管理
+3. 相关指引：https://www.myquant.cn/docs2/operatingInstruction/study/数据管理.html
+
+[init] 大盘日线已缓存: 900 行, 2022-11-15 ~ 2026-07-31
+[init] 事件桥: C:\Users\Lenovo\.goldminer3\projects\e8bb1f4d-87ce-11f1-97f7-98fa9b8df5e7\docs\回测复盘\回放包_WP-B\fix2
+[init] 策略初始化完成: 1 只标的
+[ir] 2026-04-27 regime=range score=11.7
+[D6] amount/volume=116.70 close=117.30 → VWAP单位比=0.9949
+[09:31:00] BASE 000988 华工科技 下单 800股@117.30
+[BASE] 000988 底仓成交 800股@117.32
+[ir] 2026-04-28 regime=range score=11.7
+[ir] 2026-04-29 regime=range score=12.2
+[10:06:00] BUY 000988 300@115.66 score=53 regime=range
+[10:15:00] SELL 000988 300@117.20 score=78 regime=range
+[10:36:00] BUY 000988 100@118.12 score=45 regime=range
+[10:40:00] SELL 000988 100@118.84 score=78 regime=range
+[ir] 2026-04-30 regime=range score=12.7
+[09:49:00] BUY 000988 100@115.97 score=44 regime=range
+[11:10:00] BUY 000988 100@116.87 score=44 regime=range
+[14:50:00] TAIL 000988 尾盘归位 200股 (pos=1000→800 target=800)
+[ir] 2026-05-06 regime=uni_up score=12.7
+[09:42:00] BUY 000988 100@123.99 score=44 regime=uni_up
+[10:07:00] BUY 000988 100@123.72 score=45 regime=uni_up
+[14:50:00] TAIL 000988 尾盘归位 200股 (pos=1000→800 target=800)
+[ir] 2026-05-07 regime=range score=12.7
+[09:39:00] BUY 000988 100@124.92 score=43 regime=range
+[10:06:00] BUY 000988 100@125.81 score=44 regime=range
+[11:20:00] SELL 000988 200@131.81 score=75 regime=range
+[ir] 2026-05-08 regime=range score=12.7
+[13:21:00] SELL 000988 200@132.31 score=74 regime=range
+[ir] 2026-05-11 regime=uni_up score=12.7
+[09:31:00] BASE 000988 华工科技 下单 200股@140.27
+[BASE] 000988 底仓成交 200股@140.28
+[14:52:00] SELL 000988 100@147.48 score=67 regime=uni_up
+[ir] 2026-05-12 regime=range score=12.7
+[09:31:00] BASE 000988 华工科技 下单 100股@146.47
+[BASE] 000988 底仓成交 100股@146.48
+[ir] 2026-05-13 regime=range score=12.2
+[09:34:00] SELL 000988 200@138.65 score=80 regime=range
+[ir] 2026-05-14 regime=uni_down score=11.7
+[ir] 2026-05-15 regime=uni_down score=11.7
+[10:56:00] SELL 000988 100@137.54 score=67 regime=uni_down
+[ir] 2026-05-18 regime=range score=11.7
+[09:31:00] BASE 000988 华工科技 下单 300股@139.62
+[BASE] 000988 底仓成交 300股@139.63
+[09:39:00] SELL 000988 200@144.65 score=70 regime=range
+[ir] 2026-05-19 regime=range score=-0.4
+[09:31:00] BASE 000988 华工科技 下单 200股@153.11
+[BASE] 000988 底仓成交 200股@153.12
+[13:22:00] SELL 000988 100@154.79 score=63 regime=range
+[ir] 2026-05-20 regime=range score=0.1
+[09:31:00] BASE 000988 华工科技 下单 100股@162.28
+[BASE] 000988 底仓成交 100股@162.30
+[10:09:00] SELL 000988 100@169.21 score=65 regime=range
+[ir] 2026-05-21 regime=uni_down score=-2.7
+[11:10:00] SELL 000988 200@163.53 score=72 regime=uni_down
+[ir] 2026-05-22 regime=range score=-2.7
+[09:31:00] BASE 000988 华工科技 下单 300股@156.37
+[BASE] 000988 底仓成交 300股@156.39
+[ir] 2026-05-25 regime=range score=-3.9
+[14:02:00] SELL 000988 200@167.82 score=70 regime=range
+[ir] 2026-05-26 regime=range score=-4.2
+[09:31:00] BASE 000988 华工科技 下单 200股@170.60
+[BASE] 000988 底仓成交 200股@170.61
+[ir] 2026-05-27 regime=uni_down score=-5.0
+[ir] 2026-05-28 regime=range score=-7.2
+[ir] 2026-05-29 regime=range score=-7.3
+[ir] 2026-06-01 regime=range score=-8.5
+[09:54:00] BUY 000988 100@151.75 score=46 regime=range
+[09:55:00] SELL 000988 100@152.86 score=78 regime=range
+[10:31:00] BUY 000988 300@150.72 score=50 regime=range
+[14:50:00] TAIL 000988 尾盘归位 300股 (pos=1100→800 target=800)
+[ir] 2026-06-02 regime=range score=-8.5
+[ir] 2026-06-03 regime=range score=-8.1
+[09:36:00] BUY 000988 300@157.02 score=54 regime=range
+[09:37:00] SELL 000988 300@157.70 score=78 regime=range
+[10:01:00] BUY 000988 300@158.73 score=55 regime=range
+[10:02:00] SELL 000988 300@158.73 score=78 regime=range
+[ir] 2026-06-04 regime=range score=-9.5
+[09:45:00] BUY 000988 100@154.25 score=45 regime=range
+[10:11:00] BUY 000988 200@154.69 score=51 regime=range
+[14:08:00] SELL 000988 200@159.85 score=67 regime=range
+[14:50:00] TAIL 000988 尾盘归位 100股 (pos=900→800 target=800)
+[ir] 2026-06-05 regime=range score=-9.4
+[09:37:00] BUY 000988 200@161.08 score=53 regime=range
+[10:04:00] BUY 000988 100@164.73 score=47 regime=range
+[14:50:00] TAIL 000988 尾盘归位 300股 (pos=1100→800 target=800)
+[ir] 2026-06-08 regime=uni_down score=-9.2
+[ir] 2026-06-09 regime=uni_up score=-9.0
+[ir] 2026-06-10 regime=range score=-8.8
+[09:40:00] BUY 000988 200@151.10 score=48 regime=range
+[13:40:00] BUY 000988 100@147.83 score=46 regime=range
+[14:50:00] TAIL 000988 尾盘归位 300股 (pos=1100→800 target=800)
+[ir] 2026-06-11 regime=range score=-8.8
+[ir] 2026-06-12 regime=uni_up score=-7.8
+[ir] 2026-06-15 regime=uni_up score=-7.5
+[10:36:00] SELL 000988 100@157.94 score=65 regime=uni_up
+[ir] 2026-06-16 regime=range score=4.6
+[09:31:00] BASE 000988 华工科技 下单 100股@160.35
+[BASE] 000988 底仓成交 100股@160.37
+[09:58:00] BUY 000988 200@161.92 score=52 regime=range
+[10:46:00] BUY 000988 100@162.24 score=45 regime=range
+[13:08:00] SELL 000988 200@162.21 score=64 regime=range
+[14:50:00] TAIL 000988 尾盘归位 100股 (pos=900→800 target=800)
+[ir] 2026-06-17 regime=range score=4.6
+[09:44:00] BUY 000988 200@165.60 score=51 regime=range
+[09:48:00] SELL 000988 200@170.00 score=64 regime=range
+[10:09:00] BUY 000988 100@168.78 score=48 regime=range
+[14:50:00] TAIL 000988 尾盘归位 100股 (pos=900→800 target=800)
+[ir] 2026-06-18 regime=range score=6.2
+[13:30:00] SELL 000988 100@179.93 score=67 regime=range
+[ir] 2026-06-22 regime=uni_up score=6.2
+[09:31:00] BASE 000988 华工科技 下单 100股@179.50
+[BASE] 000988 底仓成交 100股@179.52
+[ir] 2026-06-23 regime=uni_down score=7.5
+[10:33:00] SELL 000988 200@169.28 score=70 regime=uni_down
+[ir] 2026-06-24 regime=range score=7.3
+[09:31:00] BASE 000988 华工科技 下单 200股@164.66
+[BASE] 000988 底仓成交 200股@164.68
+[09:57:00] BUY 000988 100@166.13 score=44 regime=range
+[09:58:00] SELL 000988 100@166.00 score=66 regime=range
+[10:23:00] BUY 000988 100@166.17 score=44 regime=range
+[14:50:00] TAIL 000988 尾盘归位 100股 (pos=900→800 target=800)
+[ir] 2026-06-25 regime=range score=7.8
+[09:36:00] BUY 000988 100@167.13 score=45 regime=range
+[09:48:00] SELL 000988 200@170.98 score=72 regime=range
+[10:07:00] BUY 000988 100@173.48 score=44 regime=range
+[ir] 2026-06-26 regime=uni_down score=8.7
+[ir] 2026-06-29 regime=uni_up score=-1.2
+[11:05:00] BUY 000988 100@174.88 score=45 regime=uni_up
+[11:06:00] SELL 000988 100@175.66 score=78 regime=uni_up
+[11:30:00] BUY 000988 300@175.11 score=63 regime=uni_up
+[13:01:00] SELL 000988 300@175.10 score=78 regime=uni_up
+[ir] 2026-06-30 regime=range score=-0.9
+[10:27:00] SELL 000988 200@184.06 score=68 regime=range
+[ir] 2026-07-01 regime=range score=-2.6
+[09:31:00] BASE 000988 华工科技 下单 200股@184.97
+[BASE] 000988 底仓成交 200股@184.99
+[ir] 2026-07-02 regime=uni_down score=-4.0
+[ir] 2026-07-03 regime=range score=-6.2
+[09:33:00] PANIC_SELL 000988 800@151.18 profit_pct=-12.51%
+[09:33:00] SELL 000988 200@151.18 score=75 regime=range
+[ir] 2026-07-06 regime=range score=-6.3
+[09:31:00] BASE 000988 华工科技 TREND_BREAKDOWN→延迟建仓
+[09:35:00] PANIC_SELL 000988 600@151.66 profit_pct=-12.24%
+[09:35:00] SELL 000988 100@151.66 score=75 regime=range
+[10:02:00] PANIC_SELL 000988 500@152.05 profit_pct=-12.01%
+[10:02:00] SELL 000988 200@152.05 score=75 regime=range
+[10:27:00] PANIC_SELL 000988 300@149.43 profit_pct=-13.53%
+[10:27:00] SELL 000988 100@149.43 score=75 regime=range
+[10:52:00] PANIC_SELL 000988 200@146.06 profit_pct=-15.48%
+[10:52:00] SELL 000988 100@146.06 score=75 regime=range
+[11:17:00] PANIC_SELL 000988 100@148.90 profit_pct=-13.83%
+[11:17:00] SELL 000988 100@148.90 score=75 regime=range
+[ir] 2026-07-07 regime=uni_down score=-6.3
+[ir] 2026-07-08 regime=range score=-8.2
+[09:31:00] BASE 000988 华工科技 TREND_BREAKDOWN→延迟建仓
+[ir] 2026-07-09 regime=uni_up score=-7.6
+[09:31:00] BASE 000988 华工科技 TREND_BREAKDOWN→延迟建仓
+[ir] 2026-07-10 regime=uni_down score=-9.0
+[ir] 2026-07-13 regime=uni_down score=-8.9
+[ir] 2026-07-14 regime=uni_up score=-8.7
+[09:31:00] BASE 000988 华工科技 TREND_BREAKDOWN→延迟建仓
+[ir] 2026-07-15 regime=range score=-9.5
+[09:31:00] BASE 000988 华工科技 TREND_BREAKDOWN→延迟建仓
+[ir] 2026-07-16 regime=uni_down score=-9.3
+[ir] 2026-07-17 regime=uni_down score=-9.1
+[ir] 2026-07-20 regime=range score=-9.0
+[09:31:00] BASE 000988 华工科技 TREND_BREAKDOWN→延迟建仓
+[ir] 2026-07-21 regime=uni_up score=-8.3
+[09:31:00] BASE 000988 华工科技 TREND_BREAKDOWN→延迟建仓
+[ir] 2026-07-22 regime=range score=-7.8
+[09:31:00] BASE 000988 华工科技 TREND_BREAKDOWN→延迟建仓
+[ir] 2026-07-23 regime=range score=-7.8
+[09:31:00] BASE 000988 华工科技 TREND_BREAKDOWN→延迟建仓
+[ir] 2026-07-24 regime=uni_down score=-8.8
+**************************************************
+回测已完成
+  account_id: e8bb1f4d-87ce-11f1-97f7-98fa9b8df5e7
+  calmar_ratio: 4.910393998626715
+  close_count: 41
+  created_at: 2026-07-31 18:20:09.325171+08:00
+  lose_count: 8
+  max_drawdown: 0.10864405318486085
+  open_count: 40
+  pnl_ratio: 0.1300826698639523
+  pnl_ratio_annual: 0.5334851067454224
+  risk_ratio: 0.0
+  sharp_ratio: 1.237546803778223
+  updated_at: 2026-07-31 18:29:02.867840+08:00
+  win_count: 33
+  win_ratio: 0.8048780487804879
+  手动统计: 成交笔数=69
+  拒单笔数=0
+**************************************************

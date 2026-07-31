@@ -1,0 +1,869 @@
+{"event": "order", "time": "2026-04-24 09:31:00+08:00", "code": "000988", "side": "BUY", "qty": 800, "price": 116.4662, "order_id": "base", "order_type": "MKT", "_ts": 1785484393.7494965}
+{"event": "fill", "time": "2026-07-31 15:53:13.785248", "code": "000988", "side": "BUY", "qty": 800, "price": 116.47786366271973, "order_id": "", "pos_after": 800, "_ts": 1785484393.7852488}
+{"event": "signal", "time": "2026-04-28 09:37:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 48.1, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785484415.9065611}
+{"event": "fill", "time": "2026-07-31 15:53:35.910559", "code": "000988", "side": "BUY", "qty": 300, "price": 115.59923576965332, "order_id": "", "pos_after": 1100, "_ts": 1785484415.9105594}
+{"event": "signal", "time": "2026-04-28 10:17:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 46.7, "reasons": ["评分达标"], "pos_qty": 1100, "_ts": 1785484417.8154852}
+{"event": "fill", "time": "2026-07-31 15:53:37.819483", "code": "000988", "side": "BUY", "qty": 100, "price": 117.66600126342773, "order_id": "", "pos_after": 1200, "_ts": 1785484417.819484}
+{"event": "signal", "time": "2026-04-28 10:21:00+08:00", "code": "000988", "action": "SELL_HIGH", "score": 66.8, "reasons": ["评分达标"], "pos_qty": 1200, "_ts": 1785484418.011658}
+{"event": "order", "time": "2026-04-28 10:21:00+08:00", "code": "000988", "side": "SELL", "qty": 200, "price": 117.6442, "order_id": "", "order_type": "MKT", "_ts": 1785484418.013601}
+{"event": "fill", "time": "2026-07-31 15:53:38.017635", "code": "000988", "side": "SELL", "qty": 200, "price": 117.6324845375061, "order_id": "", "pos_after": 1200, "_ts": 1785484418.017635}
+{"event": "order", "time": "2026-04-28 14:50:00+08:00", "code": "000988", "side": "SELL", "qty": 200, "price": 115.398, "order_id": "tail", "order_type": "MKT", "_ts": 1785484426.1153142}
+{"event": "fill", "time": "2026-07-31 15:53:46.118297", "code": "000988", "side": "SELL", "qty": 200, "price": 115.38644756698609, "order_id": "", "pos_after": 1000, "_ts": 1785484426.118297}
+{"event": "signal", "time": "2026-04-29 10:06:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 53.2, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785484428.3375525}
+{"event": "fill", "time": "2026-07-31 15:53:48.340583", "code": "000988", "side": "BUY", "qty": 300, "price": 115.66912038192748, "order_id": "", "pos_after": 1100, "_ts": 1785484428.3405833}
+{"event": "signal", "time": "2026-04-29 10:15:00+08:00", "code": "000988", "action": "TREND_EXIT", "score": 78.0, "reasons": ["趋势破坏止盈: profit=0.9% trend=TREND_DOWN"], "pos_qty": 1100, "_ts": 1785484428.741875}
+{"event": "order", "time": "2026-04-29 10:15:00+08:00", "code": "000988", "side": "SELL", "qty": 300, "price": 117.205, "order_id": "", "order_type": "MKT", "_ts": 1785484428.7428453}
+{"event": "fill", "time": "2026-07-31 15:53:48.746871", "code": "000988", "side": "SELL", "qty": 300, "price": 117.1932660736084, "order_id": "", "pos_after": 1100, "_ts": 1785484428.746871}
+{"event": "signal", "time": "2026-04-29 10:36:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 45.2, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785484429.6999362}
+{"event": "fill", "time": "2026-07-31 15:53:49.703971", "code": "000988", "side": "BUY", "qty": 100, "price": 118.13526357803345, "order_id": "", "pos_after": 900, "_ts": 1785484429.7039714}
+{"event": "signal", "time": "2026-04-29 10:40:00+08:00", "code": "000988", "action": "TREND_EXIT", "score": 78.0, "reasons": ["趋势破坏止盈: profit=2.1% trend=TREND_DOWN"], "pos_qty": 900, "_ts": 1785484429.8803265}
+{"event": "order", "time": "2026-04-29 10:40:00+08:00", "code": "000988", "side": "SELL", "qty": 300, "price": 118.8423, "order_id": "", "order_type": "MKT", "_ts": 1785484429.8813264}
+{"event": "fill", "time": "2026-07-31 15:53:49.884296", "code": "000988", "side": "SELL", "qty": 300, "price": 118.8303780418396, "order_id": "", "pos_after": 900, "_ts": 1785484429.8842967}
+{"event": "order", "time": "2026-04-30 09:31:00+08:00", "code": "000988", "side": "BUY", "qty": 200, "price": 120.2799, "order_id": "base", "order_type": "MKT", "_ts": 1785484438.3415644}
+{"event": "fill", "time": "2026-07-31 15:53:58.347101", "code": "000988", "side": "BUY", "qty": 200, "price": 120.2918970664978, "order_id": "", "pos_after": 800, "_ts": 1785484438.3471017}
+{"event": "signal", "time": "2026-04-30 11:10:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 43.6, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785484443.2584696}
+{"event": "fill", "time": "2026-07-31 15:54:03.262472", "code": "000988", "side": "BUY", "qty": 100, "price": 116.87723373489379, "order_id": "", "pos_after": 900, "_ts": 1785484443.2624724}
+{"event": "signal", "time": "2026-04-30 13:04:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 50.2, "reasons": ["评分达标"], "pos_qty": 900, "_ts": 1785484444.4493146}
+{"event": "fill", "time": "2026-07-31 15:54:04.453341", "code": "000988", "side": "BUY", "qty": 300, "price": 118.01545484542847, "order_id": "", "pos_after": 1200, "_ts": 1785484444.453342}
+{"event": "order", "time": "2026-04-30 14:50:00+08:00", "code": "000988", "side": "SELL", "qty": 400, "price": 119.3115, "order_id": "tail", "order_type": "MKT", "_ts": 1785484449.9120333}
+{"event": "fill", "time": "2026-07-31 15:54:09.917144", "code": "000988", "side": "SELL", "qty": 400, "price": 119.2995465133667, "order_id": "", "pos_after": 1200, "_ts": 1785484449.9171445}
+{"event": "signal", "time": "2026-05-06 09:42:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 44.5, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785484451.170953}
+{"event": "fill", "time": "2026-07-31 15:54:11.175992", "code": "000988", "side": "BUY", "qty": 100, "price": 124.00608222961425, "order_id": "", "pos_after": 900, "_ts": 1785484451.175992}
+{"event": "signal", "time": "2026-05-06 10:07:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 44.9, "reasons": ["评分达标"], "pos_qty": 900, "_ts": 1785484452.472509}
+{"event": "fill", "time": "2026-07-31 15:54:12.477551", "code": "000988", "side": "BUY", "qty": 100, "price": 123.73650876617431, "order_id": "", "pos_after": 1000, "_ts": 1785484452.4775512}
+{"event": "order", "time": "2026-05-06 14:50:00+08:00", "code": "000988", "side": "SELL", "qty": 200, "price": 124.7424, "order_id": "tail", "order_type": "MKT", "_ts": 1785484462.7072847}
+{"event": "fill", "time": "2026-07-31 15:54:22.712266", "code": "000988", "side": "SELL", "qty": 200, "price": 124.72996502609253, "order_id": "", "pos_after": 1000, "_ts": 1785484462.7122662}
+{"event": "signal", "time": "2026-05-07 09:39:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 43.3, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785484463.879181}
+{"event": "fill", "time": "2026-07-31 15:54:23.883175", "code": "000988", "side": "BUY", "qty": 100, "price": 124.93463424301147, "order_id": "", "pos_after": 900, "_ts": 1785484463.8831756}
+{"event": "signal", "time": "2026-05-07 10:06:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 43.5, "reasons": ["评分达标"], "pos_qty": 900, "_ts": 1785484465.268974}
+{"event": "fill", "time": "2026-07-31 15:54:25.271970", "code": "000988", "side": "BUY", "qty": 100, "price": 125.82324238204956, "order_id": "", "pos_after": 1000, "_ts": 1785484465.2719703}
+{"event": "signal", "time": "2026-05-07 11:23:00+08:00", "code": "000988", "action": "TARGET_SELL", "score": 75.0, "reasons": ["目标止盈L1: profit=10.2%"], "pos_qty": 1000, "_ts": 1785484469.1905792}
+{"event": "order", "time": "2026-05-07 11:23:00+08:00", "code": "000988", "side": "SELL", "qty": 200, "price": 132.2699, "order_id": "", "order_type": "MKT", "_ts": 1785484469.1915514}
+{"event": "fill", "time": "2026-07-31 15:54:29.195549", "code": "000988", "side": "SELL", "qty": 200, "price": 132.25670098571777, "order_id": "", "pos_after": 1000, "_ts": 1785484469.1955492}
+{"event": "signal", "time": "2026-05-08 13:21:00+08:00", "code": "000988", "action": "SELL_HIGH", "score": 74.5, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785484482.5136845}
+{"event": "order", "time": "2026-05-08 13:21:00+08:00", "code": "000988", "side": "SELL", "qty": 200, "price": 132.3098, "order_id": "", "order_type": "MKT", "_ts": 1785484482.5146391}
+{"event": "fill", "time": "2026-07-31 15:54:42.517679", "code": "000988", "side": "SELL", "qty": 200, "price": 132.29661398620607, "order_id": "", "pos_after": 800, "_ts": 1785484482.51768}
+{"event": "order", "time": "2026-05-11 09:31:00+08:00", "code": "000988", "side": "BUY", "qty": 200, "price": 140.2666, "order_id": "base", "order_type": "MKT", "_ts": 1785484487.153257}
+{"event": "fill", "time": "2026-07-31 15:54:47.160539", "code": "000988", "side": "BUY", "qty": 200, "price": 140.2806434829712, "order_id": "", "pos_after": 800, "_ts": 1785484487.1605396}
+{"event": "signal", "time": "2026-05-11 09:32:00+08:00", "code": "000988", "action": "TARGET_SELL", "score": 75.0, "reasons": ["目标止盈L1: profit=13.0%"], "pos_qty": 800, "_ts": 1785484487.2096891}
+{"event": "order", "time": "2026-05-11 09:32:00+08:00", "code": "000988", "side": "SELL", "qty": 200, "price": 141.3848, "order_id": "", "order_type": "MKT", "_ts": 1785484487.2107315}
+{"event": "fill", "time": "2026-07-31 15:54:47.214732", "code": "000988", "side": "SELL", "qty": 200, "price": 141.37061189117432, "order_id": "", "pos_after": 800, "_ts": 1785484487.2147326}
+{"event": "order", "time": "2026-05-12 09:31:00+08:00", "code": "000988", "side": "BUY", "qty": 200, "price": 146.4663, "order_id": "base", "order_type": "MKT", "_ts": 1785484498.0644004}
+{"event": "fill", "time": "2026-07-31 15:54:58.068767", "code": "000988", "side": "BUY", "qty": 200, "price": 146.48095522460937, "order_id": "", "pos_after": 800, "_ts": 1785484498.068768}
+{"event": "signal", "time": "2026-05-12 09:32:00+08:00", "code": "000988", "action": "TARGET_SELL", "score": 75.0, "reasons": ["目标止盈L1: profit=13.0%"], "pos_qty": 800, "_ts": 1785484498.1135547}
+{"event": "order", "time": "2026-05-12 09:32:00+08:00", "code": "000988", "side": "SELL", "qty": 200, "price": 147.3848, "order_id": "", "order_type": "MKT", "_ts": 1785484498.1135547}
+{"event": "fill", "time": "2026-07-31 15:54:58.116555", "code": "000988", "side": "SELL", "qty": 200, "price": 147.37002714843752, "order_id": "", "pos_after": 800, "_ts": 1785484498.1165555}
+{"event": "order", "time": "2026-05-13 09:31:00+08:00", "code": "000988", "side": "BUY", "qty": 200, "price": 139.2882, "order_id": "base", "order_type": "MKT", "_ts": 1785484508.393298}
+{"event": "fill", "time": "2026-07-31 15:55:08.397289", "code": "000988", "side": "BUY", "qty": 200, "price": 139.30216734924315, "order_id": "", "pos_after": 800, "_ts": 1785484508.3972895}
+{"event": "signal", "time": "2026-05-13 14:38:00+08:00", "code": "000988", "action": "SELL_HIGH", "score": 65.0, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785484517.949927}
+{"event": "order", "time": "2026-05-13 14:38:00+08:00", "code": "000988", "side": "SELL", "qty": 100, "price": 142.443, "order_id": "", "order_type": "MKT", "_ts": 1785484517.950933}
+{"event": "fill", "time": "2026-07-31 15:55:17.953893", "code": "000988", "side": "SELL", "qty": 100, "price": 142.4287336074829, "order_id": "", "pos_after": 800, "_ts": 1785484517.9538937}
+{"event": "signal", "time": "2026-05-15 09:54:00+08:00", "code": "000988", "action": "TRAIL_SELL", "score": 80.0, "reasons": ["移动止盈: peak=145.75 dd=8.7%"], "pos_qty": 700, "_ts": 1785484530.2661107}
+{"event": "order", "time": "2026-05-15 09:54:00+08:00", "code": "000988", "side": "SELL", "qty": 200, "price": 133.1385, "order_id": "", "order_type": "MKT", "_ts": 1785484530.267119}
+{"event": "fill", "time": "2026-07-31 15:55:30.270077", "code": "000988", "side": "SELL", "qty": 200, "price": 133.12515966339112, "order_id": "", "pos_after": 700, "_ts": 1785484530.2700775}
+{"event": "order", "time": "2026-05-18 09:31:00+08:00", "code": "000988", "side": "BUY", "qty": 300, "price": 139.6177, "order_id": "base", "order_type": "MKT", "_ts": 1785484539.3639555}
+{"event": "fill", "time": "2026-07-31 15:55:39.366962", "code": "000988", "side": "BUY", "qty": 300, "price": 139.63165280914308, "order_id": "", "pos_after": 800, "_ts": 1785484539.3669622}
+{"event": "signal", "time": "2026-05-18 09:39:00+08:00", "code": "000988", "action": "SELL_HIGH", "score": 69.8, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785484539.7072773}
+{"event": "order", "time": "2026-05-18 09:39:00+08:00", "code": "000988", "side": "SELL", "qty": 200, "price": 144.6493, "order_id": "", "order_type": "MKT", "_ts": 1785484539.7078772}
+{"event": "fill", "time": "2026-07-31 15:55:39.710874", "code": "000988", "side": "SELL", "qty": 200, "price": 144.63485757751465, "order_id": "", "pos_after": 800, "_ts": 1785484539.7108746}
+{"event": "order", "time": "2026-05-19 09:31:00+08:00", "code": "000988", "side": "BUY", "qty": 200, "price": 153.1053, "order_id": "base", "order_type": "MKT", "_ts": 1785484549.8172982}
+{"event": "fill", "time": "2026-07-31 15:55:49.822394", "code": "000988", "side": "BUY", "qty": 200, "price": 153.1205656524658, "order_id": "", "pos_after": 800, "_ts": 1785484549.8223946}
+{"event": "signal", "time": "2026-05-19 09:35:00+08:00", "code": "000988", "action": "TARGET_SELL", "score": 75.0, "reasons": ["目标止盈L1: profit=10.2%"], "pos_qty": 800, "_ts": 1785484550.0011852}
+{"event": "order", "time": "2026-05-19 09:35:00+08:00", "code": "000988", "side": "SELL", "qty": 200, "price": 154.0038, "order_id": "", "order_type": "MKT", "_ts": 1785484550.0011852}
+{"event": "fill", "time": "2026-07-31 15:55:50.004184", "code": "000988", "side": "SELL", "qty": 200, "price": 153.98835328674318, "order_id": "", "pos_after": 800, "_ts": 1785484550.004184}
+{"event": "order", "time": "2026-05-20 09:31:00+08:00", "code": "000988", "side": "BUY", "qty": 200, "price": 162.28, "order_id": "base", "order_type": "MKT", "_ts": 1785484561.460093}
+{"event": "fill", "time": "2026-07-31 15:56:01.464052", "code": "000988", "side": "BUY", "qty": 200, "price": 162.29621151885985, "order_id": "", "pos_after": 800, "_ts": 1785484561.4640524}
+{"event": "signal", "time": "2026-05-20 09:32:00+08:00", "code": "000988", "action": "TARGET_SELL", "score": 75.0, "reasons": ["目标止盈L1: profit=12.8%"], "pos_qty": 800, "_ts": 1785484561.5112972}
+{"event": "order", "time": "2026-05-20 09:32:00+08:00", "code": "000988", "side": "SELL", "qty": 200, "price": 164.0271, "order_id": "", "order_type": "MKT", "_ts": 1785484561.5122962}
+{"event": "fill", "time": "2026-07-31 15:56:01.515290", "code": "000988", "side": "SELL", "qty": 200, "price": 164.01068164215087, "order_id": "", "pos_after": 800, "_ts": 1785484561.5152907}
+{"event": "signal", "time": "2026-05-21 11:10:00+08:00", "code": "000988", "action": "SELL_HIGH", "score": 71.7, "reasons": ["评分达标"], "pos_qty": 600, "_ts": 1785484579.1990335}
+{"event": "order", "time": "2026-05-21 11:10:00+08:00", "code": "000988", "side": "SELL", "qty": 100, "price": 163.5279, "order_id": "", "order_type": "MKT", "_ts": 1785484579.200033}
+{"event": "fill", "time": "2026-07-31 15:56:19.204028", "code": "000988", "side": "SELL", "qty": 100, "price": 163.5115555343628, "order_id": "", "pos_after": 600, "_ts": 1785484579.2040286}
+{"event": "signal", "time": "2026-05-21 14:14:00+08:00", "code": "000988", "action": "TRAIL_SELL", "score": 80.0, "reasons": ["移动止盈: peak=170.19 dd=8.1%"], "pos_qty": 500, "_ts": 1785484584.162782}
+{"event": "order", "time": "2026-05-21 14:14:00+08:00", "code": "000988", "side": "SELL", "qty": 200, "price": 156.4097, "order_id": "", "order_type": "MKT", "_ts": 1785484584.1638026}
+{"event": "fill", "time": "2026-07-31 15:56:24.167792", "code": "000988", "side": "SELL", "qty": 200, "price": 156.39410328826904, "order_id": "", "pos_after": 500, "_ts": 1785484584.1677923}
+{"event": "order", "time": "2026-05-22 09:31:00+08:00", "code": "000988", "side": "BUY", "qty": 500, "price": 156.3698, "order_id": "base", "order_type": "MKT", "_ts": 1785484586.7838142}
+{"event": "fill", "time": "2026-07-31 15:56:26.787776", "code": "000988", "side": "BUY", "qty": 500, "price": 156.38546425323486, "order_id": "", "pos_after": 800, "_ts": 1785484586.787777}
+{"event": "signal", "time": "2026-05-25 14:01:00+08:00", "code": "000988", "action": "TARGET_SELL", "score": 75.0, "reasons": ["目标止盈L1: profit=10.1%"], "pos_qty": 800, "_ts": 1785484612.4929137}
+{"event": "order", "time": "2026-05-25 14:01:00+08:00", "code": "000988", "side": "SELL", "qty": 200, "price": 167.6411, "order_id": "", "order_type": "MKT", "_ts": 1785484612.4939158}
+{"event": "fill", "time": "2026-07-31 15:56:52.496875", "code": "000988", "side": "SELL", "qty": 200, "price": 167.62430339813233, "order_id": "", "pos_after": 800, "_ts": 1785484612.4977186}
+{"event": "order", "time": "2026-05-26 09:31:00+08:00", "code": "000988", "side": "BUY", "qty": 200, "price": 170.5961, "order_id": "base", "order_type": "MKT", "_ts": 1785484616.3550832}
+{"event": "fill", "time": "2026-07-31 15:56:56.360602", "code": "000988", "side": "BUY", "qty": 200, "price": 170.6132052444458, "order_id": "", "pos_after": 800, "_ts": 1785484616.3606024}
+{"event": "signal", "time": "2026-05-26 09:32:00+08:00", "code": "000988", "action": "TARGET_SELL", "score": 75.0, "reasons": ["目标止盈L1: profit=10.3%"], "pos_qty": 800, "_ts": 1785484616.4331267}
+{"event": "order", "time": "2026-05-26 09:32:00+08:00", "code": "000988", "side": "SELL", "qty": 200, "price": 172.9422, "order_id": "", "order_type": "MKT", "_ts": 1785484616.435122}
+{"event": "fill", "time": "2026-07-31 15:56:56.439125", "code": "000988", "side": "SELL", "qty": 200, "price": 172.9249512588501, "order_id": "", "pos_after": 800, "_ts": 1785484616.4391258}
+{"event": "signal", "time": "2026-05-27 13:42:00+08:00", "code": "000988", "action": "TRAIL_SELL", "score": 80.0, "reasons": ["移动止盈: peak=175.24 dd=8.2%"], "pos_qty": 600, "_ts": 1785484639.3301117}
+{"event": "order", "time": "2026-05-27 13:42:00+08:00", "code": "000988", "side": "SELL", "qty": 100, "price": 160.9322, "order_id": "", "order_type": "MKT", "_ts": 1785484639.331114}
+{"event": "fill", "time": "2026-07-31 15:57:19.334120", "code": "000988", "side": "SELL", "qty": 100, "price": 160.91612723693848, "order_id": "", "pos_after": 600, "_ts": 1785484639.3341205}
+{"event": "order", "time": "2026-05-28 09:31:00+08:00", "code": "000988", "side": "BUY", "qty": 300, "price": 158.7359, "order_id": "base", "order_type": "MKT", "_ts": 1785484643.7328002}
+{"event": "fill", "time": "2026-07-31 15:57:23.736793", "code": "000988", "side": "BUY", "qty": 300, "price": 158.7517592086792, "order_id": "", "pos_after": 800, "_ts": 1785484643.7367938}
+{"event": "signal", "time": "2026-06-01 09:54:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 46.2, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785484670.639698}
+{"event": "fill", "time": "2026-07-31 15:57:50.642701", "code": "000988", "side": "BUY", "qty": 100, "price": 151.76268756866455, "order_id": "", "pos_after": 900, "_ts": 1785484670.6427011}
+{"event": "signal", "time": "2026-06-01 10:31:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 50.2, "reasons": ["评分达标"], "pos_qty": 900, "_ts": 1785484671.705169}
+{"event": "fill", "time": "2026-07-31 15:57:51.708167", "code": "000988", "side": "BUY", "qty": 300, "price": 150.73429494476318, "order_id": "", "pos_after": 1200, "_ts": 1785484671.708168}
+{"event": "order", "time": "2026-06-01 14:50:00+08:00", "code": "000988", "side": "SELL", "qty": 400, "price": 143.4014, "order_id": "tail", "order_type": "MKT", "_ts": 1785484676.8036263}
+{"event": "fill", "time": "2026-07-31 15:57:56.805931", "code": "000988", "side": "SELL", "qty": 400, "price": 143.38705756530763, "order_id": "", "pos_after": 1200, "_ts": 1785484676.8059313}
+{"event": "order", "time": "2026-04-24 09:31:00+08:00", "code": "000988", "side": "BUY", "qty": 800, "price": 116.4662, "order_id": "base", "order_type": "MKT", "_ts": 1785485246.314155}
+{"event": "fill", "time": "2026-07-31 16:07:26.324678", "code": "000988", "side": "BUY", "qty": 800, "price": 116.47786366271973, "order_id": "", "pos_after": 800, "_ts": 1785485246.324679}
+{"event": "signal", "time": "2026-04-28 09:37:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 48.1, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785485269.3309526}
+{"event": "fill", "time": "2026-07-31 16:07:49.335838", "code": "000988", "side": "BUY", "qty": 300, "price": 115.59923576965332, "order_id": "", "pos_after": 1100, "_ts": 1785485269.3358386}
+{"event": "signal", "time": "2026-04-28 10:17:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 46.7, "reasons": ["评分达标"], "pos_qty": 1100, "_ts": 1785485271.1513314}
+{"event": "fill", "time": "2026-07-31 16:07:51.156339", "code": "000988", "side": "BUY", "qty": 100, "price": 117.66600126342773, "order_id": "", "pos_after": 1200, "_ts": 1785485271.1563394}
+{"event": "signal", "time": "2026-04-28 10:21:00+08:00", "code": "000988", "action": "SELL_HIGH", "score": 66.8, "reasons": ["评分达标"], "pos_qty": 1200, "_ts": 1785485271.393149}
+{"event": "order", "time": "2026-04-28 10:21:00+08:00", "code": "000988", "side": "SELL", "qty": 200, "price": 117.6442, "order_id": "", "order_type": "MKT", "_ts": 1785485271.3941445}
+{"event": "fill", "time": "2026-07-31 16:07:51.398686", "code": "000988", "side": "SELL", "qty": 200, "price": 117.6324845375061, "order_id": "", "pos_after": 1200, "_ts": 1785485271.3986862}
+{"event": "order", "time": "2026-04-28 14:50:00+08:00", "code": "000988", "side": "SELL", "qty": 200, "price": 115.398, "order_id": "tail", "order_type": "MKT", "_ts": 1785485279.91665}
+{"event": "fill", "time": "2026-07-31 16:07:59.919608", "code": "000988", "side": "SELL", "qty": 200, "price": 115.38644756698609, "order_id": "", "pos_after": 1000, "_ts": 1785485279.9196088}
+{"event": "signal", "time": "2026-04-29 10:06:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 53.2, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785485282.337036}
+{"event": "fill", "time": "2026-07-31 16:08:02.342050", "code": "000988", "side": "BUY", "qty": 300, "price": 115.66912038192748, "order_id": "", "pos_after": 1100, "_ts": 1785485282.3420506}
+{"event": "signal", "time": "2026-04-29 10:15:00+08:00", "code": "000988", "action": "TREND_EXIT", "score": 78.0, "reasons": ["趋势破坏止盈: profit=0.9% trend=TREND_DOWN"], "pos_qty": 1100, "_ts": 1785485282.7948725}
+{"event": "order", "time": "2026-04-29 10:15:00+08:00", "code": "000988", "side": "SELL", "qty": 300, "price": 117.205, "order_id": "", "order_type": "MKT", "_ts": 1785485282.795876}
+{"event": "fill", "time": "2026-07-31 16:08:02.799864", "code": "000988", "side": "SELL", "qty": 300, "price": 117.1932660736084, "order_id": "", "pos_after": 1100, "_ts": 1785485282.7998643}
+{"event": "signal", "time": "2026-04-29 10:36:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 45.2, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785485283.7495768}
+{"event": "fill", "time": "2026-07-31 16:08:03.752576", "code": "000988", "side": "BUY", "qty": 100, "price": 118.13526357803345, "order_id": "", "pos_after": 900, "_ts": 1785485283.7525764}
+{"event": "signal", "time": "2026-04-29 10:40:00+08:00", "code": "000988", "action": "TREND_EXIT", "score": 78.0, "reasons": ["趋势破坏止盈: profit=2.1% trend=TREND_DOWN"], "pos_qty": 900, "_ts": 1785485283.922119}
+{"event": "order", "time": "2026-04-29 10:40:00+08:00", "code": "000988", "side": "SELL", "qty": 300, "price": 118.8423, "order_id": "", "order_type": "MKT", "_ts": 1785485283.923121}
+{"event": "fill", "time": "2026-07-31 16:08:03.928644", "code": "000988", "side": "SELL", "qty": 300, "price": 118.8303780418396, "order_id": "", "pos_after": 900, "_ts": 1785485283.9286444}
+{"event": "order", "time": "2026-04-30 09:31:00+08:00", "code": "000988", "side": "BUY", "qty": 200, "price": 120.2799, "order_id": "base", "order_type": "MKT", "_ts": 1785485293.5408432}
+{"event": "fill", "time": "2026-07-31 16:08:13.547931", "code": "000988", "side": "BUY", "qty": 200, "price": 120.2918970664978, "order_id": "", "pos_after": 800, "_ts": 1785485293.5479314}
+{"event": "signal", "time": "2026-04-30 11:10:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 43.6, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785485299.2697453}
+{"event": "fill", "time": "2026-07-31 16:08:19.276720", "code": "000988", "side": "BUY", "qty": 100, "price": 116.87723373489379, "order_id": "", "pos_after": 900, "_ts": 1785485299.2767205}
+{"event": "signal", "time": "2026-04-30 13:04:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 50.2, "reasons": ["评分达标"], "pos_qty": 900, "_ts": 1785485300.6620347}
+{"event": "fill", "time": "2026-07-31 16:08:20.666025", "code": "000988", "side": "BUY", "qty": 300, "price": 118.01545484542847, "order_id": "", "pos_after": 1200, "_ts": 1785485300.6660254}
+{"event": "order", "time": "2026-04-30 14:50:00+08:00", "code": "000988", "side": "SELL", "qty": 400, "price": 119.3115, "order_id": "tail", "order_type": "MKT", "_ts": 1785485307.0296338}
+{"event": "fill", "time": "2026-07-31 16:08:27.034634", "code": "000988", "side": "SELL", "qty": 400, "price": 119.2995465133667, "order_id": "", "pos_after": 1200, "_ts": 1785485307.0346344}
+{"event": "signal", "time": "2026-05-06 09:42:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 44.5, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785485308.403455}
+{"event": "fill", "time": "2026-07-31 16:08:28.407531", "code": "000988", "side": "BUY", "qty": 100, "price": 124.00608222961425, "order_id": "", "pos_after": 900, "_ts": 1785485308.4075313}
+{"event": "signal", "time": "2026-05-06 10:07:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 44.9, "reasons": ["评分达标"], "pos_qty": 900, "_ts": 1785485309.9512162}
+{"event": "fill", "time": "2026-07-31 16:08:29.957213", "code": "000988", "side": "BUY", "qty": 100, "price": 123.73650876617431, "order_id": "", "pos_after": 1000, "_ts": 1785485309.9572136}
+{"event": "order", "time": "2026-05-06 14:50:00+08:00", "code": "000988", "side": "SELL", "qty": 200, "price": 124.7424, "order_id": "tail", "order_type": "MKT", "_ts": 1785485322.5225234}
+{"event": "fill", "time": "2026-07-31 16:08:42.527519", "code": "000988", "side": "SELL", "qty": 200, "price": 124.72996502609253, "order_id": "", "pos_after": 1000, "_ts": 1785485322.527519}
+{"event": "signal", "time": "2026-05-07 09:39:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 43.3, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785485324.1530173}
+{"event": "fill", "time": "2026-07-31 16:08:44.158559", "code": "000988", "side": "BUY", "qty": 100, "price": 124.93463424301147, "order_id": "", "pos_after": 900, "_ts": 1785485324.1585596}
+{"event": "signal", "time": "2026-05-07 10:06:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 43.5, "reasons": ["评分达标"], "pos_qty": 900, "_ts": 1785485325.9718468}
+{"event": "fill", "time": "2026-07-31 16:08:45.977844", "code": "000988", "side": "BUY", "qty": 100, "price": 125.82324238204956, "order_id": "", "pos_after": 1000, "_ts": 1785485325.9778447}
+{"event": "signal", "time": "2026-05-07 11:23:00+08:00", "code": "000988", "action": "TARGET_SELL", "score": 75.0, "reasons": ["目标止盈L1: profit=10.2%"], "pos_qty": 1000, "_ts": 1785485330.7031903}
+{"event": "order", "time": "2026-05-07 11:23:00+08:00", "code": "000988", "side": "SELL", "qty": 200, "price": 132.2699, "order_id": "", "order_type": "MKT", "_ts": 1785485330.7041905}
+{"event": "fill", "time": "2026-07-31 16:08:50.710185", "code": "000988", "side": "SELL", "qty": 200, "price": 132.25670098571777, "order_id": "", "pos_after": 1000, "_ts": 1785485330.7101858}
+{"event": "signal", "time": "2026-05-08 13:21:00+08:00", "code": "000988", "action": "SELL_HIGH", "score": 74.5, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785485350.4594312}
+{"event": "order", "time": "2026-05-08 13:21:00+08:00", "code": "000988", "side": "SELL", "qty": 200, "price": 132.3098, "order_id": "", "order_type": "MKT", "_ts": 1785485350.4614234}
+{"event": "fill", "time": "2026-07-31 16:09:10.468421", "code": "000988", "side": "SELL", "qty": 200, "price": 132.29661398620607, "order_id": "", "pos_after": 800, "_ts": 1785485350.468422}
+{"event": "order", "time": "2026-05-11 09:31:00+08:00", "code": "000988", "side": "BUY", "qty": 200, "price": 140.2666, "order_id": "base", "order_type": "MKT", "_ts": 1785485355.546233}
+{"event": "fill", "time": "2026-07-31 16:09:15.549267", "code": "000988", "side": "BUY", "qty": 200, "price": 140.2806434829712, "order_id": "", "pos_after": 800, "_ts": 1785485355.550266}
+{"event": "signal", "time": "2026-05-11 09:32:00+08:00", "code": "000988", "action": "TARGET_SELL", "score": 75.0, "reasons": ["目标止盈L1: profit=13.0%"], "pos_qty": 800, "_ts": 1785485355.6040962}
+{"event": "order", "time": "2026-05-11 09:32:00+08:00", "code": "000988", "side": "SELL", "qty": 200, "price": 141.3848, "order_id": "", "order_type": "MKT", "_ts": 1785485355.6071014}
+{"event": "fill", "time": "2026-07-31 16:09:15.611095", "code": "000988", "side": "SELL", "qty": 200, "price": 141.37061189117432, "order_id": "", "pos_after": 800, "_ts": 1785485355.6110957}
+{"event": "order", "time": "2026-05-12 09:31:00+08:00", "code": "000988", "side": "BUY", "qty": 200, "price": 146.4663, "order_id": "base", "order_type": "MKT", "_ts": 1785485366.5534337}
+{"event": "fill", "time": "2026-07-31 16:09:26.556983", "code": "000988", "side": "BUY", "qty": 200, "price": 146.48095522460937, "order_id": "", "pos_after": 800, "_ts": 1785485366.5569837}
+{"event": "signal", "time": "2026-05-12 09:32:00+08:00", "code": "000988", "action": "TARGET_SELL", "score": 75.0, "reasons": ["目标止盈L1: profit=13.0%"], "pos_qty": 800, "_ts": 1785485366.612304}
+{"event": "order", "time": "2026-05-12 09:32:00+08:00", "code": "000988", "side": "SELL", "qty": 200, "price": 147.3848, "order_id": "", "order_type": "MKT", "_ts": 1785485366.6133065}
+{"event": "fill", "time": "2026-07-31 16:09:26.617306", "code": "000988", "side": "SELL", "qty": 200, "price": 147.37002714843752, "order_id": "", "pos_after": 800, "_ts": 1785485366.6183107}
+{"event": "order", "time": "2026-05-13 09:31:00+08:00", "code": "000988", "side": "BUY", "qty": 200, "price": 139.2882, "order_id": "base", "order_type": "MKT", "_ts": 1785485377.67248}
+{"event": "fill", "time": "2026-07-31 16:09:37.676436", "code": "000988", "side": "BUY", "qty": 200, "price": 139.30216734924315, "order_id": "", "pos_after": 800, "_ts": 1785485377.676437}
+{"event": "signal", "time": "2026-05-13 14:38:00+08:00", "code": "000988", "action": "SELL_HIGH", "score": 65.0, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785485386.8106613}
+{"event": "order", "time": "2026-05-13 14:38:00+08:00", "code": "000988", "side": "SELL", "qty": 100, "price": 142.443, "order_id": "", "order_type": "MKT", "_ts": 1785485386.8106613}
+{"event": "fill", "time": "2026-07-31 16:09:46.814699", "code": "000988", "side": "SELL", "qty": 100, "price": 142.4287336074829, "order_id": "", "pos_after": 800, "_ts": 1785485386.8147}
+{"event": "signal", "time": "2026-05-15 09:54:00+08:00", "code": "000988", "action": "TRAIL_SELL", "score": 80.0, "reasons": ["移动止盈: peak=145.75 dd=8.7%"], "pos_qty": 700, "_ts": 1785485400.2618613}
+{"event": "order", "time": "2026-05-15 09:54:00+08:00", "code": "000988", "side": "SELL", "qty": 200, "price": 133.1385, "order_id": "", "order_type": "MKT", "_ts": 1785485400.2628534}
+{"event": "fill", "time": "2026-07-31 16:10:00.267863", "code": "000988", "side": "SELL", "qty": 200, "price": 133.12515966339112, "order_id": "", "pos_after": 700, "_ts": 1785485400.2678633}
+{"event": "order", "time": "2026-05-18 09:31:00+08:00", "code": "000988", "side": "BUY", "qty": 300, "price": 139.6177, "order_id": "base", "order_type": "MKT", "_ts": 1785485411.410578}
+{"event": "fill", "time": "2026-07-31 16:10:11.413581", "code": "000988", "side": "BUY", "qty": 300, "price": 139.63165280914308, "order_id": "", "pos_after": 800, "_ts": 1785485411.4135818}
+{"event": "signal", "time": "2026-05-18 09:39:00+08:00", "code": "000988", "action": "SELL_HIGH", "score": 69.8, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785485411.8275359}
+{"event": "order", "time": "2026-05-18 09:39:00+08:00", "code": "000988", "side": "SELL", "qty": 200, "price": 144.6493, "order_id": "", "order_type": "MKT", "_ts": 1785485411.8285358}
+{"event": "fill", "time": "2026-07-31 16:10:11.832535", "code": "000988", "side": "SELL", "qty": 200, "price": 144.63485757751465, "order_id": "", "pos_after": 800, "_ts": 1785485411.832535}
+{"event": "order", "time": "2026-05-19 09:31:00+08:00", "code": "000988", "side": "BUY", "qty": 200, "price": 153.1053, "order_id": "base", "order_type": "MKT", "_ts": 1785485424.6055326}
+{"event": "fill", "time": "2026-07-31 16:10:24.611526", "code": "000988", "side": "BUY", "qty": 200, "price": 153.1205656524658, "order_id": "", "pos_after": 800, "_ts": 1785485424.6115263}
+{"event": "signal", "time": "2026-05-19 09:35:00+08:00", "code": "000988", "action": "TARGET_SELL", "score": 75.0, "reasons": ["目标止盈L1: profit=10.2%"], "pos_qty": 800, "_ts": 1785485424.8494844}
+{"event": "order", "time": "2026-05-19 09:35:00+08:00", "code": "000988", "side": "SELL", "qty": 200, "price": 154.0038, "order_id": "", "order_type": "MKT", "_ts": 1785485424.850484}
+{"event": "fill", "time": "2026-07-31 16:10:24.855451", "code": "000988", "side": "SELL", "qty": 200, "price": 153.98835328674318, "order_id": "", "pos_after": 800, "_ts": 1785485424.855451}
+{"event": "order", "time": "2026-05-20 09:31:00+08:00", "code": "000988", "side": "BUY", "qty": 200, "price": 162.28, "order_id": "base", "order_type": "MKT", "_ts": 1785485439.0827284}
+{"event": "fill", "time": "2026-07-31 16:10:39.086721", "code": "000988", "side": "BUY", "qty": 200, "price": 162.29621151885985, "order_id": "", "pos_after": 800, "_ts": 1785485439.0867212}
+{"event": "signal", "time": "2026-05-20 09:32:00+08:00", "code": "000988", "action": "TARGET_SELL", "score": 75.0, "reasons": ["目标止盈L1: profit=12.8%"], "pos_qty": 800, "_ts": 1785485439.1477604}
+{"event": "order", "time": "2026-05-20 09:32:00+08:00", "code": "000988", "side": "SELL", "qty": 200, "price": 164.0271, "order_id": "", "order_type": "MKT", "_ts": 1785485439.1487617}
+{"event": "fill", "time": "2026-07-31 16:10:39.152747", "code": "000988", "side": "SELL", "qty": 200, "price": 164.01068164215087, "order_id": "", "pos_after": 800, "_ts": 1785485439.1527472}
+{"event": "signal", "time": "2026-05-21 11:10:00+08:00", "code": "000988", "action": "SELL_HIGH", "score": 71.7, "reasons": ["评分达标"], "pos_qty": 600, "_ts": 1785485460.100327}
+{"event": "order", "time": "2026-05-21 11:10:00+08:00", "code": "000988", "side": "SELL", "qty": 100, "price": 163.5279, "order_id": "", "order_type": "MKT", "_ts": 1785485460.101298}
+{"event": "fill", "time": "2026-07-31 16:11:00.107292", "code": "000988", "side": "SELL", "qty": 100, "price": 163.5115555343628, "order_id": "", "pos_after": 600, "_ts": 1785485460.1072924}
+{"event": "signal", "time": "2026-05-21 14:14:00+08:00", "code": "000988", "action": "TRAIL_SELL", "score": 80.0, "reasons": ["移动止盈: peak=170.19 dd=8.1%"], "pos_qty": 500, "_ts": 1785485465.1779795}
+{"event": "order", "time": "2026-05-21 14:14:00+08:00", "code": "000988", "side": "SELL", "qty": 200, "price": 156.4097, "order_id": "", "order_type": "MKT", "_ts": 1785485465.17997}
+{"event": "fill", "time": "2026-07-31 16:11:05.185511", "code": "000988", "side": "SELL", "qty": 200, "price": 156.39410328826904, "order_id": "", "pos_after": 500, "_ts": 1785485465.1855116}
+{"event": "order", "time": "2026-05-22 09:31:00+08:00", "code": "000988", "side": "BUY", "qty": 500, "price": 156.3698, "order_id": "base", "order_type": "MKT", "_ts": 1785485467.784494}
+{"event": "fill", "time": "2026-07-31 16:11:07.790521", "code": "000988", "side": "BUY", "qty": 500, "price": 156.38546425323486, "order_id": "", "pos_after": 800, "_ts": 1785485467.7905219}
+{"event": "signal", "time": "2026-05-25 14:01:00+08:00", "code": "000988", "action": "TARGET_SELL", "score": 75.0, "reasons": ["目标止盈L1: profit=10.1%"], "pos_qty": 800, "_ts": 1785485488.7037365}
+{"event": "order", "time": "2026-05-25 14:01:00+08:00", "code": "000988", "side": "SELL", "qty": 200, "price": 167.6411, "order_id": "", "order_type": "MKT", "_ts": 1785485488.7037365}
+{"event": "fill", "time": "2026-07-31 16:11:28.706769", "code": "000988", "side": "SELL", "qty": 200, "price": 167.62430339813233, "order_id": "", "pos_after": 800, "_ts": 1785485488.70677}
+{"event": "order", "time": "2026-05-26 09:31:00+08:00", "code": "000988", "side": "BUY", "qty": 200, "price": 170.5961, "order_id": "base", "order_type": "MKT", "_ts": 1785485491.5216212}
+{"event": "fill", "time": "2026-07-31 16:11:31.526627", "code": "000988", "side": "BUY", "qty": 200, "price": 170.6132052444458, "order_id": "", "pos_after": 800, "_ts": 1785485491.526627}
+{"event": "signal", "time": "2026-05-26 09:32:00+08:00", "code": "000988", "action": "TARGET_SELL", "score": 75.0, "reasons": ["目标止盈L1: profit=10.3%"], "pos_qty": 800, "_ts": 1785485491.578623}
+{"event": "order", "time": "2026-05-26 09:32:00+08:00", "code": "000988", "side": "SELL", "qty": 200, "price": 172.9422, "order_id": "", "order_type": "MKT", "_ts": 1785485491.5796266}
+{"event": "fill", "time": "2026-07-31 16:11:31.586024", "code": "000988", "side": "SELL", "qty": 200, "price": 172.9249512588501, "order_id": "", "pos_after": 800, "_ts": 1785485491.5860245}
+{"event": "signal", "time": "2026-05-27 13:42:00+08:00", "code": "000988", "action": "TRAIL_SELL", "score": 80.0, "reasons": ["移动止盈: peak=175.24 dd=8.2%"], "pos_qty": 600, "_ts": 1785485510.2673855}
+{"event": "order", "time": "2026-05-27 13:42:00+08:00", "code": "000988", "side": "SELL", "qty": 100, "price": 160.9322, "order_id": "", "order_type": "MKT", "_ts": 1785485510.2683535}
+{"event": "fill", "time": "2026-07-31 16:11:50.271375", "code": "000988", "side": "SELL", "qty": 100, "price": 160.91612723693848, "order_id": "", "pos_after": 600, "_ts": 1785485510.2713754}
+{"event": "order", "time": "2026-05-28 09:31:00+08:00", "code": "000988", "side": "BUY", "qty": 300, "price": 158.7359, "order_id": "base", "order_type": "MKT", "_ts": 1785485513.94776}
+{"event": "fill", "time": "2026-07-31 16:11:53.951759", "code": "000988", "side": "BUY", "qty": 300, "price": 158.7517592086792, "order_id": "", "pos_after": 800, "_ts": 1785485513.9517593}
+{"event": "signal", "time": "2026-06-01 09:54:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 46.2, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785485538.3240395}
+{"event": "fill", "time": "2026-07-31 16:12:18.327751", "code": "000988", "side": "BUY", "qty": 100, "price": 151.76268756866455, "order_id": "", "pos_after": 900, "_ts": 1785485538.3277514}
+{"event": "signal", "time": "2026-06-01 10:31:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 50.2, "reasons": ["评分达标"], "pos_qty": 900, "_ts": 1785485540.140447}
+{"event": "fill", "time": "2026-07-31 16:12:20.143442", "code": "000988", "side": "BUY", "qty": 300, "price": 150.73429494476318, "order_id": "", "pos_after": 1200, "_ts": 1785485540.1434426}
+{"event": "order", "time": "2026-04-24 09:31:00+08:00", "code": "000988", "side": "BUY", "qty": 800, "price": 116.4662, "order_id": "base", "order_type": "MKT", "_ts": 1785485753.6218667}
+{"event": "fill", "time": "2026-07-31 16:15:53.635962", "code": "000988", "side": "BUY", "qty": 800, "price": 116.47786366271973, "order_id": "", "pos_after": 800, "_ts": 1785485753.6359625}
+{"event": "signal", "time": "2026-04-28 09:37:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 48.1, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785485774.9631877}
+{"event": "fill", "time": "2026-07-31 16:16:14.966185", "code": "000988", "side": "BUY", "qty": 300, "price": 115.59923576965332, "order_id": "", "pos_after": 1100, "_ts": 1785485774.9661853}
+{"event": "signal", "time": "2026-04-28 10:17:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 46.7, "reasons": ["评分达标"], "pos_qty": 1100, "_ts": 1785485776.6283345}
+{"event": "fill", "time": "2026-07-31 16:16:16.632342", "code": "000988", "side": "BUY", "qty": 100, "price": 117.66600126342773, "order_id": "", "pos_after": 1200, "_ts": 1785485776.632342}
+{"event": "signal", "time": "2026-04-28 10:21:00+08:00", "code": "000988", "action": "SELL_HIGH", "score": 66.8, "reasons": ["评分达标"], "pos_qty": 1200, "_ts": 1785485776.8097415}
+{"event": "order", "time": "2026-04-28 10:21:00+08:00", "code": "000988", "side": "SELL", "qty": 200, "price": 117.6442, "order_id": "", "order_type": "MKT", "_ts": 1785485776.810737}
+{"event": "fill", "time": "2026-07-31 16:16:16.812922", "code": "000988", "side": "SELL", "qty": 200, "price": 117.6324845375061, "order_id": "", "pos_after": 1200, "_ts": 1785485776.813917}
+{"event": "order", "time": "2026-04-28 14:50:00+08:00", "code": "000988", "side": "SELL", "qty": 200, "price": 115.398, "order_id": "tail", "order_type": "MKT", "_ts": 1785485784.8113806}
+{"event": "fill", "time": "2026-07-31 16:16:24.816381", "code": "000988", "side": "SELL", "qty": 200, "price": 115.38644756698609, "order_id": "", "pos_after": 1000, "_ts": 1785485784.8163812}
+{"event": "signal", "time": "2026-04-29 10:06:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 53.2, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785485787.0500317}
+{"event": "fill", "time": "2026-07-31 16:16:27.054036", "code": "000988", "side": "BUY", "qty": 300, "price": 115.66912038192748, "order_id": "", "pos_after": 1100, "_ts": 1785485787.0540364}
+{"event": "signal", "time": "2026-04-29 10:15:00+08:00", "code": "000988", "action": "TREND_EXIT", "score": 78.0, "reasons": ["趋势破坏止盈: profit=0.9% trend=TREND_DOWN"], "pos_qty": 1100, "_ts": 1785485787.498959}
+{"event": "order", "time": "2026-04-29 10:15:00+08:00", "code": "000988", "side": "SELL", "qty": 300, "price": 117.205, "order_id": "", "order_type": "MKT", "_ts": 1785485787.498959}
+{"event": "fill", "time": "2026-07-31 16:16:27.503965", "code": "000988", "side": "SELL", "qty": 300, "price": 117.1932660736084, "order_id": "", "pos_after": 1100, "_ts": 1785485787.5039656}
+{"event": "signal", "time": "2026-04-29 10:36:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 45.2, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785485788.4795291}
+{"event": "fill", "time": "2026-07-31 16:16:28.483539", "code": "000988", "side": "BUY", "qty": 100, "price": 118.13526357803345, "order_id": "", "pos_after": 900, "_ts": 1785485788.48354}
+{"event": "signal", "time": "2026-04-29 10:40:00+08:00", "code": "000988", "action": "TREND_EXIT", "score": 78.0, "reasons": ["趋势破坏止盈: profit=2.1% trend=TREND_DOWN"], "pos_qty": 900, "_ts": 1785485788.6873295}
+{"event": "order", "time": "2026-04-29 10:40:00+08:00", "code": "000988", "side": "SELL", "qty": 300, "price": 118.8423, "order_id": "", "order_type": "MKT", "_ts": 1785485788.6893334}
+{"event": "fill", "time": "2026-07-31 16:16:28.692323", "code": "000988", "side": "SELL", "qty": 300, "price": 118.8303780418396, "order_id": "", "pos_after": 900, "_ts": 1785485788.6923237}
+{"event": "order", "time": "2026-04-30 09:31:00+08:00", "code": "000988", "side": "BUY", "qty": 200, "price": 120.2799, "order_id": "base", "order_type": "MKT", "_ts": 1785485797.1339605}
+{"event": "fill", "time": "2026-07-31 16:16:37.139956", "code": "000988", "side": "BUY", "qty": 200, "price": 120.2918970664978, "order_id": "", "pos_after": 800, "_ts": 1785485797.1399565}
+{"event": "signal", "time": "2026-04-30 11:10:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 43.6, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785485801.7432806}
+{"event": "fill", "time": "2026-07-31 16:16:41.745802", "code": "000988", "side": "BUY", "qty": 100, "price": 116.87723373489379, "order_id": "", "pos_after": 900, "_ts": 1785485801.7458024}
+{"event": "signal", "time": "2026-04-30 13:04:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 50.2, "reasons": ["评分达标"], "pos_qty": 900, "_ts": 1785485802.817132}
+{"event": "fill", "time": "2026-07-31 16:16:42.821151", "code": "000988", "side": "BUY", "qty": 300, "price": 118.01545484542847, "order_id": "", "pos_after": 1200, "_ts": 1785485802.821151}
+{"event": "order", "time": "2026-04-30 14:50:00+08:00", "code": "000988", "side": "SELL", "qty": 400, "price": 119.3115, "order_id": "tail", "order_type": "MKT", "_ts": 1785485807.940957}
+{"event": "fill", "time": "2026-07-31 16:16:47.945967", "code": "000988", "side": "SELL", "qty": 400, "price": 119.2995465133667, "order_id": "", "pos_after": 1200, "_ts": 1785485807.9459674}
+{"event": "signal", "time": "2026-05-06 09:42:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 44.5, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785485809.1220958}
+{"event": "fill", "time": "2026-07-31 16:16:49.126101", "code": "000988", "side": "BUY", "qty": 100, "price": 124.00608222961425, "order_id": "", "pos_after": 900, "_ts": 1785485809.1261015}
+{"event": "signal", "time": "2026-05-06 10:07:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 44.9, "reasons": ["评分达标"], "pos_qty": 900, "_ts": 1785485810.2503092}
+{"event": "fill", "time": "2026-07-31 16:16:50.253295", "code": "000988", "side": "BUY", "qty": 100, "price": 123.73650876617431, "order_id": "", "pos_after": 1000, "_ts": 1785485810.253296}
+{"event": "order", "time": "2026-05-06 14:50:00+08:00", "code": "000988", "side": "SELL", "qty": 200, "price": 124.7424, "order_id": "tail", "order_type": "MKT", "_ts": 1785485819.9114885}
+{"event": "fill", "time": "2026-07-31 16:16:59.915497", "code": "000988", "side": "SELL", "qty": 200, "price": 124.72996502609253, "order_id": "", "pos_after": 1000, "_ts": 1785485819.9154975}
+{"event": "signal", "time": "2026-05-07 09:39:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 43.3, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785485820.9501283}
+{"event": "fill", "time": "2026-07-31 16:17:00.955142", "code": "000988", "side": "BUY", "qty": 100, "price": 124.93463424301147, "order_id": "", "pos_after": 900, "_ts": 1785485820.9551423}
+{"event": "signal", "time": "2026-05-07 10:06:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 43.5, "reasons": ["评分达标"], "pos_qty": 900, "_ts": 1785485822.4499178}
+{"event": "fill", "time": "2026-07-31 16:17:02.454926", "code": "000988", "side": "BUY", "qty": 100, "price": 125.82324238204956, "order_id": "", "pos_after": 1000, "_ts": 1785485822.454926}
+{"event": "signal", "time": "2026-05-07 11:23:00+08:00", "code": "000988", "action": "TARGET_SELL", "score": 75.0, "reasons": ["目标止盈L1: profit=10.2%"], "pos_qty": 1000, "_ts": 1785485826.663223}
+{"event": "order", "time": "2026-05-07 11:23:00+08:00", "code": "000988", "side": "SELL", "qty": 200, "price": 132.2699, "order_id": "", "order_type": "MKT", "_ts": 1785485826.6642184}
+{"event": "fill", "time": "2026-07-31 16:17:06.668748", "code": "000988", "side": "SELL", "qty": 200, "price": 132.25670098571777, "order_id": "", "pos_after": 1000, "_ts": 1785485826.6687486}
+{"event": "signal", "time": "2026-05-08 13:21:00+08:00", "code": "000988", "action": "SELL_HIGH", "score": 74.5, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785485842.177986}
+{"event": "order", "time": "2026-05-08 13:21:00+08:00", "code": "000988", "side": "SELL", "qty": 200, "price": 132.3098, "order_id": "", "order_type": "MKT", "_ts": 1785485842.1789818}
+{"event": "fill", "time": "2026-07-31 16:17:22.183986", "code": "000988", "side": "SELL", "qty": 200, "price": 132.29661398620607, "order_id": "", "pos_after": 800, "_ts": 1785485842.1839867}
+{"event": "order", "time": "2026-05-11 09:31:00+08:00", "code": "000988", "side": "BUY", "qty": 200, "price": 140.2666, "order_id": "base", "order_type": "MKT", "_ts": 1785485847.933936}
+{"event": "fill", "time": "2026-07-31 16:17:27.939951", "code": "000988", "side": "BUY", "qty": 200, "price": 140.2806434829712, "order_id": "", "pos_after": 800, "_ts": 1785485847.9399514}
+{"event": "signal", "time": "2026-05-11 09:32:00+08:00", "code": "000988", "action": "TARGET_SELL", "score": 75.0, "reasons": ["目标止盈L1: profit=13.0%"], "pos_qty": 800, "_ts": 1785485847.999278}
+{"event": "order", "time": "2026-05-11 09:32:00+08:00", "code": "000988", "side": "SELL", "qty": 200, "price": 141.3848, "order_id": "", "order_type": "MKT", "_ts": 1785485848.000288}
+{"event": "fill", "time": "2026-07-31 16:17:28.007268", "code": "000988", "side": "SELL", "qty": 200, "price": 141.37061189117432, "order_id": "", "pos_after": 800, "_ts": 1785485848.0072684}
+{"event": "order", "time": "2026-05-12 09:31:00+08:00", "code": "000988", "side": "BUY", "qty": 200, "price": 146.4663, "order_id": "base", "order_type": "MKT", "_ts": 1785485861.963103}
+{"event": "fill", "time": "2026-07-31 16:17:41.968080", "code": "000988", "side": "BUY", "qty": 200, "price": 146.48095522460937, "order_id": "", "pos_after": 800, "_ts": 1785485861.968081}
+{"event": "signal", "time": "2026-05-12 09:32:00+08:00", "code": "000988", "action": "TARGET_SELL", "score": 75.0, "reasons": ["目标止盈L1: profit=13.0%"], "pos_qty": 800, "_ts": 1785485862.0291028}
+{"event": "order", "time": "2026-05-12 09:32:00+08:00", "code": "000988", "side": "SELL", "qty": 200, "price": 147.3848, "order_id": "", "order_type": "MKT", "_ts": 1785485862.0300992}
+{"event": "fill", "time": "2026-07-31 16:17:42.033102", "code": "000988", "side": "SELL", "qty": 200, "price": 147.37002714843752, "order_id": "", "pos_after": 800, "_ts": 1785485862.0341005}
+{"event": "order", "time": "2026-05-13 09:31:00+08:00", "code": "000988", "side": "BUY", "qty": 200, "price": 139.2882, "order_id": "base", "order_type": "MKT", "_ts": 1785485875.5558147}
+{"event": "fill", "time": "2026-07-31 16:17:55.559816", "code": "000988", "side": "BUY", "qty": 200, "price": 139.30216734924315, "order_id": "", "pos_after": 800, "_ts": 1785485875.559816}
+{"event": "signal", "time": "2026-05-13 14:38:00+08:00", "code": "000988", "action": "SELL_HIGH", "score": 65.0, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785485886.0768483}
+{"event": "order", "time": "2026-05-13 14:38:00+08:00", "code": "000988", "side": "SELL", "qty": 100, "price": 142.443, "order_id": "", "order_type": "MKT", "_ts": 1785485886.0788414}
+{"event": "fill", "time": "2026-07-31 16:18:06.081839", "code": "000988", "side": "SELL", "qty": 100, "price": 142.4287336074829, "order_id": "", "pos_after": 800, "_ts": 1785485886.081839}
+{"event": "signal", "time": "2026-05-15 09:54:00+08:00", "code": "000988", "action": "TRAIL_SELL", "score": 80.0, "reasons": ["移动止盈: peak=145.75 dd=8.7%"], "pos_qty": 700, "_ts": 1785485901.9499428}
+{"event": "order", "time": "2026-05-15 09:54:00+08:00", "code": "000988", "side": "SELL", "qty": 200, "price": 133.1385, "order_id": "", "order_type": "MKT", "_ts": 1785485901.9509425}
+{"event": "fill", "time": "2026-07-31 16:18:21.954479", "code": "000988", "side": "SELL", "qty": 200, "price": 133.12515966339112, "order_id": "", "pos_after": 700, "_ts": 1785485901.9544792}
+{"event": "order", "time": "2026-05-18 09:31:00+08:00", "code": "000988", "side": "BUY", "qty": 300, "price": 139.6177, "order_id": "base", "order_type": "MKT", "_ts": 1785485912.0256946}
+{"event": "fill", "time": "2026-07-31 16:18:32.030694", "code": "000988", "side": "BUY", "qty": 300, "price": 139.63165280914308, "order_id": "", "pos_after": 800, "_ts": 1785485912.0306938}
+{"event": "signal", "time": "2026-05-18 09:39:00+08:00", "code": "000988", "action": "SELL_HIGH", "score": 69.8, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785485912.3658035}
+{"event": "order", "time": "2026-05-18 09:39:00+08:00", "code": "000988", "side": "SELL", "qty": 200, "price": 144.6493, "order_id": "", "order_type": "MKT", "_ts": 1785485912.3677714}
+{"event": "fill", "time": "2026-07-31 16:18:32.370754", "code": "000988", "side": "SELL", "qty": 200, "price": 144.63485757751465, "order_id": "", "pos_after": 800, "_ts": 1785485912.3707542}
+{"event": "order", "time": "2026-05-19 09:31:00+08:00", "code": "000988", "side": "BUY", "qty": 200, "price": 153.1053, "order_id": "base", "order_type": "MKT", "_ts": 1785485923.6382973}
+{"event": "fill", "time": "2026-07-31 16:18:43.642294", "code": "000988", "side": "BUY", "qty": 200, "price": 153.1205656524658, "order_id": "", "pos_after": 800, "_ts": 1785485923.642295}
+{"event": "signal", "time": "2026-05-19 09:35:00+08:00", "code": "000988", "action": "TARGET_SELL", "score": 75.0, "reasons": ["目标止盈L1: profit=10.2%"], "pos_qty": 800, "_ts": 1785485923.836013}
+{"event": "order", "time": "2026-05-19 09:35:00+08:00", "code": "000988", "side": "SELL", "qty": 200, "price": 154.0038, "order_id": "", "order_type": "MKT", "_ts": 1785485923.8370142}
+{"event": "fill", "time": "2026-07-31 16:18:43.840010", "code": "000988", "side": "SELL", "qty": 200, "price": 153.98835328674318, "order_id": "", "pos_after": 800, "_ts": 1785485923.8400104}
+{"event": "order", "time": "2026-05-20 09:31:00+08:00", "code": "000988", "side": "BUY", "qty": 200, "price": 162.28, "order_id": "base", "order_type": "MKT", "_ts": 1785485936.5655887}
+{"event": "fill", "time": "2026-07-31 16:18:56.569582", "code": "000988", "side": "BUY", "qty": 200, "price": 162.29621151885985, "order_id": "", "pos_after": 800, "_ts": 1785485936.569583}
+{"event": "signal", "time": "2026-05-20 09:32:00+08:00", "code": "000988", "action": "TARGET_SELL", "score": 75.0, "reasons": ["目标止盈L1: profit=12.8%"], "pos_qty": 800, "_ts": 1785485936.6199832}
+{"event": "order", "time": "2026-05-20 09:32:00+08:00", "code": "000988", "side": "SELL", "qty": 200, "price": 164.0271, "order_id": "", "order_type": "MKT", "_ts": 1785485936.6219966}
+{"event": "fill", "time": "2026-07-31 16:18:56.626002", "code": "000988", "side": "SELL", "qty": 200, "price": 164.01068164215087, "order_id": "", "pos_after": 800, "_ts": 1785485936.6260028}
+{"event": "signal", "time": "2026-05-21 11:10:00+08:00", "code": "000988", "action": "SELL_HIGH", "score": 71.7, "reasons": ["评分达标"], "pos_qty": 600, "_ts": 1785485950.4528532}
+{"event": "order", "time": "2026-05-21 11:10:00+08:00", "code": "000988", "side": "SELL", "qty": 100, "price": 163.5279, "order_id": "", "order_type": "MKT", "_ts": 1785485950.453796}
+{"event": "fill", "time": "2026-07-31 16:19:10.455835", "code": "000988", "side": "SELL", "qty": 100, "price": 163.5115555343628, "order_id": "", "pos_after": 600, "_ts": 1785485950.4558358}
+{"event": "signal", "time": "2026-05-21 14:14:00+08:00", "code": "000988", "action": "TRAIL_SELL", "score": 80.0, "reasons": ["移动止盈: peak=170.19 dd=8.1%"], "pos_qty": 500, "_ts": 1785485954.273407}
+{"event": "order", "time": "2026-05-21 14:14:00+08:00", "code": "000988", "side": "SELL", "qty": 200, "price": 156.4097, "order_id": "", "order_type": "MKT", "_ts": 1785485954.2744088}
+{"event": "fill", "time": "2026-07-31 16:19:14.278413", "code": "000988", "side": "SELL", "qty": 200, "price": 156.39410328826904, "order_id": "", "pos_after": 500, "_ts": 1785485954.278413}
+{"event": "order", "time": "2026-05-22 09:31:00+08:00", "code": "000988", "side": "BUY", "qty": 500, "price": 156.3698, "order_id": "base", "order_type": "MKT", "_ts": 1785485956.478487}
+{"event": "fill", "time": "2026-07-31 16:19:16.482478", "code": "000988", "side": "BUY", "qty": 500, "price": 156.38546425323486, "order_id": "", "pos_after": 800, "_ts": 1785485956.4824781}
+{"event": "signal", "time": "2026-05-25 14:01:00+08:00", "code": "000988", "action": "TARGET_SELL", "score": 75.0, "reasons": ["目标止盈L1: profit=10.1%"], "pos_qty": 800, "_ts": 1785485976.9029706}
+{"event": "order", "time": "2026-05-25 14:01:00+08:00", "code": "000988", "side": "SELL", "qty": 200, "price": 167.6411, "order_id": "", "order_type": "MKT", "_ts": 1785485976.9049752}
+{"event": "fill", "time": "2026-07-31 16:19:36.909974", "code": "000988", "side": "SELL", "qty": 200, "price": 167.62430339813233, "order_id": "", "pos_after": 800, "_ts": 1785485976.9099746}
+{"event": "order", "time": "2026-05-26 09:31:00+08:00", "code": "000988", "side": "BUY", "qty": 200, "price": 170.5961, "order_id": "base", "order_type": "MKT", "_ts": 1785485980.4104455}
+{"event": "fill", "time": "2026-07-31 16:19:40.417454", "code": "000988", "side": "BUY", "qty": 200, "price": 170.6132052444458, "order_id": "", "pos_after": 800, "_ts": 1785485980.417455}
+{"event": "signal", "time": "2026-05-26 09:32:00+08:00", "code": "000988", "action": "TARGET_SELL", "score": 75.0, "reasons": ["目标止盈L1: profit=10.3%"], "pos_qty": 800, "_ts": 1785485980.473805}
+{"event": "order", "time": "2026-05-26 09:32:00+08:00", "code": "000988", "side": "SELL", "qty": 200, "price": 172.9422, "order_id": "", "order_type": "MKT", "_ts": 1785485980.4748077}
+{"event": "fill", "time": "2026-07-31 16:19:40.479809", "code": "000988", "side": "SELL", "qty": 200, "price": 172.9249512588501, "order_id": "", "pos_after": 800, "_ts": 1785485980.4798098}
+{"event": "signal", "time": "2026-05-27 13:42:00+08:00", "code": "000988", "action": "TRAIL_SELL", "score": 80.0, "reasons": ["移动止盈: peak=175.24 dd=8.2%"], "pos_qty": 600, "_ts": 1785486005.6159804}
+{"event": "order", "time": "2026-05-27 13:42:00+08:00", "code": "000988", "side": "SELL", "qty": 100, "price": 160.9322, "order_id": "", "order_type": "MKT", "_ts": 1785486005.6179817}
+{"event": "fill", "time": "2026-07-31 16:20:05.620982", "code": "000988", "side": "SELL", "qty": 100, "price": 160.91612723693848, "order_id": "", "pos_after": 600, "_ts": 1785486005.6219833}
+{"event": "order", "time": "2026-05-28 09:31:00+08:00", "code": "000988", "side": "BUY", "qty": 300, "price": 158.7359, "order_id": "base", "order_type": "MKT", "_ts": 1785486010.3740475}
+{"event": "fill", "time": "2026-07-31 16:20:10.377583", "code": "000988", "side": "BUY", "qty": 300, "price": 158.7517592086792, "order_id": "", "pos_after": 800, "_ts": 1785486010.3775833}
+{"event": "signal", "time": "2026-06-01 09:54:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 46.2, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785486036.3208106}
+{"event": "fill", "time": "2026-07-31 16:20:36.324325", "code": "000988", "side": "BUY", "qty": 100, "price": 151.76268756866455, "order_id": "", "pos_after": 900, "_ts": 1785486036.3243253}
+{"event": "signal", "time": "2026-06-01 10:31:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 50.2, "reasons": ["评分达标"], "pos_qty": 900, "_ts": 1785486038.0177858}
+{"event": "fill", "time": "2026-07-31 16:20:38.021775", "code": "000988", "side": "BUY", "qty": 300, "price": 150.73429494476318, "order_id": "", "pos_after": 1200, "_ts": 1785486038.021775}
+{"event": "order", "time": "2026-06-01 14:50:00+08:00", "code": "000988", "side": "SELL", "qty": 400, "price": 143.4014, "order_id": "tail", "order_type": "MKT", "_ts": 1785486045.6613338}
+{"event": "fill", "time": "2026-07-31 16:20:45.665319", "code": "000988", "side": "SELL", "qty": 400, "price": 143.38705756530763, "order_id": "", "pos_after": 1200, "_ts": 1785486045.6653194}
+{"event": "signal", "time": "2026-06-03 09:36:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 54.4, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785486057.9634306}
+{"event": "fill", "time": "2026-07-31 16:20:57.968431", "code": "000988", "side": "BUY", "qty": 300, "price": 157.03443966674806, "order_id": "", "pos_after": 1100, "_ts": 1785486057.9684315}
+{"event": "signal", "time": "2026-06-03 09:37:00+08:00", "code": "000988", "action": "TREND_EXIT", "score": 78.0, "reasons": ["趋势破坏止盈: profit=1.2% trend=TREND_DOWN"], "pos_qty": 1100, "_ts": 1785486058.022485}
+{"event": "order", "time": "2026-06-03 09:37:00+08:00", "code": "000988", "side": "SELL", "qty": 300, "price": 157.6976, "order_id": "", "order_type": "MKT", "_ts": 1785486058.0234852}
+{"event": "fill", "time": "2026-07-31 16:20:58.029030", "code": "000988", "side": "SELL", "qty": 300, "price": 157.68184681549073, "order_id": "", "pos_after": 1100, "_ts": 1785486058.0290308}
+{"event": "signal", "time": "2026-06-03 10:01:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 54.7, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785486059.194069}
+{"event": "fill", "time": "2026-07-31 16:20:59.197072", "code": "000988", "side": "BUY", "qty": 300, "price": 158.7417789627075, "order_id": "", "pos_after": 1100, "_ts": 1785486059.1980727}
+{"event": "signal", "time": "2026-06-03 10:02:00+08:00", "code": "000988", "action": "TREND_EXIT", "score": 78.0, "reasons": ["趋势破坏止盈: profit=1.4% trend=TREND_DOWN"], "pos_qty": 1100, "_ts": 1785486059.244655}
+{"event": "order", "time": "2026-06-03 10:02:00+08:00", "code": "000988", "side": "SELL", "qty": 400, "price": 158.7259, "order_id": "", "order_type": "MKT", "_ts": 1785486059.2456517}
+{"event": "fill", "time": "2026-07-31 16:20:59.249655", "code": "000988", "side": "SELL", "qty": 400, "price": 158.7100337814331, "order_id": "", "pos_after": 1100, "_ts": 1785486059.2496557}
+{"event": "order", "time": "2026-06-04 09:31:00+08:00", "code": "000988", "side": "BUY", "qty": 100, "price": 151.0487, "order_id": "base", "order_type": "MKT", "_ts": 1785486069.703754}
+{"event": "fill", "time": "2026-07-31 16:21:09.707728", "code": "000988", "side": "BUY", "qty": 100, "price": 151.06378040466308, "order_id": "", "pos_after": 800, "_ts": 1785486069.7077289}
+{"event": "signal", "time": "2026-06-04 10:02:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 51.8, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785486071.1222064}
+{"event": "fill", "time": "2026-07-31 16:21:11.126210", "code": "000988", "side": "BUY", "qty": 200, "price": 154.15892326202393, "order_id": "", "pos_after": 1000, "_ts": 1785486071.12621}
+{"event": "signal", "time": "2026-06-04 10:44:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 57.7, "reasons": ["评分达标"], "pos_qty": 1000, "_ts": 1785486072.7562172}
+{"event": "fill", "time": "2026-07-31 16:21:12.759181", "code": "000988", "side": "BUY", "qty": 100, "price": 154.4085362335205, "order_id": "", "pos_after": 1100, "_ts": 1785486072.759181}
+{"event": "signal", "time": "2026-06-04 14:08:00+08:00", "code": "000988", "action": "SELL_HIGH", "score": 67.0, "reasons": ["评分达标"], "pos_qty": 1100, "_ts": 1785486075.8451478}
+{"event": "order", "time": "2026-06-04 14:08:00+08:00", "code": "000988", "side": "SELL", "qty": 200, "price": 159.854, "order_id": "", "order_type": "MKT", "_ts": 1785486075.8451478}
+{"event": "fill", "time": "2026-07-31 16:21:15.848192", "code": "000988", "side": "SELL", "qty": 200, "price": 159.83803376312255, "order_id": "", "pos_after": 1100, "_ts": 1785486075.848193}
+{"event": "order", "time": "2026-06-04 14:50:00+08:00", "code": "000988", "side": "SELL", "qty": 100, "price": 158.1568, "order_id": "tail", "order_type": "MKT", "_ts": 1785486077.1138487}
+{"event": "fill", "time": "2026-07-31 16:21:17.115811", "code": "000988", "side": "SELL", "qty": 100, "price": 158.14102940826416, "order_id": "", "pos_after": 900, "_ts": 1785486077.1158118}
+{"event": "signal", "time": "2026-06-05 09:37:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 52.6, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785486077.6300344}
+{"event": "fill", "time": "2026-07-31 16:21:17.632074", "code": "000988", "side": "BUY", "qty": 200, "price": 161.09809367218017, "order_id": "", "pos_after": 1000, "_ts": 1785486077.6330822}
+{"event": "signal", "time": "2026-06-05 10:04:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 46.7, "reasons": ["评分达标"], "pos_qty": 1000, "_ts": 1785486078.4047575}
+{"event": "fill", "time": "2026-07-31 16:21:18.406760", "code": "000988", "side": "BUY", "qty": 100, "price": 164.7423789627075, "order_id": "", "pos_after": 1100, "_ts": 1785486078.4067607}
+{"event": "order", "time": "2026-06-05 14:50:00+08:00", "code": "000988", "side": "SELL", "qty": 300, "price": 156.8889, "order_id": "tail", "order_type": "MKT", "_ts": 1785486083.7162411}
+{"event": "fill", "time": "2026-07-31 16:21:23.718278", "code": "000988", "side": "SELL", "qty": 300, "price": 156.8732576385498, "order_id": "", "pos_after": 1100, "_ts": 1785486083.718278}
+{"event": "signal", "time": "2026-06-10 09:40:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 48.3, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785486097.6324086}
+{"event": "fill", "time": "2026-07-31 16:21:37.635408", "code": "000988", "side": "BUY", "qty": 300, "price": 151.11369689483644, "order_id": "", "pos_after": 1100, "_ts": 1785486097.6354082}
+{"event": "signal", "time": "2026-06-10 13:40:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 45.9, "reasons": ["评分达标"], "pos_qty": 1100, "_ts": 1785486101.8035288}
+{"event": "fill", "time": "2026-07-31 16:21:41.806522", "code": "000988", "side": "BUY", "qty": 100, "price": 147.8487982940674, "order_id": "", "pos_after": 1200, "_ts": 1785486101.8065221}
+{"event": "order", "time": "2026-06-10 14:50:00+08:00", "code": "000988", "side": "SELL", "qty": 400, "price": 148.5628, "order_id": "tail", "order_type": "MKT", "_ts": 1785486103.7535431}
+{"event": "fill", "time": "2026-07-31 16:21:43.755098", "code": "000988", "side": "SELL", "qty": 400, "price": 148.5479488952637, "order_id": "", "pos_after": 1200, "_ts": 1785486103.7561321}
+{"event": "signal", "time": "2026-06-15 10:36:00+08:00", "code": "000988", "action": "SELL_HIGH", "score": 65.1, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785486118.7538564}
+{"event": "order", "time": "2026-06-15 10:36:00+08:00", "code": "000988", "side": "SELL", "qty": 100, "price": 157.94, "order_id": "", "order_type": "MKT", "_ts": 1785486118.7538564}
+{"event": "fill", "time": "2026-07-31 16:21:58.756856", "code": "000988", "side": "SELL", "qty": 100, "price": 157.9242084411621, "order_id": "", "pos_after": 800, "_ts": 1785486118.756856}
+{"event": "order", "time": "2026-06-16 09:31:00+08:00", "code": "000988", "side": "BUY", "qty": 100, "price": 160.35, "order_id": "base", "order_type": "MKT", "_ts": 1785486125.6701424}
+{"event": "fill", "time": "2026-07-31 16:22:05.677140", "code": "000988", "side": "BUY", "qty": 100, "price": 160.36604110412597, "order_id": "", "pos_after": 800, "_ts": 1785486125.6771402}
+{"event": "signal", "time": "2026-06-16 09:58:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 52.0, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785486126.7014122}
+{"event": "fill", "time": "2026-07-31 16:22:06.704937", "code": "000988", "side": "BUY", "qty": 200, "price": 161.9361901687622, "order_id": "", "pos_after": 1000, "_ts": 1785486126.7049375}
+{"event": "signal", "time": "2026-06-16 10:46:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 44.7, "reasons": ["评分达标"], "pos_qty": 1000, "_ts": 1785486128.6945214}
+{"event": "fill", "time": "2026-07-31 16:22:08.698506", "code": "000988", "side": "BUY", "qty": 100, "price": 162.2562294937134, "order_id": "", "pos_after": 1100, "_ts": 1785486128.6985066}
+{"event": "signal", "time": "2026-06-16 13:08:00+08:00", "code": "000988", "action": "SELL_HIGH", "score": 64.1, "reasons": ["评分达标"], "pos_qty": 1100, "_ts": 1785486130.6516223}
+{"event": "order", "time": "2026-06-16 13:08:00+08:00", "code": "000988", "side": "SELL", "qty": 200, "price": 162.21, "order_id": "", "order_type": "MKT", "_ts": 1785486130.6541953}
+{"event": "fill", "time": "2026-07-31 16:22:10.659183", "code": "000988", "side": "SELL", "qty": 200, "price": 162.1937857131958, "order_id": "", "pos_after": 1100, "_ts": 1785486130.6591833}
+{"event": "order", "time": "2026-06-16 14:50:00+08:00", "code": "000988", "side": "SELL", "qty": 100, "price": 164.15, "order_id": "tail", "order_type": "MKT", "_ts": 1785486134.741186}
+{"event": "fill", "time": "2026-07-31 16:22:14.744181", "code": "000988", "side": "SELL", "qty": 100, "price": 164.13357889709474, "order_id": "", "pos_after": 900, "_ts": 1785486134.7441812}
+{"event": "signal", "time": "2026-06-17 09:44:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 51.4, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785486135.8227794}
+{"event": "fill", "time": "2026-07-31 16:22:15.826789", "code": "000988", "side": "BUY", "qty": 200, "price": 165.61656610412598, "order_id": "", "pos_after": 1000, "_ts": 1785486135.8267894}
+{"event": "signal", "time": "2026-06-17 09:48:00+08:00", "code": "000988", "action": "SELL_HIGH", "score": 64.3, "reasons": ["评分达标"], "pos_qty": 1000, "_ts": 1785486135.9841628}
+{"event": "order", "time": "2026-06-17 09:48:00+08:00", "code": "000988", "side": "SELL", "qty": 200, "price": 170.0, "order_id": "", "order_type": "MKT", "_ts": 1785486135.9851627}
+{"event": "fill", "time": "2026-07-31 16:22:15.988475", "code": "000988", "side": "SELL", "qty": 200, "price": 169.983, "order_id": "", "pos_after": 1000, "_ts": 1785486135.9885414}
+{"event": "signal", "time": "2026-06-17 10:09:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 47.8, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785486136.9139228}
+{"event": "fill", "time": "2026-07-31 16:22:16.918909", "code": "000988", "side": "BUY", "qty": 100, "price": 168.7968767791748, "order_id": "", "pos_after": 900, "_ts": 1785486136.9189098}
+{"event": "order", "time": "2026-06-17 14:50:00+08:00", "code": "000988", "side": "SELL", "qty": 100, "price": 170.99, "order_id": "tail", "order_type": "MKT", "_ts": 1785486144.6500306}
+{"event": "fill", "time": "2026-07-31 16:22:24.654494", "code": "000988", "side": "SELL", "qty": 100, "price": 170.97290649261475, "order_id": "", "pos_after": 900, "_ts": 1785486144.6544945}
+{"event": "signal", "time": "2026-06-18 10:22:00+08:00", "code": "000988", "action": "TARGET_SELL", "score": 75.0, "reasons": ["目标止盈L1: profit=10.3%"], "pos_qty": 800, "_ts": 1785486147.5976453}
+{"event": "order", "time": "2026-06-18 10:22:00+08:00", "code": "000988", "side": "SELL", "qty": 200, "price": 176.56, "order_id": "", "order_type": "MKT", "_ts": 1785486147.5996423}
+{"event": "fill", "time": "2026-07-31 16:22:27.602642", "code": "000988", "side": "SELL", "qty": 200, "price": 176.5423415588379, "order_id": "", "pos_after": 800, "_ts": 1785486147.6026425}
+{"event": "order", "time": "2026-06-22 09:31:00+08:00", "code": "000988", "side": "BUY", "qty": 200, "price": 179.5, "order_id": "base", "order_type": "MKT", "_ts": 1785486156.5340877}
+{"event": "fill", "time": "2026-07-31 16:22:36.539093", "code": "000988", "side": "BUY", "qty": 200, "price": 179.51794999999998, "order_id": "", "pos_after": 800, "_ts": 1785486156.5390935}
+{"event": "signal", "time": "2026-06-23 09:46:00+08:00", "code": "000988", "action": "TRAIL_SELL", "score": 80.0, "reasons": ["移动止盈: peak=180.89 dd=8.8%"], "pos_qty": 800, "_ts": 1785486169.2770858}
+{"event": "order", "time": "2026-06-23 09:46:00+08:00", "code": "000988", "side": "SELL", "qty": 200, "price": 165.01, "order_id": "", "order_type": "MKT", "_ts": 1785486169.2780838}
+{"event": "fill", "time": "2026-07-31 16:22:49.282121", "code": "000988", "side": "SELL", "qty": 200, "price": 164.99349350738527, "order_id": "", "pos_after": 800, "_ts": 1785486169.2821214}
+{"event": "order", "time": "2026-06-24 09:31:00+08:00", "code": "000988", "side": "BUY", "qty": 200, "price": 164.66, "order_id": "base", "order_type": "MKT", "_ts": 1785486181.9031951}
+{"event": "fill", "time": "2026-07-31 16:23:01.908204", "code": "000988", "side": "BUY", "qty": 200, "price": 164.6764696624756, "order_id": "", "pos_after": 800, "_ts": 1785486181.9092038}
+{"event": "signal", "time": "2026-06-24 09:57:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 44.3, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785486183.4704697}
+{"event": "fill", "time": "2026-07-31 16:23:03.476478", "code": "000988", "side": "BUY", "qty": 100, "price": 166.1466178833008, "order_id": "", "pos_after": 900, "_ts": 1785486183.4764788}
+{"event": "signal", "time": "2026-06-24 09:58:00+08:00", "code": "000988", "action": "SELL_HIGH", "score": 65.8, "reasons": ["评分达标"], "pos_qty": 900, "_ts": 1785486183.5310078}
+{"event": "order", "time": "2026-06-24 09:58:00+08:00", "code": "000988", "side": "SELL", "qty": 100, "price": 166.0, "order_id": "", "order_type": "MKT", "_ts": 1785486183.5320075}
+{"event": "fill", "time": "2026-07-31 16:23:03.538019", "code": "000988", "side": "SELL", "qty": 100, "price": 165.9834, "order_id": "", "pos_after": 900, "_ts": 1785486183.5380197}
+{"event": "signal", "time": "2026-06-24 10:23:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 44.4, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785486184.8476696}
+{"event": "fill", "time": "2026-07-31 16:23:04.850675", "code": "000988", "side": "BUY", "qty": 100, "price": 166.18661516876222, "order_id": "", "pos_after": 900, "_ts": 1785486184.8506758}
+{"event": "order", "time": "2026-06-24 14:50:00+08:00", "code": "000988", "side": "SELL", "qty": 100, "price": 167.77, "order_id": "tail", "order_type": "MKT", "_ts": 1785486194.115599}
+{"event": "fill", "time": "2026-07-31 16:23:14.120602", "code": "000988", "side": "SELL", "qty": 100, "price": 167.75322727203368, "order_id": "", "pos_after": 900, "_ts": 1785486194.1206026}
+{"event": "signal", "time": "2026-06-25 09:36:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 45.0, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785486194.924753}
+{"event": "fill", "time": "2026-07-31 16:23:14.928280", "code": "000988", "side": "BUY", "qty": 100, "price": 167.14671788330077, "order_id": "", "pos_after": 900, "_ts": 1785486194.9282806}
+{"event": "signal", "time": "2026-06-25 09:48:00+08:00", "code": "000988", "action": "SELL_HIGH", "score": 72.2, "reasons": ["评分达标"], "pos_qty": 900, "_ts": 1785486195.4518306}
+{"event": "order", "time": "2026-06-25 09:48:00+08:00", "code": "000988", "side": "SELL", "qty": 200, "price": 170.98, "order_id": "", "order_type": "MKT", "_ts": 1785486195.4528494}
+{"event": "fill", "time": "2026-07-31 16:23:15.457399", "code": "000988", "side": "SELL", "qty": 200, "price": 170.96289772796632, "order_id": "", "pos_after": 900, "_ts": 1785486195.4573996}
+{"event": "signal", "time": "2026-06-25 10:07:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 44.3, "reasons": ["评分达标"], "pos_qty": 700, "_ts": 1785486196.3508382}
+{"event": "fill", "time": "2026-07-31 16:23:16.353837", "code": "000988", "side": "BUY", "qty": 100, "price": 173.49734372711183, "order_id": "", "pos_after": 800, "_ts": 1785486196.3538377}
+{"event": "signal", "time": "2026-06-29 11:05:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 44.8, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785486221.295177}
+{"event": "fill", "time": "2026-07-31 16:23:41.300218", "code": "000988", "side": "BUY", "qty": 100, "price": 174.89749288330077, "order_id": "", "pos_after": 900, "_ts": 1785486221.3002183}
+{"event": "signal", "time": "2026-06-29 11:06:00+08:00", "code": "000988", "action": "TREND_EXIT", "score": 78.0, "reasons": ["趋势破坏止盈: profit=5.0% trend=TREND_DOWN"], "pos_qty": 900, "_ts": 1785486221.3427026}
+{"event": "order", "time": "2026-06-29 11:06:00+08:00", "code": "000988", "side": "SELL", "qty": 200, "price": 175.66, "order_id": "", "order_type": "MKT", "_ts": 1785486221.3436835}
+{"event": "fill", "time": "2026-07-31 16:23:41.347715", "code": "000988", "side": "SELL", "qty": 200, "price": 175.64243766174317, "order_id": "", "pos_after": 900, "_ts": 1785486221.3477154}
+{"event": "signal", "time": "2026-06-29 11:30:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 62.8, "reasons": ["评分达标"], "pos_qty": 700, "_ts": 1785486222.2709827}
+{"event": "fill", "time": "2026-07-31 16:23:42.273982", "code": "000988", "side": "BUY", "qty": 300, "price": 175.1275116104126, "order_id": "", "pos_after": 1000, "_ts": 1785486222.2739828}
+{"event": "signal", "time": "2026-06-29 13:01:00+08:00", "code": "000988", "action": "TREND_EXIT", "score": 78.0, "reasons": ["趋势破坏止盈: profit=3.2% trend=TREND_DOWN"], "pos_qty": 1000, "_ts": 1785486222.3119931}
+{"event": "order", "time": "2026-06-29 13:01:00+08:00", "code": "000988", "side": "SELL", "qty": 400, "price": 175.1, "order_id": "", "order_type": "MKT", "_ts": 1785486222.3119931}
+{"event": "fill", "time": "2026-07-31 16:23:42.314993", "code": "000988", "side": "SELL", "qty": 400, "price": 175.08249610290528, "order_id": "", "pos_after": 1000, "_ts": 1785486222.3149939}
+{"event": "order", "time": "2026-06-30 09:31:00+08:00", "code": "000988", "side": "BUY", "qty": 200, "price": 177.0, "order_id": "base", "order_type": "MKT", "_ts": 1785486227.5327954}
+{"event": "fill", "time": "2026-07-31 16:23:47.536317", "code": "000988", "side": "BUY", "qty": 200, "price": 177.0177, "order_id": "", "pos_after": 800, "_ts": 1785486227.536317}
+{"event": "signal", "time": "2026-06-30 10:27:00+08:00", "code": "000988", "action": "SELL_HIGH", "score": 68.1, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785486230.2982388}
+{"event": "order", "time": "2026-06-30 10:27:00+08:00", "code": "000988", "side": "SELL", "qty": 200, "price": 184.06, "order_id": "", "order_type": "MKT", "_ts": 1785486230.2992473}
+{"event": "fill", "time": "2026-07-31 16:23:50.302247", "code": "000988", "side": "SELL", "qty": 200, "price": 184.0415915588379, "order_id": "", "pos_after": 800, "_ts": 1785486230.3022473}
+{"event": "order", "time": "2026-07-01 09:31:00+08:00", "code": "000988", "side": "BUY", "qty": 200, "price": 184.97, "order_id": "base", "order_type": "MKT", "_ts": 1785486240.0879552}
+{"event": "fill", "time": "2026-07-31 16:24:00.094492", "code": "000988", "side": "BUY", "qty": 200, "price": 184.9884982208252, "order_id": "", "pos_after": 800, "_ts": 1785486240.0944927}
+{"event": "signal", "time": "2026-07-03 09:32:00+08:00", "code": "000988", "action": "PANIC_SELL", "score": 75.0, "reasons": ["深度亏损恐慌卖出", "profit_pct=-12.99%"], "pos_qty": 800, "_ts": 1785486267.1807058}
+{"event": "order", "time": "2026-07-03 09:32:00+08:00", "code": "000988", "side": "SELL", "qty": 200, "price": 152.16, "order_id": "", "order_type": "MKT", "_ts": 1785486267.1817064}
+{"event": "fill", "time": "2026-07-31 16:24:27.186714", "code": "000988", "side": "SELL", "qty": 200, "price": 152.14478766174315, "order_id": "", "pos_after": 800, "_ts": 1785486267.1867146}
+{"event": "signal", "time": "2026-07-03 09:57:00+08:00", "code": "000988", "action": "PANIC_SELL", "score": 75.0, "reasons": ["深度亏损恐慌卖出", "profit_pct=-12.51%"], "pos_qty": 600, "_ts": 1785486268.3703566}
+{"event": "order", "time": "2026-07-03 09:57:00+08:00", "code": "000988", "side": "SELL", "qty": 200, "price": 153.0, "order_id": "", "order_type": "MKT", "_ts": 1785486268.371355}
+{"event": "fill", "time": "2026-07-31 16:24:28.374356", "code": "000988", "side": "SELL", "qty": 200, "price": 152.9847, "order_id": "", "pos_after": 600, "_ts": 1785486268.374356}
+{"event": "signal", "time": "2026-07-03 10:22:00+08:00", "code": "000988", "action": "PANIC_SELL", "score": 75.0, "reasons": ["深度亏损恐慌卖出", "profit_pct=-12.01%"], "pos_qty": 400, "_ts": 1785486269.5687928}
+{"event": "order", "time": "2026-07-03 10:22:00+08:00", "code": "000988", "side": "SELL", "qty": 100, "price": 153.88, "order_id": "", "order_type": "MKT", "_ts": 1785486269.5697932}
+{"event": "fill", "time": "2026-07-31 16:24:29.572783", "code": "000988", "side": "SELL", "qty": 100, "price": 153.8646168823242, "order_id": "", "pos_after": 400, "_ts": 1785486269.5727837}
+{"event": "signal", "time": "2026-07-03 14:35:00+08:00", "code": "000988", "action": "PANIC_SELL", "score": 75.0, "reasons": ["深度亏损恐慌卖出", "profit_pct=-12.08%"], "pos_qty": 300, "_ts": 1785486277.4592314}
+{"event": "order", "time": "2026-07-03 14:35:00+08:00", "code": "000988", "side": "SELL", "qty": 100, "price": 153.76, "order_id": "", "order_type": "MKT", "_ts": 1785486277.4602227}
+{"event": "fill", "time": "2026-07-31 16:24:37.463210", "code": "000988", "side": "SELL", "qty": 100, "price": 153.74461850738527, "order_id": "", "pos_after": 300, "_ts": 1785486277.4632108}
+{"event": "risk", "time": "2026-07-06 09:31:00+08:00", "code": "000988", "kind": "base_deferred", "detail": "_stock_trend_state=TREND_BREAKDOWN", "_ts": 1785486278.886368}
+{"event": "signal", "time": "2026-07-06 09:31:00+08:00", "code": "000988", "action": "PANIC_SELL", "score": 75.0, "reasons": ["深度亏损恐慌卖出", "profit_pct=-12.41%"], "pos_qty": 200, "_ts": 1785486278.8923697}
+{"event": "order", "time": "2026-07-06 09:31:00+08:00", "code": "000988", "side": "SELL", "qty": 100, "price": 153.18, "order_id": "", "order_type": "MKT", "_ts": 1785486278.8933694}
+{"event": "fill", "time": "2026-07-31 16:24:38.900919", "code": "000988", "side": "SELL", "qty": 100, "price": 153.16467467651367, "order_id": "", "pos_after": 200, "_ts": 1785486278.9009192}
+{"event": "signal", "time": "2026-07-06 09:57:00+08:00", "code": "000988", "action": "PANIC_SELL", "score": 75.0, "reasons": ["深度亏损恐慌卖出", "profit_pct=-12.17%"], "pos_qty": 100, "_ts": 1785486280.236969}
+{"event": "order", "time": "2026-07-06 09:57:00+08:00", "code": "000988", "side": "SELL", "qty": 100, "price": 153.6, "order_id": "", "order_type": "MKT", "_ts": 1785486280.237936}
+{"event": "fill", "time": "2026-07-31 16:24:40.241955", "code": "000988", "side": "SELL", "qty": 100, "price": 153.58464610290528, "order_id": "", "pos_after": 100, "_ts": 1785486280.2419558}
+{"event": "risk", "time": "2026-07-08 09:31:00+08:00", "code": "000988", "kind": "base_deferred", "detail": "_stock_trend_state=TREND_BREAKDOWN", "_ts": 1785486301.8710785}
+{"event": "risk", "time": "2026-07-09 09:31:00+08:00", "code": "000988", "kind": "base_deferred", "detail": "_stock_trend_state=TREND_BREAKDOWN", "_ts": 1785486314.9006255}
+{"event": "risk", "time": "2026-07-14 09:31:00+08:00", "code": "000988", "kind": "base_deferred", "detail": "_stock_trend_state=TREND_BREAKDOWN", "_ts": 1785486348.5409596}
+{"event": "risk", "time": "2026-07-15 09:31:00+08:00", "code": "000988", "kind": "base_deferred", "detail": "_stock_trend_state=TREND_BREAKDOWN", "_ts": 1785486358.5199203}
+{"event": "risk", "time": "2026-07-20 09:31:00+08:00", "code": "000988", "kind": "base_deferred", "detail": "_stock_trend_state=TREND_BREAKDOWN", "_ts": 1785486387.7466912}
+{"event": "risk", "time": "2026-07-21 09:31:00+08:00", "code": "000988", "kind": "base_deferred", "detail": "_stock_trend_state=TREND_BREAKDOWN", "_ts": 1785486397.197215}
+{"event": "risk", "time": "2026-07-22 09:31:00+08:00", "code": "000988", "kind": "base_deferred", "detail": "_stock_trend_state=TREND_BREAKDOWN", "_ts": 1785486407.3551877}
+{"event": "risk", "time": "2026-07-23 09:31:00+08:00", "code": "000988", "kind": "base_deferred", "detail": "_stock_trend_state=TREND_BREAKDOWN", "_ts": 1785486418.0039656}
+{"event": "order", "time": "2026-04-24 09:31:00+08:00", "code": "000988", "side": "BUY", "qty": 800, "price": 116.4662, "order_id": "base", "order_type": "MKT", "_ts": 1785487992.2575753}
+{"event": "fill", "time": "2026-07-31 16:53:12.271826", "code": "000988", "side": "BUY", "qty": 800, "price": 116.47786366271973, "order_id": "", "pos_after": 800, "_ts": 1785487992.2718267}
+{"event": "signal", "time": "2026-04-28 09:37:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 48.1, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785488015.1603103}
+{"event": "fill", "time": "2026-07-31 16:53:35.164270", "code": "000988", "side": "BUY", "qty": 300, "price": 115.59923576965332, "order_id": "", "pos_after": 1100, "_ts": 1785488015.1642706}
+{"event": "signal", "time": "2026-04-28 10:17:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 46.7, "reasons": ["评分达标"], "pos_qty": 1100, "_ts": 1785488016.8490274}
+{"event": "fill", "time": "2026-07-31 16:53:36.852976", "code": "000988", "side": "BUY", "qty": 100, "price": 117.66600126342773, "order_id": "", "pos_after": 1200, "_ts": 1785488016.8529766}
+{"event": "signal", "time": "2026-04-28 10:21:00+08:00", "code": "000988", "action": "SELL_HIGH", "score": 66.8, "reasons": ["评分达标"], "pos_qty": 1200, "_ts": 1785488017.0250502}
+{"event": "order", "time": "2026-04-28 10:21:00+08:00", "code": "000988", "side": "SELL", "qty": 200, "price": 117.6442, "order_id": "", "order_type": "MKT", "_ts": 1785488017.0270202}
+{"event": "fill", "time": "2026-07-31 16:53:37.030050", "code": "000988", "side": "SELL", "qty": 200, "price": 117.6324845375061, "order_id": "", "pos_after": 1200, "_ts": 1785488017.0310142}
+{"event": "order", "time": "2026-04-28 14:50:00+08:00", "code": "000988", "side": "SELL", "qty": 200, "price": 115.398, "order_id": "tail", "order_type": "MKT", "_ts": 1785488024.822452}
+{"event": "fill", "time": "2026-07-31 16:53:44.827984", "code": "000988", "side": "SELL", "qty": 200, "price": 115.38644756698609, "order_id": "", "pos_after": 1000, "_ts": 1785488024.827984}
+{"event": "signal", "time": "2026-04-29 10:06:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 53.2, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785488026.9782276}
+{"event": "fill", "time": "2026-07-31 16:53:46.981225", "code": "000988", "side": "BUY", "qty": 300, "price": 115.66912038192748, "order_id": "", "pos_after": 1100, "_ts": 1785488026.9812257}
+{"event": "signal", "time": "2026-04-29 10:15:00+08:00", "code": "000988", "action": "TREND_EXIT", "score": 78.0, "reasons": ["趋势破坏止盈: profit=0.9% trend=TREND_DOWN"], "pos_qty": 1100, "_ts": 1785488027.4537802}
+{"event": "order", "time": "2026-04-29 10:15:00+08:00", "code": "000988", "side": "SELL", "qty": 300, "price": 117.205, "order_id": "", "order_type": "MKT", "_ts": 1785488027.4547822}
+{"event": "fill", "time": "2026-07-31 16:53:47.459812", "code": "000988", "side": "SELL", "qty": 300, "price": 117.1932660736084, "order_id": "", "pos_after": 1100, "_ts": 1785488027.4598126}
+{"event": "signal", "time": "2026-04-29 10:36:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 45.2, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785488028.3523345}
+{"event": "fill", "time": "2026-07-31 16:53:48.358616", "code": "000988", "side": "BUY", "qty": 100, "price": 118.13526357803345, "order_id": "", "pos_after": 900, "_ts": 1785488028.3586166}
+{"event": "signal", "time": "2026-04-29 10:40:00+08:00", "code": "000988", "action": "TREND_EXIT", "score": 78.0, "reasons": ["趋势破坏止盈: profit=2.1% trend=TREND_DOWN"], "pos_qty": 900, "_ts": 1785488028.5248523}
+{"event": "order", "time": "2026-04-29 10:40:00+08:00", "code": "000988", "side": "SELL", "qty": 300, "price": 118.8423, "order_id": "", "order_type": "MKT", "_ts": 1785488028.525841}
+{"event": "fill", "time": "2026-07-31 16:53:48.528854", "code": "000988", "side": "SELL", "qty": 300, "price": 118.8303780418396, "order_id": "", "pos_after": 900, "_ts": 1785488028.5288548}
+{"event": "order", "time": "2026-04-30 09:31:00+08:00", "code": "000988", "side": "BUY", "qty": 200, "price": 120.2799, "order_id": "base", "order_type": "MKT", "_ts": 1785488036.0202074}
+{"event": "fill", "time": "2026-07-31 16:53:56.025204", "code": "000988", "side": "BUY", "qty": 200, "price": 120.2918970664978, "order_id": "", "pos_after": 800, "_ts": 1785488036.0252042}
+{"event": "signal", "time": "2026-04-30 11:10:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 43.6, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785488040.5806882}
+{"event": "fill", "time": "2026-07-31 16:54:00.583687", "code": "000988", "side": "BUY", "qty": 100, "price": 116.87723373489379, "order_id": "", "pos_after": 900, "_ts": 1785488040.5836868}
+{"event": "signal", "time": "2026-04-30 13:04:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 50.2, "reasons": ["评分达标"], "pos_qty": 900, "_ts": 1785488041.616552}
+{"event": "fill", "time": "2026-07-31 16:54:01.620550", "code": "000988", "side": "BUY", "qty": 300, "price": 118.01545484542847, "order_id": "", "pos_after": 1200, "_ts": 1785488041.6205502}
+{"event": "order", "time": "2026-04-30 14:50:00+08:00", "code": "000988", "side": "SELL", "qty": 400, "price": 119.3115, "order_id": "tail", "order_type": "MKT", "_ts": 1785488046.3091445}
+{"event": "fill", "time": "2026-07-31 16:54:06.312142", "code": "000988", "side": "SELL", "qty": 400, "price": 119.2995465133667, "order_id": "", "pos_after": 1200, "_ts": 1785488046.3121421}
+{"event": "signal", "time": "2026-05-06 09:42:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 44.5, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785488047.3918703}
+{"event": "fill", "time": "2026-07-31 16:54:07.394870", "code": "000988", "side": "BUY", "qty": 100, "price": 124.00608222961425, "order_id": "", "pos_after": 900, "_ts": 1785488047.3948708}
+{"event": "signal", "time": "2026-05-06 10:07:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 44.9, "reasons": ["评分达标"], "pos_qty": 900, "_ts": 1785488048.5253701}
+{"event": "fill", "time": "2026-07-31 16:54:08.529856", "code": "000988", "side": "BUY", "qty": 100, "price": 123.73650876617431, "order_id": "", "pos_after": 1000, "_ts": 1785488048.529856}
+{"event": "order", "time": "2026-05-06 14:50:00+08:00", "code": "000988", "side": "SELL", "qty": 200, "price": 124.7424, "order_id": "tail", "order_type": "MKT", "_ts": 1785488057.145355}
+{"event": "fill", "time": "2026-07-31 16:54:17.150351", "code": "000988", "side": "SELL", "qty": 200, "price": 124.72996502609253, "order_id": "", "pos_after": 1000, "_ts": 1785488057.1503513}
+{"event": "signal", "time": "2026-05-07 09:39:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 43.3, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785488058.1347227}
+{"event": "fill", "time": "2026-07-31 16:54:18.139249", "code": "000988", "side": "BUY", "qty": 100, "price": 124.93463424301147, "order_id": "", "pos_after": 900, "_ts": 1785488058.139249}
+{"event": "signal", "time": "2026-05-07 10:06:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 43.5, "reasons": ["评分达标"], "pos_qty": 900, "_ts": 1785488059.3760326}
+{"event": "fill", "time": "2026-07-31 16:54:19.380014", "code": "000988", "side": "BUY", "qty": 100, "price": 125.82324238204956, "order_id": "", "pos_after": 1000, "_ts": 1785488059.380015}
+{"event": "signal", "time": "2026-05-07 11:23:00+08:00", "code": "000988", "action": "TARGET_SELL", "score": 75.0, "reasons": ["目标止盈L1: profit=10.2%"], "pos_qty": 1000, "_ts": 1785488062.940893}
+{"event": "order", "time": "2026-05-07 11:23:00+08:00", "code": "000988", "side": "SELL", "qty": 200, "price": 132.2699, "order_id": "", "order_type": "MKT", "_ts": 1785488062.9418404}
+{"event": "fill", "time": "2026-07-31 16:54:22.944579", "code": "000988", "side": "SELL", "qty": 200, "price": 132.25670098571777, "order_id": "", "pos_after": 1000, "_ts": 1785488062.9445798}
+{"event": "signal", "time": "2026-05-08 13:21:00+08:00", "code": "000988", "action": "SELL_HIGH", "score": 74.5, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785488076.4021218}
+{"event": "order", "time": "2026-05-08 13:21:00+08:00", "code": "000988", "side": "SELL", "qty": 200, "price": 132.3098, "order_id": "", "order_type": "MKT", "_ts": 1785488076.4030738}
+{"event": "fill", "time": "2026-07-31 16:54:36.407731", "code": "000988", "side": "SELL", "qty": 200, "price": 132.29661398620607, "order_id": "", "pos_after": 800, "_ts": 1785488076.4077315}
+{"event": "order", "time": "2026-05-11 09:31:00+08:00", "code": "000988", "side": "BUY", "qty": 200, "price": 140.2666, "order_id": "base", "order_type": "MKT", "_ts": 1785488081.6231673}
+{"event": "fill", "time": "2026-07-31 16:54:41.628221", "code": "000988", "side": "BUY", "qty": 200, "price": 140.2806434829712, "order_id": "", "pos_after": 800, "_ts": 1785488081.6282213}
+{"event": "signal", "time": "2026-05-11 14:52:00+08:00", "code": "000988", "action": "SELL_HIGH", "score": 67.3, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785488096.1406326}
+{"event": "order", "time": "2026-05-11 14:52:00+08:00", "code": "000988", "side": "SELL", "qty": 100, "price": 147.4846, "order_id": "", "order_type": "MKT", "_ts": 1785488096.141631}
+{"event": "fill", "time": "2026-07-31 16:54:56.146632", "code": "000988", "side": "SELL", "qty": 100, "price": 147.46985542144776, "order_id": "", "pos_after": 800, "_ts": 1785488096.1466327}
+{"event": "order", "time": "2026-05-12 09:31:00+08:00", "code": "000988", "side": "BUY", "qty": 100, "price": 146.4663, "order_id": "base", "order_type": "MKT", "_ts": 1785488096.8650868}
+{"event": "fill", "time": "2026-07-31 16:54:56.871088", "code": "000988", "side": "BUY", "qty": 100, "price": 146.48095522460937, "order_id": "", "pos_after": 800, "_ts": 1785488096.8720896}
+{"event": "signal", "time": "2026-05-13 09:34:00+08:00", "code": "000988", "action": "TRAIL_SELL", "score": 80.0, "reasons": ["移动止盈: peak=149.89 dd=7.5%"], "pos_qty": 800, "_ts": 1785488111.0425293}
+{"event": "order", "time": "2026-05-13 09:34:00+08:00", "code": "000988", "side": "SELL", "qty": 200, "price": 138.6493, "order_id": "", "order_type": "MKT", "_ts": 1785488111.0435293}
+{"event": "fill", "time": "2026-07-31 16:55:11.047570", "code": "000988", "side": "SELL", "qty": 200, "price": 138.63544232025146, "order_id": "", "pos_after": 800, "_ts": 1785488111.04757}
+{"event": "signal", "time": "2026-05-15 10:56:00+08:00", "code": "000988", "action": "SELL_HIGH", "score": 66.9, "reasons": ["评分达标"], "pos_qty": 600, "_ts": 1785488139.383523}
+{"event": "order", "time": "2026-05-15 10:56:00+08:00", "code": "000988", "side": "SELL", "qty": 100, "price": 137.5412, "order_id": "", "order_type": "MKT", "_ts": 1785488139.3845356}
+{"event": "fill", "time": "2026-07-31 16:55:39.388530", "code": "000988", "side": "SELL", "qty": 100, "price": 137.52739883880616, "order_id": "", "pos_after": 600, "_ts": 1785488139.3885303}
+{"event": "order", "time": "2026-05-18 09:31:00+08:00", "code": "000988", "side": "BUY", "qty": 300, "price": 139.6177, "order_id": "base", "order_type": "MKT", "_ts": 1785488146.5134878}
+{"event": "fill", "time": "2026-07-31 16:55:46.516434", "code": "000988", "side": "BUY", "qty": 300, "price": 139.63165280914308, "order_id": "", "pos_after": 800, "_ts": 1785488146.516435}
+{"event": "signal", "time": "2026-05-18 09:39:00+08:00", "code": "000988", "action": "SELL_HIGH", "score": 69.8, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785488146.8764265}
+{"event": "order", "time": "2026-05-18 09:39:00+08:00", "code": "000988", "side": "SELL", "qty": 200, "price": 144.6493, "order_id": "", "order_type": "MKT", "_ts": 1785488146.8779793}
+{"event": "fill", "time": "2026-07-31 16:55:46.880968", "code": "000988", "side": "SELL", "qty": 200, "price": 144.63485757751465, "order_id": "", "pos_after": 800, "_ts": 1785488146.8809683}
+{"event": "order", "time": "2026-05-19 09:31:00+08:00", "code": "000988", "side": "BUY", "qty": 200, "price": 153.1053, "order_id": "base", "order_type": "MKT", "_ts": 1785488157.2415464}
+{"event": "fill", "time": "2026-07-31 16:55:57.245558", "code": "000988", "side": "BUY", "qty": 200, "price": 153.1205656524658, "order_id": "", "pos_after": 800, "_ts": 1785488157.2455587}
+{"event": "signal", "time": "2026-05-19 13:22:00+08:00", "code": "000988", "action": "SELL_HIGH", "score": 63.1, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785488163.75884}
+{"event": "order", "time": "2026-05-19 13:22:00+08:00", "code": "000988", "side": "SELL", "qty": 100, "price": 154.7924, "order_id": "", "order_type": "MKT", "_ts": 1785488163.7598474}
+{"event": "fill", "time": "2026-07-31 16:56:03.763837", "code": "000988", "side": "SELL", "qty": 100, "price": 154.77697070617677, "order_id": "", "pos_after": 800, "_ts": 1785488163.7638369}
+{"event": "order", "time": "2026-05-20 09:31:00+08:00", "code": "000988", "side": "BUY", "qty": 100, "price": 162.28, "order_id": "base", "order_type": "MKT", "_ts": 1785488168.4292543}
+{"event": "fill", "time": "2026-07-31 16:56:08.433255", "code": "000988", "side": "BUY", "qty": 100, "price": 162.29621151885985, "order_id": "", "pos_after": 800, "_ts": 1785488168.4342673}
+{"event": "signal", "time": "2026-05-20 10:09:00+08:00", "code": "000988", "action": "SELL_HIGH", "score": 65.1, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785488170.187451}
+{"event": "order", "time": "2026-05-20 10:09:00+08:00", "code": "000988", "side": "SELL", "qty": 100, "price": 169.2085, "order_id": "", "order_type": "MKT", "_ts": 1785488170.1885002}
+{"event": "fill", "time": "2026-07-31 16:56:10.192492", "code": "000988", "side": "SELL", "qty": 100, "price": 169.19154472961426, "order_id": "", "pos_after": 800, "_ts": 1785488170.1924927}
+{"event": "signal", "time": "2026-05-21 11:10:00+08:00", "code": "000988", "action": "SELL_HIGH", "score": 71.7, "reasons": ["评分达标"], "pos_qty": 700, "_ts": 1785488184.3131578}
+{"event": "order", "time": "2026-05-21 11:10:00+08:00", "code": "000988", "side": "SELL", "qty": 200, "price": 163.5279, "order_id": "", "order_type": "MKT", "_ts": 1785488184.3141563}
+{"event": "fill", "time": "2026-07-31 16:56:24.317120", "code": "000988", "side": "SELL", "qty": 200, "price": 163.5115555343628, "order_id": "", "pos_after": 700, "_ts": 1785488184.31712}
+{"event": "order", "time": "2026-05-22 09:31:00+08:00", "code": "000988", "side": "BUY", "qty": 300, "price": 156.3698, "order_id": "base", "order_type": "MKT", "_ts": 1785488191.167289}
+{"event": "fill", "time": "2026-07-31 16:56:31.172292", "code": "000988", "side": "BUY", "qty": 300, "price": 156.38546425323486, "order_id": "", "pos_after": 800, "_ts": 1785488191.1722925}
+{"event": "signal", "time": "2026-05-25 14:02:00+08:00", "code": "000988", "action": "SELL_HIGH", "score": 69.7, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785488213.2468662}
+{"event": "order", "time": "2026-05-25 14:02:00+08:00", "code": "000988", "side": "SELL", "qty": 200, "price": 167.8208, "order_id": "", "order_type": "MKT", "_ts": 1785488213.247873}
+{"event": "fill", "time": "2026-07-31 16:56:53.251922", "code": "000988", "side": "SELL", "qty": 200, "price": 167.8039881866455, "order_id": "", "pos_after": 800, "_ts": 1785488213.2519221}
+{"event": "order", "time": "2026-05-26 09:31:00+08:00", "code": "000988", "side": "BUY", "qty": 200, "price": 170.5961, "order_id": "base", "order_type": "MKT", "_ts": 1785488216.5447223}
+{"event": "fill", "time": "2026-07-31 16:56:56.550738", "code": "000988", "side": "BUY", "qty": 200, "price": 170.6132052444458, "order_id": "", "pos_after": 800, "_ts": 1785488216.5507383}
+{"event": "signal", "time": "2026-06-01 09:54:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 46.2, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785488277.4779198}
+{"event": "fill", "time": "2026-07-31 16:57:57.482929", "code": "000988", "side": "BUY", "qty": 100, "price": 151.76268756866455, "order_id": "", "pos_after": 900, "_ts": 1785488277.48293}
+{"event": "signal", "time": "2026-06-01 09:55:00+08:00", "code": "000988", "action": "TREND_EXIT", "score": 78.0, "reasons": ["趋势破坏止盈: profit=0.3% trend=TREND_DOWN"], "pos_qty": 900, "_ts": 1785488277.5353262}
+{"event": "order", "time": "2026-06-01 09:55:00+08:00", "code": "000988", "side": "SELL", "qty": 200, "price": 152.8557, "order_id": "", "order_type": "MKT", "_ts": 1785488277.5353262}
+{"event": "fill", "time": "2026-07-31 16:57:57.539367", "code": "000988", "side": "SELL", "qty": 200, "price": 152.8403815475464, "order_id": "", "pos_after": 900, "_ts": 1785488277.5393674}
+{"event": "signal", "time": "2026-06-01 10:31:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 50.2, "reasons": ["评分达标"], "pos_qty": 700, "_ts": 1785488279.175033}
+{"event": "fill", "time": "2026-07-31 16:57:59.179060", "code": "000988", "side": "BUY", "qty": 300, "price": 150.73429494476318, "order_id": "", "pos_after": 1000, "_ts": 1785488279.1790607}
+{"event": "order", "time": "2026-06-01 14:50:00+08:00", "code": "000988", "side": "SELL", "qty": 200, "price": 143.4014, "order_id": "tail", "order_type": "MKT", "_ts": 1785488286.6308262}
+{"event": "fill", "time": "2026-07-31 16:58:06.634812", "code": "000988", "side": "SELL", "qty": 200, "price": 143.38705756530763, "order_id": "", "pos_after": 1000, "_ts": 1785488286.6348124}
+{"event": "signal", "time": "2026-06-03 09:36:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 54.4, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785488297.9132257}
+{"event": "fill", "time": "2026-07-31 16:58:17.917202", "code": "000988", "side": "BUY", "qty": 300, "price": 157.03443966674806, "order_id": "", "pos_after": 1100, "_ts": 1785488297.9172027}
+{"event": "signal", "time": "2026-06-03 09:37:00+08:00", "code": "000988", "action": "TREND_EXIT", "score": 78.0, "reasons": ["趋势破坏止盈: profit=2.9% trend=TREND_DOWN"], "pos_qty": 1100, "_ts": 1785488297.961243}
+{"event": "order", "time": "2026-06-03 09:37:00+08:00", "code": "000988", "side": "SELL", "qty": 300, "price": 157.6976, "order_id": "", "order_type": "MKT", "_ts": 1785488297.9622645}
+{"event": "fill", "time": "2026-07-31 16:58:17.967245", "code": "000988", "side": "SELL", "qty": 300, "price": 157.68184681549073, "order_id": "", "pos_after": 1100, "_ts": 1785488297.9672453}
+{"event": "signal", "time": "2026-06-03 10:01:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 54.7, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785488299.001969}
+{"event": "fill", "time": "2026-07-31 16:58:19.005961", "code": "000988", "side": "BUY", "qty": 300, "price": 158.7417789627075, "order_id": "", "pos_after": 1100, "_ts": 1785488299.0059614}
+{"event": "signal", "time": "2026-06-03 10:02:00+08:00", "code": "000988", "action": "TREND_EXIT", "score": 78.0, "reasons": ["趋势破坏止盈: profit=2.5% trend=TREND_DOWN"], "pos_qty": 1100, "_ts": 1785488299.0495102}
+{"event": "order", "time": "2026-06-03 10:02:00+08:00", "code": "000988", "side": "SELL", "qty": 400, "price": 158.7259, "order_id": "", "order_type": "MKT", "_ts": 1785488299.0505176}
+{"event": "fill", "time": "2026-07-31 16:58:19.053526", "code": "000988", "side": "SELL", "qty": 400, "price": 158.7100337814331, "order_id": "", "pos_after": 1100, "_ts": 1785488299.0535266}
+{"event": "order", "time": "2026-06-04 09:31:00+08:00", "code": "000988", "side": "BUY", "qty": 100, "price": 151.0487, "order_id": "base", "order_type": "MKT", "_ts": 1785488309.1825068}
+{"event": "fill", "time": "2026-07-31 16:58:29.187914", "code": "000988", "side": "BUY", "qty": 100, "price": 151.06378040466308, "order_id": "", "pos_after": 800, "_ts": 1785488309.1879148}
+{"event": "signal", "time": "2026-06-04 10:02:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 51.8, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785488310.5750937}
+{"event": "fill", "time": "2026-07-31 16:58:30.579090", "code": "000988", "side": "BUY", "qty": 200, "price": 154.15892326202393, "order_id": "", "pos_after": 1000, "_ts": 1785488310.5790906}
+{"event": "signal", "time": "2026-06-04 10:44:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 57.7, "reasons": ["评分达标"], "pos_qty": 1000, "_ts": 1785488312.4756753}
+{"event": "fill", "time": "2026-07-31 16:58:32.478670", "code": "000988", "side": "BUY", "qty": 100, "price": 154.4085362335205, "order_id": "", "pos_after": 1100, "_ts": 1785488312.4786704}
+{"event": "signal", "time": "2026-06-04 14:08:00+08:00", "code": "000988", "action": "SELL_HIGH", "score": 67.0, "reasons": ["评分达标"], "pos_qty": 1100, "_ts": 1785488317.7338738}
+{"event": "order", "time": "2026-06-04 14:08:00+08:00", "code": "000988", "side": "SELL", "qty": 200, "price": 159.854, "order_id": "", "order_type": "MKT", "_ts": 1785488317.7348666}
+{"event": "fill", "time": "2026-07-31 16:58:37.739840", "code": "000988", "side": "SELL", "qty": 200, "price": 159.83803376312255, "order_id": "", "pos_after": 1100, "_ts": 1785488317.73984}
+{"event": "order", "time": "2026-06-04 14:50:00+08:00", "code": "000988", "side": "SELL", "qty": 100, "price": 158.1568, "order_id": "tail", "order_type": "MKT", "_ts": 1785488319.6811228}
+{"event": "fill", "time": "2026-07-31 16:58:39.684107", "code": "000988", "side": "SELL", "qty": 100, "price": 158.14102940826416, "order_id": "", "pos_after": 900, "_ts": 1785488319.6841078}
+{"event": "signal", "time": "2026-06-05 09:37:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 52.6, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785488320.5688112}
+{"event": "fill", "time": "2026-07-31 16:58:40.573816", "code": "000988", "side": "BUY", "qty": 200, "price": 161.09809367218017, "order_id": "", "pos_after": 1000, "_ts": 1785488320.573816}
+{"event": "signal", "time": "2026-06-05 10:04:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 46.7, "reasons": ["评分达标"], "pos_qty": 1000, "_ts": 1785488321.7940745}
+{"event": "fill", "time": "2026-07-31 16:58:41.798074", "code": "000988", "side": "BUY", "qty": 100, "price": 164.7423789627075, "order_id": "", "pos_after": 1100, "_ts": 1785488321.7980747}
+{"event": "order", "time": "2026-06-05 14:50:00+08:00", "code": "000988", "side": "SELL", "qty": 300, "price": 156.8889, "order_id": "tail", "order_type": "MKT", "_ts": 1785488330.8159854}
+{"event": "fill", "time": "2026-07-31 16:58:50.818975", "code": "000988", "side": "SELL", "qty": 300, "price": 156.8732576385498, "order_id": "", "pos_after": 1100, "_ts": 1785488330.818975}
+{"event": "signal", "time": "2026-06-10 09:40:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 48.3, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785488353.8177643}
+{"event": "fill", "time": "2026-07-31 16:59:13.820789", "code": "000988", "side": "BUY", "qty": 300, "price": 151.11369689483644, "order_id": "", "pos_after": 1100, "_ts": 1785488353.8207898}
+{"event": "signal", "time": "2026-06-10 13:40:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 45.9, "reasons": ["评分达标"], "pos_qty": 1100, "_ts": 1785488361.2509212}
+{"event": "fill", "time": "2026-07-31 16:59:21.256497", "code": "000988", "side": "BUY", "qty": 100, "price": 147.8487982940674, "order_id": "", "pos_after": 1200, "_ts": 1785488361.2564979}
+{"event": "order", "time": "2026-06-10 14:50:00+08:00", "code": "000988", "side": "SELL", "qty": 400, "price": 148.5628, "order_id": "tail", "order_type": "MKT", "_ts": 1785488364.8065338}
+{"event": "fill", "time": "2026-07-31 16:59:24.810530", "code": "000988", "side": "SELL", "qty": 400, "price": 148.5479488952637, "order_id": "", "pos_after": 1200, "_ts": 1785488364.8105307}
+{"event": "signal", "time": "2026-06-15 10:36:00+08:00", "code": "000988", "action": "SELL_HIGH", "score": 65.1, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785488394.1123757}
+{"event": "order", "time": "2026-06-15 10:36:00+08:00", "code": "000988", "side": "SELL", "qty": 100, "price": 157.94, "order_id": "", "order_type": "MKT", "_ts": 1785488394.1133747}
+{"event": "fill", "time": "2026-07-31 16:59:54.116374", "code": "000988", "side": "SELL", "qty": 100, "price": 157.9242084411621, "order_id": "", "pos_after": 800, "_ts": 1785488394.1163745}
+{"event": "order", "time": "2026-06-16 09:31:00+08:00", "code": "000988", "side": "BUY", "qty": 100, "price": 160.35, "order_id": "base", "order_type": "MKT", "_ts": 1785488401.8746479}
+{"event": "fill", "time": "2026-07-31 17:00:01.878673", "code": "000988", "side": "BUY", "qty": 100, "price": 160.36604110412597, "order_id": "", "pos_after": 800, "_ts": 1785488401.8786733}
+{"event": "signal", "time": "2026-06-16 09:58:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 52.0, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785488403.350832}
+{"event": "fill", "time": "2026-07-31 17:00:03.354821", "code": "000988", "side": "BUY", "qty": 200, "price": 161.9361901687622, "order_id": "", "pos_after": 1000, "_ts": 1785488403.354822}
+{"event": "signal", "time": "2026-06-16 10:46:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 44.7, "reasons": ["评分达标"], "pos_qty": 1000, "_ts": 1785488405.4697065}
+{"event": "fill", "time": "2026-07-31 17:00:05.472740", "code": "000988", "side": "BUY", "qty": 100, "price": 162.2562294937134, "order_id": "", "pos_after": 1100, "_ts": 1785488405.4727407}
+{"event": "signal", "time": "2026-06-16 13:08:00+08:00", "code": "000988", "action": "SELL_HIGH", "score": 64.1, "reasons": ["评分达标"], "pos_qty": 1100, "_ts": 1785488407.7497597}
+{"event": "order", "time": "2026-06-16 13:08:00+08:00", "code": "000988", "side": "SELL", "qty": 200, "price": 162.21, "order_id": "", "order_type": "MKT", "_ts": 1785488407.7507582}
+{"event": "fill", "time": "2026-07-31 17:00:07.753758", "code": "000988", "side": "SELL", "qty": 200, "price": 162.1937857131958, "order_id": "", "pos_after": 1100, "_ts": 1785488407.7537587}
+{"event": "order", "time": "2026-06-16 14:50:00+08:00", "code": "000988", "side": "SELL", "qty": 100, "price": 164.15, "order_id": "tail", "order_type": "MKT", "_ts": 1785488411.8506815}
+{"event": "fill", "time": "2026-07-31 17:00:11.854687", "code": "000988", "side": "SELL", "qty": 100, "price": 164.13357889709474, "order_id": "", "pos_after": 900, "_ts": 1785488411.8546872}
+{"event": "signal", "time": "2026-06-17 09:44:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 51.4, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785488412.842386}
+{"event": "fill", "time": "2026-07-31 17:00:12.846381", "code": "000988", "side": "BUY", "qty": 200, "price": 165.61656610412598, "order_id": "", "pos_after": 1000, "_ts": 1785488412.8463814}
+{"event": "signal", "time": "2026-06-17 09:48:00+08:00", "code": "000988", "action": "SELL_HIGH", "score": 64.3, "reasons": ["评分达标"], "pos_qty": 1000, "_ts": 1785488413.0173635}
+{"event": "order", "time": "2026-06-17 09:48:00+08:00", "code": "000988", "side": "SELL", "qty": 200, "price": 170.0, "order_id": "", "order_type": "MKT", "_ts": 1785488413.0173635}
+{"event": "fill", "time": "2026-07-31 17:00:13.022067", "code": "000988", "side": "SELL", "qty": 200, "price": 169.983, "order_id": "", "pos_after": 1000, "_ts": 1785488413.022068}
+{"event": "signal", "time": "2026-06-17 10:09:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 47.8, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785488413.888554}
+{"event": "fill", "time": "2026-07-31 17:00:13.892548", "code": "000988", "side": "BUY", "qty": 100, "price": 168.7968767791748, "order_id": "", "pos_after": 900, "_ts": 1785488413.892548}
+{"event": "order", "time": "2026-06-17 14:50:00+08:00", "code": "000988", "side": "SELL", "qty": 100, "price": 170.99, "order_id": "tail", "order_type": "MKT", "_ts": 1785488421.8915594}
+{"event": "fill", "time": "2026-07-31 17:00:21.896564", "code": "000988", "side": "SELL", "qty": 100, "price": 170.97290649261475, "order_id": "", "pos_after": 900, "_ts": 1785488421.8965642}
+{"event": "signal", "time": "2026-06-18 13:30:00+08:00", "code": "000988", "action": "SELL_HIGH", "score": 66.6, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785488428.478681}
+{"event": "order", "time": "2026-06-18 13:30:00+08:00", "code": "000988", "side": "SELL", "qty": 100, "price": 179.93, "order_id": "", "order_type": "MKT", "_ts": 1785488428.47968}
+{"event": "fill", "time": "2026-07-31 17:00:28.482682", "code": "000988", "side": "SELL", "qty": 100, "price": 179.9119996765137, "order_id": "", "pos_after": 800, "_ts": 1785488428.4826827}
+{"event": "order", "time": "2026-06-22 09:31:00+08:00", "code": "000988", "side": "BUY", "qty": 100, "price": 179.5, "order_id": "base", "order_type": "MKT", "_ts": 1785488432.220349}
+{"event": "fill", "time": "2026-07-31 17:00:32.224346", "code": "000988", "side": "BUY", "qty": 100, "price": 179.51794999999998, "order_id": "", "pos_after": 800, "_ts": 1785488432.2243466}
+{"event": "signal", "time": "2026-06-23 10:33:00+08:00", "code": "000988", "action": "SELL_HIGH", "score": 70.4, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785488445.3105674}
+{"event": "order", "time": "2026-06-23 10:33:00+08:00", "code": "000988", "side": "SELL", "qty": 200, "price": 169.28, "order_id": "", "order_type": "MKT", "_ts": 1785488445.312538}
+{"event": "fill", "time": "2026-07-31 17:00:45.315538", "code": "000988", "side": "SELL", "qty": 200, "price": 169.26307077941894, "order_id": "", "pos_after": 800, "_ts": 1785488445.3155382}
+{"event": "order", "time": "2026-06-24 09:31:00+08:00", "code": "000988", "side": "BUY", "qty": 200, "price": 164.66, "order_id": "base", "order_type": "MKT", "_ts": 1785488452.5535536}
+{"event": "fill", "time": "2026-07-31 17:00:52.558545", "code": "000988", "side": "BUY", "qty": 200, "price": 164.6764696624756, "order_id": "", "pos_after": 800, "_ts": 1785488452.5585456}
+{"event": "signal", "time": "2026-06-24 09:57:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 44.3, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785488453.553786}
+{"event": "fill", "time": "2026-07-31 17:00:53.557330", "code": "000988", "side": "BUY", "qty": 100, "price": 166.1466178833008, "order_id": "", "pos_after": 900, "_ts": 1785488453.5573306}
+{"event": "signal", "time": "2026-06-24 09:58:00+08:00", "code": "000988", "action": "SELL_HIGH", "score": 65.8, "reasons": ["评分达标"], "pos_qty": 900, "_ts": 1785488453.5924623}
+{"event": "order", "time": "2026-06-24 09:58:00+08:00", "code": "000988", "side": "SELL", "qty": 100, "price": 166.0, "order_id": "", "order_type": "MKT", "_ts": 1785488453.5934596}
+{"event": "fill", "time": "2026-07-31 17:00:53.595464", "code": "000988", "side": "SELL", "qty": 100, "price": 165.9834, "order_id": "", "pos_after": 900, "_ts": 1785488453.5954647}
+{"event": "signal", "time": "2026-06-24 10:23:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 44.4, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785488454.528487}
+{"event": "fill", "time": "2026-07-31 17:00:54.531460", "code": "000988", "side": "BUY", "qty": 100, "price": 166.18661516876222, "order_id": "", "pos_after": 900, "_ts": 1785488454.5314608}
+{"event": "order", "time": "2026-06-24 14:50:00+08:00", "code": "000988", "side": "SELL", "qty": 100, "price": 167.77, "order_id": "tail", "order_type": "MKT", "_ts": 1785488461.7409465}
+{"event": "fill", "time": "2026-07-31 17:01:01.744960", "code": "000988", "side": "SELL", "qty": 100, "price": 167.75322727203368, "order_id": "", "pos_after": 900, "_ts": 1785488461.7449605}
+{"event": "signal", "time": "2026-06-25 09:36:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 45.0, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785488462.5101721}
+{"event": "fill", "time": "2026-07-31 17:01:02.513994", "code": "000988", "side": "BUY", "qty": 100, "price": 167.14671788330077, "order_id": "", "pos_after": 900, "_ts": 1785488462.5139942}
+{"event": "signal", "time": "2026-06-25 09:48:00+08:00", "code": "000988", "action": "SELL_HIGH", "score": 72.2, "reasons": ["评分达标"], "pos_qty": 900, "_ts": 1785488463.1286218}
+{"event": "order", "time": "2026-06-25 09:48:00+08:00", "code": "000988", "side": "SELL", "qty": 200, "price": 170.98, "order_id": "", "order_type": "MKT", "_ts": 1785488463.1306205}
+{"event": "fill", "time": "2026-07-31 17:01:03.133633", "code": "000988", "side": "SELL", "qty": 200, "price": 170.96289772796632, "order_id": "", "pos_after": 900, "_ts": 1785488463.1336336}
+{"event": "signal", "time": "2026-06-25 10:07:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 44.3, "reasons": ["评分达标"], "pos_qty": 700, "_ts": 1785488464.0130177}
+{"event": "fill", "time": "2026-07-31 17:01:04.016015", "code": "000988", "side": "BUY", "qty": 100, "price": 173.49734372711183, "order_id": "", "pos_after": 800, "_ts": 1785488464.0160153}
+{"event": "signal", "time": "2026-06-29 11:05:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 44.8, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785488490.9875455}
+{"event": "fill", "time": "2026-07-31 17:01:30.991552", "code": "000988", "side": "BUY", "qty": 100, "price": 174.89749288330077, "order_id": "", "pos_after": 900, "_ts": 1785488490.9925506}
+{"event": "signal", "time": "2026-06-29 11:06:00+08:00", "code": "000988", "action": "TREND_EXIT", "score": 78.0, "reasons": ["趋势破坏止盈: profit=5.7% trend=TREND_DOWN"], "pos_qty": 900, "_ts": 1785488491.0425448}
+{"event": "order", "time": "2026-06-29 11:06:00+08:00", "code": "000988", "side": "SELL", "qty": 200, "price": 175.66, "order_id": "", "order_type": "MKT", "_ts": 1785488491.0435448}
+{"event": "fill", "time": "2026-07-31 17:01:31.049557", "code": "000988", "side": "SELL", "qty": 200, "price": 175.64243766174317, "order_id": "", "pos_after": 900, "_ts": 1785488491.0495577}
+{"event": "signal", "time": "2026-06-29 11:30:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 62.8, "reasons": ["评分达标"], "pos_qty": 700, "_ts": 1785488492.2352548}
+{"event": "fill", "time": "2026-07-31 17:01:32.239291", "code": "000988", "side": "BUY", "qty": 300, "price": 175.1275116104126, "order_id": "", "pos_after": 1000, "_ts": 1785488492.2392914}
+{"event": "signal", "time": "2026-06-29 13:01:00+08:00", "code": "000988", "action": "TREND_EXIT", "score": 78.0, "reasons": ["趋势破坏止盈: profit=3.7% trend=TREND_DOWN"], "pos_qty": 1000, "_ts": 1785488492.2811928}
+{"event": "order", "time": "2026-06-29 13:01:00+08:00", "code": "000988", "side": "SELL", "qty": 400, "price": 175.1, "order_id": "", "order_type": "MKT", "_ts": 1785488492.2821934}
+{"event": "fill", "time": "2026-07-31 17:01:32.285193", "code": "000988", "side": "SELL", "qty": 400, "price": 175.08249610290528, "order_id": "", "pos_after": 1000, "_ts": 1785488492.2851932}
+{"event": "order", "time": "2026-06-30 09:31:00+08:00", "code": "000988", "side": "BUY", "qty": 200, "price": 177.0, "order_id": "base", "order_type": "MKT", "_ts": 1785488498.329664}
+{"event": "fill", "time": "2026-07-31 17:01:38.334658", "code": "000988", "side": "BUY", "qty": 200, "price": 177.0177, "order_id": "", "pos_after": 800, "_ts": 1785488498.3346586}
+{"event": "signal", "time": "2026-06-30 10:27:00+08:00", "code": "000988", "action": "SELL_HIGH", "score": 68.1, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785488501.3452594}
+{"event": "order", "time": "2026-06-30 10:27:00+08:00", "code": "000988", "side": "SELL", "qty": 200, "price": 184.06, "order_id": "", "order_type": "MKT", "_ts": 1785488501.3462586}
+{"event": "fill", "time": "2026-07-31 17:01:41.350255", "code": "000988", "side": "SELL", "qty": 200, "price": 184.0415915588379, "order_id": "", "pos_after": 800, "_ts": 1785488501.350256}
+{"event": "order", "time": "2026-07-01 09:31:00+08:00", "code": "000988", "side": "BUY", "qty": 200, "price": 184.97, "order_id": "base", "order_type": "MKT", "_ts": 1785488511.2199326}
+{"event": "fill", "time": "2026-07-31 17:01:51.223935", "code": "000988", "side": "BUY", "qty": 200, "price": 184.9884982208252, "order_id": "", "pos_after": 800, "_ts": 1785488511.223935}
+{"event": "signal", "time": "2026-07-03 09:32:00+08:00", "code": "000988", "action": "PANIC_SELL", "score": 75.0, "reasons": ["深度亏损恐慌卖出", "profit_pct=-12.78%"], "pos_qty": 800, "_ts": 1785488535.9485302}
+{"event": "order", "time": "2026-07-03 09:32:00+08:00", "code": "000988", "side": "SELL", "qty": 200, "price": 152.16, "order_id": "", "order_type": "MKT", "_ts": 1785488535.9485302}
+{"event": "fill", "time": "2026-07-31 17:02:15.951528", "code": "000988", "side": "SELL", "qty": 200, "price": 152.14478766174315, "order_id": "", "pos_after": 800, "_ts": 1785488535.9515288}
+{"event": "signal", "time": "2026-07-03 09:57:00+08:00", "code": "000988", "action": "PANIC_SELL", "score": 75.0, "reasons": ["深度亏损恐慌卖出", "profit_pct=-12.30%"], "pos_qty": 600, "_ts": 1785488537.03128}
+{"event": "order", "time": "2026-07-03 09:57:00+08:00", "code": "000988", "side": "SELL", "qty": 200, "price": 153.0, "order_id": "", "order_type": "MKT", "_ts": 1785488537.0322795}
+{"event": "fill", "time": "2026-07-31 17:02:17.036290", "code": "000988", "side": "SELL", "qty": 200, "price": 152.9847, "order_id": "", "pos_after": 600, "_ts": 1785488537.0362904}
+{"event": "risk", "time": "2026-07-06 09:31:00+08:00", "code": "000988", "kind": "base_deferred", "detail": "_stock_trend_state=TREND_BREAKDOWN", "_ts": 1785488546.8045833}
+{"event": "signal", "time": "2026-07-06 09:31:00+08:00", "code": "000988", "action": "PANIC_SELL", "score": 75.0, "reasons": ["深度亏损恐慌卖出", "profit_pct=-12.20%"], "pos_qty": 400, "_ts": 1785488546.8085823}
+{"event": "order", "time": "2026-07-06 09:31:00+08:00", "code": "000988", "side": "SELL", "qty": 100, "price": 153.18, "order_id": "", "order_type": "MKT", "_ts": 1785488546.8095431}
+{"event": "fill", "time": "2026-07-31 17:02:26.815302", "code": "000988", "side": "SELL", "qty": 100, "price": 153.16467467651367, "order_id": "", "pos_after": 400, "_ts": 1785488546.8153026}
+{"event": "signal", "time": "2026-07-06 09:58:00+08:00", "code": "000988", "action": "PANIC_SELL", "score": 75.0, "reasons": ["深度亏损恐慌卖出", "profit_pct=-12.04%"], "pos_qty": 300, "_ts": 1785488547.945011}
+{"event": "order", "time": "2026-07-06 09:58:00+08:00", "code": "000988", "side": "SELL", "qty": 100, "price": 153.46, "order_id": "", "order_type": "MKT", "_ts": 1785488547.9455457}
+{"event": "fill", "time": "2026-07-31 17:02:27.949576", "code": "000988", "side": "SELL", "qty": 100, "price": 153.44466071319582, "order_id": "", "pos_after": 300, "_ts": 1785488547.9495761}
+{"event": "signal", "time": "2026-07-06 10:23:00+08:00", "code": "000988", "action": "PANIC_SELL", "score": 75.0, "reasons": ["深度亏损恐慌卖出", "profit_pct=-13.82%"], "pos_qty": 200, "_ts": 1785488549.0182338}
+{"event": "order", "time": "2026-07-06 10:23:00+08:00", "code": "000988", "side": "SELL", "qty": 100, "price": 150.35, "order_id": "", "order_type": "MKT", "_ts": 1785488549.0182338}
+{"event": "fill", "time": "2026-07-31 17:02:29.021245", "code": "000988", "side": "SELL", "qty": 100, "price": 150.33497110290529, "order_id": "", "pos_after": 200, "_ts": 1785488549.0212455}
+{"event": "signal", "time": "2026-07-06 10:48:00+08:00", "code": "000988", "action": "PANIC_SELL", "score": 75.0, "reasons": ["深度亏损恐慌卖出", "profit_pct=-15.81%"], "pos_qty": 100, "_ts": 1785488550.0706606}
+{"event": "order", "time": "2026-07-06 10:48:00+08:00", "code": "000988", "side": "SELL", "qty": 100, "price": 146.88, "order_id": "", "order_type": "MKT", "_ts": 1785488550.0716922}
+{"event": "fill", "time": "2026-07-31 17:02:30.075690", "code": "000988", "side": "SELL", "qty": 100, "price": 146.8653168823242, "order_id": "", "pos_after": 100, "_ts": 1785488550.0756903}
+{"event": "risk", "time": "2026-07-08 09:31:00+08:00", "code": "000988", "kind": "base_deferred", "detail": "_stock_trend_state=TREND_BREAKDOWN", "_ts": 1785488566.961124}
+{"event": "risk", "time": "2026-07-09 09:31:00+08:00", "code": "000988", "kind": "base_deferred", "detail": "_stock_trend_state=TREND_BREAKDOWN", "_ts": 1785488576.0791857}
+{"event": "risk", "time": "2026-07-14 09:31:00+08:00", "code": "000988", "kind": "base_deferred", "detail": "_stock_trend_state=TREND_BREAKDOWN", "_ts": 1785488603.3156204}
+{"event": "risk", "time": "2026-07-15 09:31:00+08:00", "code": "000988", "kind": "base_deferred", "detail": "_stock_trend_state=TREND_BREAKDOWN", "_ts": 1785488612.459666}
+{"event": "risk", "time": "2026-07-20 09:31:00+08:00", "code": "000988", "kind": "base_deferred", "detail": "_stock_trend_state=TREND_BREAKDOWN", "_ts": 1785488639.0540426}
+{"event": "risk", "time": "2026-07-21 09:31:00+08:00", "code": "000988", "kind": "base_deferred", "detail": "_stock_trend_state=TREND_BREAKDOWN", "_ts": 1785488648.282611}
+{"event": "risk", "time": "2026-07-22 09:31:00+08:00", "code": "000988", "kind": "base_deferred", "detail": "_stock_trend_state=TREND_BREAKDOWN", "_ts": 1785488658.4352329}
+{"event": "risk", "time": "2026-07-23 09:31:00+08:00", "code": "000988", "kind": "base_deferred", "detail": "_stock_trend_state=TREND_BREAKDOWN", "_ts": 1785488670.2757306}
+{"event": "order", "time": "2026-04-24 09:31:00+08:00", "code": "000988", "side": "BUY", "qty": 800, "price": 116.4662, "order_id": "base", "order_type": "MKT", "_ts": 1785492670.3496683}
+{"event": "fill", "time": "2026-07-31 18:11:10.411712", "code": "000988", "side": "BUY", "qty": 800, "price": 116.47786366271973, "order_id": "", "pos_after": 800, "_ts": 1785492670.411713}
+{"event": "signal", "time": "2026-04-28 09:37:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 48.1, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785492689.6923385}
+{"event": "fill", "time": "2026-07-31 18:11:29.695339", "code": "000988", "side": "BUY", "qty": 300, "price": 115.59923576965332, "order_id": "", "pos_after": 1100, "_ts": 1785492689.695339}
+{"event": "signal", "time": "2026-04-28 10:17:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 46.7, "reasons": ["评分达标"], "pos_qty": 1100, "_ts": 1785492691.417674}
+{"event": "fill", "time": "2026-07-31 18:11:31.420707", "code": "000988", "side": "BUY", "qty": 100, "price": 117.66600126342773, "order_id": "", "pos_after": 1200, "_ts": 1785492691.420708}
+{"event": "signal", "time": "2026-04-28 10:21:00+08:00", "code": "000988", "action": "SELL_HIGH", "score": 66.8, "reasons": ["评分达标"], "pos_qty": 1200, "_ts": 1785492691.6142068}
+{"event": "order", "time": "2026-04-28 10:21:00+08:00", "code": "000988", "side": "SELL", "qty": 200, "price": 117.6442, "order_id": "", "order_type": "MKT", "_ts": 1785492691.6152031}
+{"event": "fill", "time": "2026-07-31 18:11:31.620208", "code": "000988", "side": "SELL", "qty": 200, "price": 117.6324845375061, "order_id": "", "pos_after": 1200, "_ts": 1785492691.620209}
+{"event": "order", "time": "2026-04-28 14:50:00+08:00", "code": "000988", "side": "SELL", "qty": 200, "price": 115.398, "order_id": "tail", "order_type": "MKT", "_ts": 1785492699.753688}
+{"event": "fill", "time": "2026-07-31 18:11:39.756695", "code": "000988", "side": "SELL", "qty": 200, "price": 115.38644756698609, "order_id": "", "pos_after": 1000, "_ts": 1785492699.756695}
+{"event": "signal", "time": "2026-04-29 10:06:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 53.2, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785492701.910656}
+{"event": "fill", "time": "2026-07-31 18:11:41.913681", "code": "000988", "side": "BUY", "qty": 300, "price": 115.66912038192748, "order_id": "", "pos_after": 1100, "_ts": 1785492701.9136817}
+{"event": "signal", "time": "2026-04-29 10:15:00+08:00", "code": "000988", "action": "TREND_EXIT", "score": 78.0, "reasons": ["趋势破坏止盈: profit=0.9% trend=TREND_DOWN"], "pos_qty": 1100, "_ts": 1785492702.359241}
+{"event": "order", "time": "2026-04-29 10:15:00+08:00", "code": "000988", "side": "SELL", "qty": 300, "price": 117.205, "order_id": "", "order_type": "MKT", "_ts": 1785492702.3602707}
+{"event": "fill", "time": "2026-07-31 18:11:42.365255", "code": "000988", "side": "SELL", "qty": 300, "price": 117.1932660736084, "order_id": "", "pos_after": 1100, "_ts": 1785492702.3652556}
+{"event": "signal", "time": "2026-04-29 10:36:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 45.2, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785492703.4162862}
+{"event": "fill", "time": "2026-07-31 18:11:43.422286", "code": "000988", "side": "BUY", "qty": 100, "price": 118.13526357803345, "order_id": "", "pos_after": 900, "_ts": 1785492703.4222865}
+{"event": "signal", "time": "2026-04-29 10:40:00+08:00", "code": "000988", "action": "TREND_EXIT", "score": 78.0, "reasons": ["趋势破坏止盈: profit=2.1% trend=TREND_DOWN"], "pos_qty": 900, "_ts": 1785492703.6346135}
+{"event": "order", "time": "2026-04-29 10:40:00+08:00", "code": "000988", "side": "SELL", "qty": 100, "price": 118.8423, "order_id": "", "order_type": "MKT", "_ts": 1785492703.6356173}
+{"event": "fill", "time": "2026-07-31 18:11:43.639614", "code": "000988", "side": "SELL", "qty": 100, "price": 118.8303780418396, "order_id": "", "pos_after": 900, "_ts": 1785492703.6396148}
+{"event": "signal", "time": "2026-04-30 09:49:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 44.0, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785492713.3281147}
+{"event": "fill", "time": "2026-07-31 18:11:53.337665", "code": "000988", "side": "BUY", "qty": 100, "price": 115.97864534988403, "order_id": "", "pos_after": 900, "_ts": 1785492713.3376658}
+{"event": "signal", "time": "2026-04-30 11:10:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 43.6, "reasons": ["评分达标"], "pos_qty": 900, "_ts": 1785492719.1504846}
+{"event": "fill", "time": "2026-07-31 18:11:59.157462", "code": "000988", "side": "BUY", "qty": 100, "price": 116.87723373489379, "order_id": "", "pos_after": 1000, "_ts": 1785492719.1574624}
+{"event": "order", "time": "2026-04-30 14:50:00+08:00", "code": "000988", "side": "SELL", "qty": 200, "price": 119.3115, "order_id": "tail", "order_type": "MKT", "_ts": 1785492726.767321}
+{"event": "fill", "time": "2026-07-31 18:12:06.770338", "code": "000988", "side": "SELL", "qty": 200, "price": 119.2995465133667, "order_id": "", "pos_after": 1000, "_ts": 1785492726.7703388}
+{"event": "signal", "time": "2026-05-06 09:42:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 44.5, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785492727.6719217}
+{"event": "fill", "time": "2026-07-31 18:12:07.675963", "code": "000988", "side": "BUY", "qty": 100, "price": 124.00608222961425, "order_id": "", "pos_after": 900, "_ts": 1785492727.6759632}
+{"event": "signal", "time": "2026-05-06 10:07:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 44.9, "reasons": ["评分达标"], "pos_qty": 900, "_ts": 1785492728.686249}
+{"event": "fill", "time": "2026-07-31 18:12:08.689246", "code": "000988", "side": "BUY", "qty": 100, "price": 123.73650876617431, "order_id": "", "pos_after": 1000, "_ts": 1785492728.6892467}
+{"event": "order", "time": "2026-05-06 14:50:00+08:00", "code": "000988", "side": "SELL", "qty": 200, "price": 124.7424, "order_id": "tail", "order_type": "MKT", "_ts": 1785492735.4413793}
+{"event": "fill", "time": "2026-07-31 18:12:15.446387", "code": "000988", "side": "SELL", "qty": 200, "price": 124.72996502609253, "order_id": "", "pos_after": 1000, "_ts": 1785492735.4463873}
+{"event": "signal", "time": "2026-05-07 09:39:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 43.3, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785492736.2647088}
+{"event": "fill", "time": "2026-07-31 18:12:16.267740", "code": "000988", "side": "BUY", "qty": 100, "price": 124.93463424301147, "order_id": "", "pos_after": 900, "_ts": 1785492736.2677405}
+{"event": "signal", "time": "2026-05-07 10:06:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 43.5, "reasons": ["评分达标"], "pos_qty": 900, "_ts": 1785492737.2436478}
+{"event": "fill", "time": "2026-07-31 18:12:17.248647", "code": "000988", "side": "BUY", "qty": 100, "price": 125.82324238204956, "order_id": "", "pos_after": 1000, "_ts": 1785492737.2486472}
+{"event": "signal", "time": "2026-05-07 11:18:00+08:00", "code": "000988", "action": "TARGET_SELL", "score": 75.0, "reasons": ["目标止盈L1: profit=10.0%"], "pos_qty": 1000, "_ts": 1785492739.8986}
+{"event": "order", "time": "2026-05-07 11:18:00+08:00", "code": "000988", "side": "SELL", "qty": 200, "price": 131.3415, "order_id": "", "order_type": "MKT", "_ts": 1785492739.8996}
+{"event": "fill", "time": "2026-07-31 18:12:19.902630", "code": "000988", "side": "SELL", "qty": 200, "price": 131.32832703552245, "order_id": "", "pos_after": 1000, "_ts": 1785492739.90263}
+{"event": "signal", "time": "2026-05-08 13:21:00+08:00", "code": "000988", "action": "SELL_HIGH", "score": 74.5, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785492749.2923858}
+{"event": "order", "time": "2026-05-08 13:21:00+08:00", "code": "000988", "side": "SELL", "qty": 200, "price": 132.3098, "order_id": "", "order_type": "MKT", "_ts": 1785492749.2933893}
+{"event": "fill", "time": "2026-07-31 18:12:29.297417", "code": "000988", "side": "SELL", "qty": 200, "price": 132.29661398620607, "order_id": "", "pos_after": 800, "_ts": 1785492749.2974172}
+{"event": "order", "time": "2026-05-11 09:31:00+08:00", "code": "000988", "side": "BUY", "qty": 200, "price": 140.2666, "order_id": "base", "order_type": "MKT", "_ts": 1785492753.7179494}
+{"event": "fill", "time": "2026-07-31 18:12:33.720976", "code": "000988", "side": "BUY", "qty": 200, "price": 140.2806434829712, "order_id": "", "pos_after": 800, "_ts": 1785492753.720976}
+{"event": "signal", "time": "2026-05-11 14:52:00+08:00", "code": "000988", "action": "SELL_HIGH", "score": 67.3, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785492761.93315}
+{"event": "order", "time": "2026-05-11 14:52:00+08:00", "code": "000988", "side": "SELL", "qty": 100, "price": 147.4846, "order_id": "", "order_type": "MKT", "_ts": 1785492761.9341626}
+{"event": "fill", "time": "2026-07-31 18:12:41.937149", "code": "000988", "side": "SELL", "qty": 100, "price": 147.46985542144776, "order_id": "", "pos_after": 800, "_ts": 1785492761.9371498}
+{"event": "order", "time": "2026-05-12 09:31:00+08:00", "code": "000988", "side": "BUY", "qty": 100, "price": 146.4663, "order_id": "base", "order_type": "MKT", "_ts": 1785492762.3711436}
+{"event": "fill", "time": "2026-07-31 18:12:42.375151", "code": "000988", "side": "BUY", "qty": 100, "price": 146.48095522460937, "order_id": "", "pos_after": 800, "_ts": 1785492762.3751519}
+{"event": "signal", "time": "2026-05-13 09:34:00+08:00", "code": "000988", "action": "TRAIL_SELL", "score": 80.0, "reasons": ["移动止盈: peak=149.89 dd=7.5%"], "pos_qty": 800, "_ts": 1785492771.2635524}
+{"event": "order", "time": "2026-05-13 09:34:00+08:00", "code": "000988", "side": "SELL", "qty": 200, "price": 138.6493, "order_id": "", "order_type": "MKT", "_ts": 1785492771.2635524}
+{"event": "fill", "time": "2026-07-31 18:12:51.266554", "code": "000988", "side": "SELL", "qty": 200, "price": 138.63544232025146, "order_id": "", "pos_after": 800, "_ts": 1785492771.2665548}
+{"event": "signal", "time": "2026-05-15 10:56:00+08:00", "code": "000988", "action": "SELL_HIGH", "score": 66.9, "reasons": ["评分达标"], "pos_qty": 600, "_ts": 1785492788.9043138}
+{"event": "order", "time": "2026-05-15 10:56:00+08:00", "code": "000988", "side": "SELL", "qty": 100, "price": 137.5412, "order_id": "", "order_type": "MKT", "_ts": 1785492788.9052825}
+{"event": "fill", "time": "2026-07-31 18:13:08.908312", "code": "000988", "side": "SELL", "qty": 100, "price": 137.52739883880616, "order_id": "", "pos_after": 600, "_ts": 1785492788.9083126}
+{"event": "order", "time": "2026-05-18 09:31:00+08:00", "code": "000988", "side": "BUY", "qty": 300, "price": 139.6177, "order_id": "base", "order_type": "MKT", "_ts": 1785492793.300788}
+{"event": "fill", "time": "2026-07-31 18:13:13.305789", "code": "000988", "side": "BUY", "qty": 300, "price": 139.63165280914308, "order_id": "", "pos_after": 800, "_ts": 1785492793.3057897}
+{"event": "signal", "time": "2026-05-18 09:39:00+08:00", "code": "000988", "action": "SELL_HIGH", "score": 69.8, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785492793.5061095}
+{"event": "order", "time": "2026-05-18 09:39:00+08:00", "code": "000988", "side": "SELL", "qty": 200, "price": 144.6493, "order_id": "", "order_type": "MKT", "_ts": 1785492793.5061095}
+{"event": "fill", "time": "2026-07-31 18:13:13.509106", "code": "000988", "side": "SELL", "qty": 200, "price": 144.63485757751465, "order_id": "", "pos_after": 800, "_ts": 1785492793.5091062}
+{"event": "order", "time": "2026-05-19 09:31:00+08:00", "code": "000988", "side": "BUY", "qty": 200, "price": 153.1053, "order_id": "base", "order_type": "MKT", "_ts": 1785492800.1536198}
+{"event": "fill", "time": "2026-07-31 18:13:20.156579", "code": "000988", "side": "BUY", "qty": 200, "price": 153.1205656524658, "order_id": "", "pos_after": 800, "_ts": 1785492800.1565793}
+{"event": "signal", "time": "2026-05-19 13:22:00+08:00", "code": "000988", "action": "SELL_HIGH", "score": 63.1, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785492803.7433128}
+{"event": "order", "time": "2026-05-19 13:22:00+08:00", "code": "000988", "side": "SELL", "qty": 100, "price": 154.7924, "order_id": "", "order_type": "MKT", "_ts": 1785492803.744312}
+{"event": "fill", "time": "2026-07-31 18:13:23.746274", "code": "000988", "side": "SELL", "qty": 100, "price": 154.77697070617677, "order_id": "", "pos_after": 800, "_ts": 1785492803.7462742}
+{"event": "order", "time": "2026-05-20 09:31:00+08:00", "code": "000988", "side": "BUY", "qty": 100, "price": 162.28, "order_id": "base", "order_type": "MKT", "_ts": 1785492806.3579497}
+{"event": "fill", "time": "2026-07-31 18:13:26.360987", "code": "000988", "side": "BUY", "qty": 100, "price": 162.29621151885985, "order_id": "", "pos_after": 800, "_ts": 1785492806.360988}
+{"event": "signal", "time": "2026-05-20 10:09:00+08:00", "code": "000988", "action": "SELL_HIGH", "score": 65.1, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785492807.3110423}
+{"event": "order", "time": "2026-05-20 10:09:00+08:00", "code": "000988", "side": "SELL", "qty": 100, "price": 169.2085, "order_id": "", "order_type": "MKT", "_ts": 1785492807.3120081}
+{"event": "fill", "time": "2026-07-31 18:13:27.314006", "code": "000988", "side": "SELL", "qty": 100, "price": 169.19154472961426, "order_id": "", "pos_after": 800, "_ts": 1785492807.3150036}
+{"event": "signal", "time": "2026-05-21 11:10:00+08:00", "code": "000988", "action": "SELL_HIGH", "score": 71.7, "reasons": ["评分达标"], "pos_qty": 700, "_ts": 1785492815.3193827}
+{"event": "order", "time": "2026-05-21 11:10:00+08:00", "code": "000988", "side": "SELL", "qty": 200, "price": 163.5279, "order_id": "", "order_type": "MKT", "_ts": 1785492815.32038}
+{"event": "fill", "time": "2026-07-31 18:13:35.322924", "code": "000988", "side": "SELL", "qty": 200, "price": 163.5115555343628, "order_id": "", "pos_after": 700, "_ts": 1785492815.3229244}
+{"event": "order", "time": "2026-05-22 09:31:00+08:00", "code": "000988", "side": "BUY", "qty": 300, "price": 156.3698, "order_id": "base", "order_type": "MKT", "_ts": 1785492819.261391}
+{"event": "fill", "time": "2026-07-31 18:13:39.265436", "code": "000988", "side": "BUY", "qty": 300, "price": 156.38546425323486, "order_id": "", "pos_after": 800, "_ts": 1785492819.2654364}
+{"event": "signal", "time": "2026-05-25 14:02:00+08:00", "code": "000988", "action": "SELL_HIGH", "score": 69.7, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785492830.485358}
+{"event": "order", "time": "2026-05-25 14:02:00+08:00", "code": "000988", "side": "SELL", "qty": 200, "price": 167.8208, "order_id": "", "order_type": "MKT", "_ts": 1785492830.485358}
+{"event": "fill", "time": "2026-07-31 18:13:50.489319", "code": "000988", "side": "SELL", "qty": 200, "price": 167.8039881866455, "order_id": "", "pos_after": 800, "_ts": 1785492830.4893196}
+{"event": "order", "time": "2026-05-26 09:31:00+08:00", "code": "000988", "side": "BUY", "qty": 200, "price": 170.5961, "order_id": "base", "order_type": "MKT", "_ts": 1785492832.1167903}
+{"event": "fill", "time": "2026-07-31 18:13:52.119791", "code": "000988", "side": "BUY", "qty": 200, "price": 170.6132052444458, "order_id": "", "pos_after": 800, "_ts": 1785492832.119791}
+{"event": "signal", "time": "2026-06-01 09:54:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 46.2, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785492858.7669299}
+{"event": "fill", "time": "2026-07-31 18:14:18.768934", "code": "000988", "side": "BUY", "qty": 100, "price": 151.76268756866455, "order_id": "", "pos_after": 900, "_ts": 1785492858.7689345}
+{"event": "signal", "time": "2026-06-01 09:55:00+08:00", "code": "000988", "action": "TREND_EXIT", "score": 78.0, "reasons": ["趋势破坏止盈: profit=0.3% trend=TREND_DOWN"], "pos_qty": 900, "_ts": 1785492858.794919}
+{"event": "order", "time": "2026-06-01 09:55:00+08:00", "code": "000988", "side": "SELL", "qty": 100, "price": 152.8557, "order_id": "", "order_type": "MKT", "_ts": 1785492858.7959197}
+{"event": "fill", "time": "2026-07-31 18:14:18.797878", "code": "000988", "side": "SELL", "qty": 100, "price": 152.8403815475464, "order_id": "", "pos_after": 900, "_ts": 1785492858.7978787}
+{"event": "signal", "time": "2026-06-01 10:31:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 50.2, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785492859.6679673}
+{"event": "fill", "time": "2026-07-31 18:14:19.671009", "code": "000988", "side": "BUY", "qty": 300, "price": 150.73429494476318, "order_id": "", "pos_after": 1100, "_ts": 1785492859.6710098}
+{"event": "order", "time": "2026-06-01 14:50:00+08:00", "code": "000988", "side": "SELL", "qty": 300, "price": 143.4014, "order_id": "tail", "order_type": "MKT", "_ts": 1785492863.9656005}
+{"event": "fill", "time": "2026-07-31 18:14:23.968638", "code": "000988", "side": "SELL", "qty": 300, "price": 143.38705756530763, "order_id": "", "pos_after": 1100, "_ts": 1785492863.9686382}
+{"event": "signal", "time": "2026-06-03 09:36:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 54.4, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785492870.9131286}
+{"event": "fill", "time": "2026-07-31 18:14:30.916123", "code": "000988", "side": "BUY", "qty": 300, "price": 157.03443966674806, "order_id": "", "pos_after": 1100, "_ts": 1785492870.9161234}
+{"event": "signal", "time": "2026-06-03 09:37:00+08:00", "code": "000988", "action": "TREND_EXIT", "score": 78.0, "reasons": ["趋势破坏止盈: profit=2.9% trend=TREND_DOWN"], "pos_qty": 1100, "_ts": 1785492870.9504066}
+{"event": "order", "time": "2026-06-03 09:37:00+08:00", "code": "000988", "side": "SELL", "qty": 300, "price": 157.6976, "order_id": "", "order_type": "MKT", "_ts": 1785492870.9513786}
+{"event": "fill", "time": "2026-07-31 18:14:30.954411", "code": "000988", "side": "SELL", "qty": 300, "price": 157.68184681549073, "order_id": "", "pos_after": 1100, "_ts": 1785492870.9544113}
+{"event": "signal", "time": "2026-06-03 10:01:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 54.7, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785492871.6073616}
+{"event": "fill", "time": "2026-07-31 18:14:31.610365", "code": "000988", "side": "BUY", "qty": 300, "price": 158.7417789627075, "order_id": "", "pos_after": 1100, "_ts": 1785492871.6103654}
+{"event": "signal", "time": "2026-06-03 10:02:00+08:00", "code": "000988", "action": "TREND_EXIT", "score": 78.0, "reasons": ["趋势破坏止盈: profit=2.5% trend=TREND_DOWN"], "pos_qty": 1100, "_ts": 1785492871.6405804}
+{"event": "order", "time": "2026-06-03 10:02:00+08:00", "code": "000988", "side": "SELL", "qty": 300, "price": 158.7259, "order_id": "", "order_type": "MKT", "_ts": 1785492871.6405804}
+{"event": "fill", "time": "2026-07-31 18:14:31.643611", "code": "000988", "side": "SELL", "qty": 300, "price": 158.7100337814331, "order_id": "", "pos_after": 1100, "_ts": 1785492871.643612}
+{"event": "signal", "time": "2026-06-04 09:45:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 44.7, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785492877.983104}
+{"event": "fill", "time": "2026-07-31 18:14:37.986119", "code": "000988", "side": "BUY", "qty": 100, "price": 154.26875174865722, "order_id": "", "pos_after": 900, "_ts": 1785492877.9861193}
+{"event": "signal", "time": "2026-06-04 10:11:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 50.8, "reasons": ["评分达标"], "pos_qty": 900, "_ts": 1785492878.6673727}
+{"event": "fill", "time": "2026-07-31 18:14:38.670368", "code": "000988", "side": "BUY", "qty": 200, "price": 154.70808095550538, "order_id": "", "pos_after": 1100, "_ts": 1785492878.670368}
+{"event": "signal", "time": "2026-06-04 14:08:00+08:00", "code": "000988", "action": "SELL_HIGH", "score": 67.0, "reasons": ["评分达标"], "pos_qty": 1100, "_ts": 1785492882.4376402}
+{"event": "order", "time": "2026-06-04 14:08:00+08:00", "code": "000988", "side": "SELL", "qty": 200, "price": 159.854, "order_id": "", "order_type": "MKT", "_ts": 1785492882.4386234}
+{"event": "fill", "time": "2026-07-31 18:14:42.440950", "code": "000988", "side": "SELL", "qty": 200, "price": 159.83803376312255, "order_id": "", "pos_after": 1100, "_ts": 1785492882.4409502}
+{"event": "order", "time": "2026-06-04 14:50:00+08:00", "code": "000988", "side": "SELL", "qty": 100, "price": 158.1568, "order_id": "tail", "order_type": "MKT", "_ts": 1785492883.7406847}
+{"event": "fill", "time": "2026-07-31 18:14:43.743196", "code": "000988", "side": "SELL", "qty": 100, "price": 158.14102940826416, "order_id": "", "pos_after": 900, "_ts": 1785492883.743196}
+{"event": "signal", "time": "2026-06-05 09:37:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 52.6, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785492884.293404}
+{"event": "fill", "time": "2026-07-31 18:14:44.295403", "code": "000988", "side": "BUY", "qty": 200, "price": 161.09809367218017, "order_id": "", "pos_after": 1000, "_ts": 1785492884.2954035}
+{"event": "signal", "time": "2026-06-05 10:04:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 46.7, "reasons": ["评分达标"], "pos_qty": 1000, "_ts": 1785492885.015118}
+{"event": "fill", "time": "2026-07-31 18:14:45.018119", "code": "000988", "side": "BUY", "qty": 100, "price": 164.7423789627075, "order_id": "", "pos_after": 1100, "_ts": 1785492885.018119}
+{"event": "order", "time": "2026-06-05 14:50:00+08:00", "code": "000988", "side": "SELL", "qty": 300, "price": 156.8889, "order_id": "tail", "order_type": "MKT", "_ts": 1785492890.2543666}
+{"event": "fill", "time": "2026-07-31 18:14:50.256074", "code": "000988", "side": "SELL", "qty": 300, "price": 156.8732576385498, "order_id": "", "pos_after": 1100, "_ts": 1785492890.256074}
+{"event": "signal", "time": "2026-06-10 09:40:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 48.3, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785492903.2836344}
+{"event": "fill", "time": "2026-07-31 18:15:03.286635", "code": "000988", "side": "BUY", "qty": 200, "price": 151.11369689483644, "order_id": "", "pos_after": 1000, "_ts": 1785492903.2866352}
+{"event": "signal", "time": "2026-06-10 13:40:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 45.9, "reasons": ["评分达标"], "pos_qty": 1000, "_ts": 1785492907.305004}
+{"event": "fill", "time": "2026-07-31 18:15:07.307619", "code": "000988", "side": "BUY", "qty": 100, "price": 147.8487982940674, "order_id": "", "pos_after": 1100, "_ts": 1785492907.3076196}
+{"event": "order", "time": "2026-06-10 14:50:00+08:00", "code": "000988", "side": "SELL", "qty": 300, "price": 148.5628, "order_id": "tail", "order_type": "MKT", "_ts": 1785492909.2336762}
+{"event": "fill", "time": "2026-07-31 18:15:09.236709", "code": "000988", "side": "SELL", "qty": 300, "price": 148.5479488952637, "order_id": "", "pos_after": 1100, "_ts": 1785492909.2367098}
+{"event": "signal", "time": "2026-06-15 10:36:00+08:00", "code": "000988", "action": "SELL_HIGH", "score": 65.1, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785492934.3368714}
+{"event": "order", "time": "2026-06-15 10:36:00+08:00", "code": "000988", "side": "SELL", "qty": 100, "price": 157.94, "order_id": "", "order_type": "MKT", "_ts": 1785492934.3378727}
+{"event": "fill", "time": "2026-07-31 18:15:34.341873", "code": "000988", "side": "SELL", "qty": 100, "price": 157.9242084411621, "order_id": "", "pos_after": 800, "_ts": 1785492934.3418736}
+{"event": "order", "time": "2026-06-16 09:31:00+08:00", "code": "000988", "side": "BUY", "qty": 100, "price": 160.35, "order_id": "base", "order_type": "MKT", "_ts": 1785492939.85272}
+{"event": "fill", "time": "2026-07-31 18:15:39.856718", "code": "000988", "side": "BUY", "qty": 100, "price": 160.36604110412597, "order_id": "", "pos_after": 800, "_ts": 1785492939.8567183}
+{"event": "signal", "time": "2026-06-16 09:58:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 52.0, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785492940.6855154}
+{"event": "fill", "time": "2026-07-31 18:15:40.688515", "code": "000988", "side": "BUY", "qty": 200, "price": 161.9361901687622, "order_id": "", "pos_after": 1000, "_ts": 1785492940.6885154}
+{"event": "signal", "time": "2026-06-16 10:46:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 44.7, "reasons": ["评分达标"], "pos_qty": 1000, "_ts": 1785492942.3254504}
+{"event": "fill", "time": "2026-07-31 18:15:42.327583", "code": "000988", "side": "BUY", "qty": 100, "price": 162.2562294937134, "order_id": "", "pos_after": 1100, "_ts": 1785492942.328613}
+{"event": "signal", "time": "2026-06-16 13:08:00+08:00", "code": "000988", "action": "SELL_HIGH", "score": 64.1, "reasons": ["评分达标"], "pos_qty": 1100, "_ts": 1785492944.0119796}
+{"event": "order", "time": "2026-06-16 13:08:00+08:00", "code": "000988", "side": "SELL", "qty": 200, "price": 162.21, "order_id": "", "order_type": "MKT", "_ts": 1785492944.0119796}
+{"event": "fill", "time": "2026-07-31 18:15:44.014938", "code": "000988", "side": "SELL", "qty": 200, "price": 162.1937857131958, "order_id": "", "pos_after": 1100, "_ts": 1785492944.0149384}
+{"event": "order", "time": "2026-06-16 14:50:00+08:00", "code": "000988", "side": "SELL", "qty": 100, "price": 164.15, "order_id": "tail", "order_type": "MKT", "_ts": 1785492947.2782393}
+{"event": "fill", "time": "2026-07-31 18:15:47.280844", "code": "000988", "side": "SELL", "qty": 100, "price": 164.13357889709474, "order_id": "", "pos_after": 900, "_ts": 1785492947.2808447}
+{"event": "signal", "time": "2026-06-17 09:44:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 51.4, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785492948.6617572}
+{"event": "fill", "time": "2026-07-31 18:15:48.664756", "code": "000988", "side": "BUY", "qty": 200, "price": 165.61656610412598, "order_id": "", "pos_after": 1000, "_ts": 1785492948.6647568}
+{"event": "signal", "time": "2026-06-17 09:48:00+08:00", "code": "000988", "action": "SELL_HIGH", "score": 64.3, "reasons": ["评分达标"], "pos_qty": 1000, "_ts": 1785492948.8588626}
+{"event": "order", "time": "2026-06-17 09:48:00+08:00", "code": "000988", "side": "SELL", "qty": 200, "price": 170.0, "order_id": "", "order_type": "MKT", "_ts": 1785492948.8768647}
+{"event": "fill", "time": "2026-07-31 18:15:48.913415", "code": "000988", "side": "SELL", "qty": 200, "price": 169.983, "order_id": "", "pos_after": 1000, "_ts": 1785492948.9134152}
+{"event": "signal", "time": "2026-06-17 10:09:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 47.8, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785492949.8856988}
+{"event": "fill", "time": "2026-07-31 18:15:49.891705", "code": "000988", "side": "BUY", "qty": 100, "price": 168.7968767791748, "order_id": "", "pos_after": 900, "_ts": 1785492949.891705}
+{"event": "order", "time": "2026-06-17 14:50:00+08:00", "code": "000988", "side": "SELL", "qty": 100, "price": 170.99, "order_id": "tail", "order_type": "MKT", "_ts": 1785492958.5783157}
+{"event": "fill", "time": "2026-07-31 18:15:58.581286", "code": "000988", "side": "SELL", "qty": 100, "price": 170.97290649261475, "order_id": "", "pos_after": 900, "_ts": 1785492958.5812862}
+{"event": "signal", "time": "2026-06-18 13:30:00+08:00", "code": "000988", "action": "SELL_HIGH", "score": 66.6, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785492966.3654633}
+{"event": "order", "time": "2026-06-18 13:30:00+08:00", "code": "000988", "side": "SELL", "qty": 100, "price": 179.93, "order_id": "", "order_type": "MKT", "_ts": 1785492966.3664627}
+{"event": "fill", "time": "2026-07-31 18:16:06.369465", "code": "000988", "side": "SELL", "qty": 100, "price": 179.9119996765137, "order_id": "", "pos_after": 800, "_ts": 1785492966.3694654}
+{"event": "order", "time": "2026-06-22 09:31:00+08:00", "code": "000988", "side": "BUY", "qty": 100, "price": 179.5, "order_id": "base", "order_type": "MKT", "_ts": 1785492970.166384}
+{"event": "fill", "time": "2026-07-31 18:16:10.169384", "code": "000988", "side": "BUY", "qty": 100, "price": 179.51794999999998, "order_id": "", "pos_after": 800, "_ts": 1785492970.169384}
+{"event": "signal", "time": "2026-06-23 10:33:00+08:00", "code": "000988", "action": "SELL_HIGH", "score": 70.4, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785492982.572186}
+{"event": "order", "time": "2026-06-23 10:33:00+08:00", "code": "000988", "side": "SELL", "qty": 200, "price": 169.28, "order_id": "", "order_type": "MKT", "_ts": 1785492982.5731857}
+{"event": "fill", "time": "2026-07-31 18:16:22.577787", "code": "000988", "side": "SELL", "qty": 200, "price": 169.26307077941894, "order_id": "", "pos_after": 800, "_ts": 1785492982.5777876}
+{"event": "order", "time": "2026-06-24 09:31:00+08:00", "code": "000988", "side": "BUY", "qty": 200, "price": 164.66, "order_id": "base", "order_type": "MKT", "_ts": 1785492991.241484}
+{"event": "fill", "time": "2026-07-31 18:16:31.245481", "code": "000988", "side": "BUY", "qty": 200, "price": 164.6764696624756, "order_id": "", "pos_after": 800, "_ts": 1785492991.2454813}
+{"event": "signal", "time": "2026-06-24 09:57:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 44.3, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785492992.314545}
+{"event": "fill", "time": "2026-07-31 18:16:32.318555", "code": "000988", "side": "BUY", "qty": 100, "price": 166.1466178833008, "order_id": "", "pos_after": 900, "_ts": 1785492992.318555}
+{"event": "signal", "time": "2026-06-24 09:58:00+08:00", "code": "000988", "action": "SELL_HIGH", "score": 65.8, "reasons": ["评分达标"], "pos_qty": 900, "_ts": 1785492992.3547351}
+{"event": "order", "time": "2026-06-24 09:58:00+08:00", "code": "000988", "side": "SELL", "qty": 100, "price": 166.0, "order_id": "", "order_type": "MKT", "_ts": 1785492992.3557343}
+{"event": "fill", "time": "2026-07-31 18:16:32.358733", "code": "000988", "side": "SELL", "qty": 100, "price": 165.9834, "order_id": "", "pos_after": 900, "_ts": 1785492992.3587334}
+{"event": "signal", "time": "2026-06-24 10:23:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 44.4, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785492993.2990584}
+{"event": "fill", "time": "2026-07-31 18:16:33.303018", "code": "000988", "side": "BUY", "qty": 100, "price": 166.18661516876222, "order_id": "", "pos_after": 900, "_ts": 1785492993.303019}
+{"event": "order", "time": "2026-06-24 14:50:00+08:00", "code": "000988", "side": "SELL", "qty": 100, "price": 167.77, "order_id": "tail", "order_type": "MKT", "_ts": 1785492999.8702943}
+{"event": "fill", "time": "2026-07-31 18:16:39.873294", "code": "000988", "side": "SELL", "qty": 100, "price": 167.75322727203368, "order_id": "", "pos_after": 900, "_ts": 1785492999.873294}
+{"event": "signal", "time": "2026-06-25 09:36:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 45.0, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785493000.5064466}
+{"event": "fill", "time": "2026-07-31 18:16:40.509447", "code": "000988", "side": "BUY", "qty": 100, "price": 167.14671788330077, "order_id": "", "pos_after": 900, "_ts": 1785493000.509447}
+{"event": "signal", "time": "2026-06-25 09:48:00+08:00", "code": "000988", "action": "SELL_HIGH", "score": 72.2, "reasons": ["评分达标"], "pos_qty": 900, "_ts": 1785493000.854222}
+{"event": "order", "time": "2026-06-25 09:48:00+08:00", "code": "000988", "side": "SELL", "qty": 200, "price": 170.98, "order_id": "", "order_type": "MKT", "_ts": 1785493000.8552253}
+{"event": "fill", "time": "2026-07-31 18:16:40.858183", "code": "000988", "side": "SELL", "qty": 200, "price": 170.96289772796632, "order_id": "", "pos_after": 900, "_ts": 1785493000.8581834}
+{"event": "signal", "time": "2026-06-25 10:07:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 44.3, "reasons": ["评分达标"], "pos_qty": 700, "_ts": 1785493001.3679025}
+{"event": "fill", "time": "2026-07-31 18:16:41.370902", "code": "000988", "side": "BUY", "qty": 100, "price": 173.49734372711183, "order_id": "", "pos_after": 800, "_ts": 1785493001.3709028}
+{"event": "signal", "time": "2026-06-29 11:05:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 44.8, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785493017.213483}
+{"event": "fill", "time": "2026-07-31 18:16:57.216463", "code": "000988", "side": "BUY", "qty": 100, "price": 174.89749288330077, "order_id": "", "pos_after": 900, "_ts": 1785493017.216463}
+{"event": "signal", "time": "2026-06-29 11:06:00+08:00", "code": "000988", "action": "TREND_EXIT", "score": 78.0, "reasons": ["趋势破坏止盈: profit=5.6% trend=TREND_DOWN"], "pos_qty": 900, "_ts": 1785493017.2455063}
+{"event": "order", "time": "2026-06-29 11:06:00+08:00", "code": "000988", "side": "SELL", "qty": 100, "price": 175.66, "order_id": "", "order_type": "MKT", "_ts": 1785493017.2455063}
+{"event": "fill", "time": "2026-07-31 18:16:57.248503", "code": "000988", "side": "SELL", "qty": 100, "price": 175.64243766174317, "order_id": "", "pos_after": 900, "_ts": 1785493017.2485032}
+{"event": "signal", "time": "2026-06-29 11:30:00+08:00", "code": "000988", "action": "BUY_LOW", "score": 62.8, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785493017.9917057}
+{"event": "fill", "time": "2026-07-31 18:16:57.994706", "code": "000988", "side": "BUY", "qty": 300, "price": 175.1275116104126, "order_id": "", "pos_after": 1100, "_ts": 1785493017.994706}
+{"event": "signal", "time": "2026-06-29 13:01:00+08:00", "code": "000988", "action": "TREND_EXIT", "score": 78.0, "reasons": ["趋势破坏止盈: profit=3.8% trend=TREND_DOWN"], "pos_qty": 1100, "_ts": 1785493018.0266967}
+{"event": "order", "time": "2026-06-29 13:01:00+08:00", "code": "000988", "side": "SELL", "qty": 300, "price": 175.1, "order_id": "", "order_type": "MKT", "_ts": 1785493018.0277028}
+{"event": "fill", "time": "2026-07-31 18:16:58.030746", "code": "000988", "side": "SELL", "qty": 300, "price": 175.08249610290528, "order_id": "", "pos_after": 1100, "_ts": 1785493018.0307462}
+{"event": "signal", "time": "2026-06-30 10:27:00+08:00", "code": "000988", "action": "SELL_HIGH", "score": 68.1, "reasons": ["评分达标"], "pos_qty": 800, "_ts": 1785493023.149558}
+{"event": "order", "time": "2026-06-30 10:27:00+08:00", "code": "000988", "side": "SELL", "qty": 200, "price": 184.06, "order_id": "", "order_type": "MKT", "_ts": 1785493023.149558}
+{"event": "fill", "time": "2026-07-31 18:17:03.152596", "code": "000988", "side": "SELL", "qty": 200, "price": 184.0415915588379, "order_id": "", "pos_after": 800, "_ts": 1785493023.1525962}
+{"event": "order", "time": "2026-07-01 09:31:00+08:00", "code": "000988", "side": "BUY", "qty": 200, "price": 184.97, "order_id": "base", "order_type": "MKT", "_ts": 1785493028.4351811}
+{"event": "fill", "time": "2026-07-31 18:17:08.438138", "code": "000988", "side": "BUY", "qty": 200, "price": 184.9884982208252, "order_id": "", "pos_after": 800, "_ts": 1785493028.438139}
+{"event": "signal", "time": "2026-07-03 09:33:00+08:00", "code": "000988", "action": "PANIC_SELL", "score": 75.0, "reasons": ["深度亏损恐慌卖出", "profit_pct=-12.51%"], "pos_qty": 800, "_ts": 1785493044.5208197}
+{"event": "order", "time": "2026-07-03 09:33:00+08:00", "code": "000988", "side": "SELL", "qty": 200, "price": 151.18, "order_id": "", "order_type": "MKT", "_ts": 1785493044.5218577}
+{"event": "fill", "time": "2026-07-31 18:17:24.524822", "code": "000988", "side": "SELL", "qty": 200, "price": 151.16487467651368, "order_id": "", "pos_after": 800, "_ts": 1785493044.5248225}
+{"event": "risk", "time": "2026-07-06 09:31:00+08:00", "code": "000988", "kind": "base_deferred", "detail": "_stock_trend_state=TREND_BREAKDOWN", "_ts": 1785493055.4230638}
+{"event": "signal", "time": "2026-07-06 09:35:00+08:00", "code": "000988", "action": "PANIC_SELL", "score": 75.0, "reasons": ["深度亏损恐慌卖出", "profit_pct=-12.24%"], "pos_qty": 600, "_ts": 1785493055.6389802}
+{"event": "order", "time": "2026-07-06 09:35:00+08:00", "code": "000988", "side": "SELL", "qty": 100, "price": 151.66, "order_id": "", "order_type": "MKT", "_ts": 1785493055.6399791}
+{"event": "fill", "time": "2026-07-31 18:17:35.645981", "code": "000988", "side": "SELL", "qty": 100, "price": 151.64483766174317, "order_id": "", "pos_after": 600, "_ts": 1785493055.6459818}
+{"event": "signal", "time": "2026-07-06 10:02:00+08:00", "code": "000988", "action": "PANIC_SELL", "score": 75.0, "reasons": ["深度亏损恐慌卖出", "profit_pct=-12.01%"], "pos_qty": 500, "_ts": 1785493056.9414923}
+{"event": "order", "time": "2026-07-06 10:02:00+08:00", "code": "000988", "side": "SELL", "qty": 200, "price": 152.05, "order_id": "", "order_type": "MKT", "_ts": 1785493056.9424925}
+{"event": "fill", "time": "2026-07-31 18:17:36.946492", "code": "000988", "side": "SELL", "qty": 200, "price": 152.03479805145264, "order_id": "", "pos_after": 500, "_ts": 1785493056.946492}
+{"event": "signal", "time": "2026-07-06 10:27:00+08:00", "code": "000988", "action": "PANIC_SELL", "score": 75.0, "reasons": ["深度亏损恐慌卖出", "profit_pct=-13.53%"], "pos_qty": 300, "_ts": 1785493058.5457244}
+{"event": "order", "time": "2026-07-06 10:27:00+08:00", "code": "000988", "side": "SELL", "qty": 100, "price": 149.43, "order_id": "", "order_type": "MKT", "_ts": 1785493058.54773}
+{"event": "fill", "time": "2026-07-31 18:17:38.551255", "code": "000988", "side": "SELL", "qty": 100, "price": 149.41504967651366, "order_id": "", "pos_after": 300, "_ts": 1785493058.5512552}
+{"event": "signal", "time": "2026-07-06 10:52:00+08:00", "code": "000988", "action": "PANIC_SELL", "score": 75.0, "reasons": ["深度亏损恐慌卖出", "profit_pct=-15.48%"], "pos_qty": 200, "_ts": 1785493059.6536767}
+{"event": "order", "time": "2026-07-06 10:52:00+08:00", "code": "000988", "side": "SELL", "qty": 100, "price": 146.06, "order_id": "", "order_type": "MKT", "_ts": 1785493059.6546872}
+{"event": "fill", "time": "2026-07-31 18:17:39.657716", "code": "000988", "side": "SELL", "qty": 100, "price": 146.0453915588379, "order_id": "", "pos_after": 200, "_ts": 1785493059.6577165}
+{"event": "signal", "time": "2026-07-06 11:17:00+08:00", "code": "000988", "action": "PANIC_SELL", "score": 75.0, "reasons": ["深度亏损恐慌卖出", "profit_pct=-13.83%"], "pos_qty": 100, "_ts": 1785493060.377401}
+{"event": "order", "time": "2026-07-06 11:17:00+08:00", "code": "000988", "side": "SELL", "qty": 100, "price": 148.9, "order_id": "", "order_type": "MKT", "_ts": 1785493060.377401}
+{"event": "fill", "time": "2026-07-31 18:17:40.380363", "code": "000988", "side": "SELL", "qty": 100, "price": 148.88510389709472, "order_id": "", "pos_after": 100, "_ts": 1785493060.380363}
+{"event": "risk", "time": "2026-07-08 09:31:00+08:00", "code": "000988", "kind": "base_deferred", "detail": "_stock_trend_state=TREND_BREAKDOWN", "_ts": 1785493070.6702728}
+{"event": "risk", "time": "2026-07-09 09:31:00+08:00", "code": "000988", "kind": "base_deferred", "detail": "_stock_trend_state=TREND_BREAKDOWN", "_ts": 1785493080.1860707}
+{"event": "risk", "time": "2026-07-14 09:31:00+08:00", "code": "000988", "kind": "base_deferred", "detail": "_stock_trend_state=TREND_BREAKDOWN", "_ts": 1785493110.9501204}
+{"event": "risk", "time": "2026-07-15 09:31:00+08:00", "code": "000988", "kind": "base_deferred", "detail": "_stock_trend_state=TREND_BREAKDOWN", "_ts": 1785493122.200684}
+{"event": "risk", "time": "2026-07-20 09:31:00+08:00", "code": "000988", "kind": "base_deferred", "detail": "_stock_trend_state=TREND_BREAKDOWN", "_ts": 1785493156.6601179}
+{"event": "risk", "time": "2026-07-21 09:31:00+08:00", "code": "000988", "kind": "base_deferred", "detail": "_stock_trend_state=TREND_BREAKDOWN", "_ts": 1785493166.9183452}
+{"event": "risk", "time": "2026-07-22 09:31:00+08:00", "code": "000988", "kind": "base_deferred", "detail": "_stock_trend_state=TREND_BREAKDOWN", "_ts": 1785493177.601403}
+{"event": "risk", "time": "2026-07-23 09:31:00+08:00", "code": "000988", "kind": "base_deferred", "detail": "_stock_trend_state=TREND_BREAKDOWN", "_ts": 1785493187.1613567}
