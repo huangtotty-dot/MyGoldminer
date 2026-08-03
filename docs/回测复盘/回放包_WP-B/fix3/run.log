@@ -1,30 +1,30 @@
-[replay] åœºæ™¯=fix3 çª—å£=2026-04-24 08:00:00~2026-07-24 16:00:00 èµ„é‡‘=200000 æ ‡çš„=['000988']
-[replay] äº§ç‰©ç›®å½•=C:\Users\Lenovo\.goldminer3\projects\e8bb1f4d-87ce-11f1-97f7-98fa9b8df5e7\docs\å›æµ‹å¤ç›˜\å›æ”¾åŒ…_WP-B\fix3
+[replay] ³¡¾°=fix3 ´°¿Ú=2026-04-24 08:00:00~2026-07-24 16:00:00 ×Ê½ğ=200000 ±êµÄ=['000988']
+[replay] ²úÎïÄ¿Â¼=C:\Users\Lenovo\.goldminer3\projects\e8bb1f4d-87ce-11f1-97f7-98fa9b8df5e7\docs\»Ø²â¸´ÅÌ\»Ø·Å°ü_WP-B\fix3
 ----------------------------------------
 python sdk version: 3.0.186
 c sdk version: 3.8.19
 ----------------------------------------
 
-å›æµ‹å¼€å§‹ï¼Œæ­£ä¸‹è½½æ•°æ®åˆ°æœ¬åœ°...
+»Ø²â¿ªÊ¼£¬ÕıÏÂÔØÊı¾İµ½±¾µØ...
 
-æç¤ºï¼š
-1. å¦‚æœè¯·æ±‚æ•°æ®é‡è¾ƒå¤§ï¼Œé¦–æ¬¡å‡†å¤‡æ•°æ®å¯èƒ½éœ€è¦è¾ƒé•¿æ—¶é—´ï¼Œè¯·è€å¿ƒç­‰å¾…ã€‚
-2. å¯é¢„å…ˆä¸‹è½½æ•°æ®ä»¥åŠ é€Ÿå›æµ‹ï¼ŒåŠŸèƒ½å…¥å£ï¼šæ˜é‡‘ç»ˆç«¯->é‡åŒ–ç ”ç©¶->æ•°æ®ç®¡ç†
-3. ç›¸å…³æŒ‡å¼•ï¼šhttps://www.myquant.cn/docs2/operatingInstruction/study/æ•°æ®ç®¡ç†.html
+ÌáÊ¾£º
+1. Èç¹ûÇëÇóÊı¾İÁ¿½Ï´ó£¬Ê×´Î×¼±¸Êı¾İ¿ÉÄÜĞèÒª½Ï³¤Ê±¼ä£¬ÇëÄÍĞÄµÈ´ı¡£
+2. ¿ÉÔ¤ÏÈÏÂÔØÊı¾İÒÔ¼ÓËÙ»Ø²â£¬¹¦ÄÜÈë¿Ú£º¾ò½ğÖÕ¶Ë->Á¿»¯ÑĞ¾¿->Êı¾İ¹ÜÀí
+3. Ïà¹ØÖ¸Òı£ºhttps://www.myquant.cn/docs2/operatingInstruction/study/Êı¾İ¹ÜÀí.html
 
-[init] å¤§ç›˜æ—¥çº¿å·²ç¼“å­˜: 900 è¡Œ, 2022-11-15 ~ 2026-07-31
-[init] äº‹ä»¶æ¡¥: C:\Users\Lenovo\.goldminer3\projects\e8bb1f4d-87ce-11f1-97f7-98fa9b8df5e7\docs\å›æµ‹å¤ç›˜\å›æ”¾åŒ…_WP-B\fix3
-[init] ç­–ç•¥åˆå§‹åŒ–å®Œæˆ: 1 åªæ ‡çš„
+[init] ´óÅÌÈÕÏßÒÑ»º´æ: 900 ĞĞ, 2022-11-15 ~ 2026-07-31
+[init] ÊÂ¼şÇÅ: C:\Users\Lenovo\.goldminer3\projects\e8bb1f4d-87ce-11f1-97f7-98fa9b8df5e7\docs\»Ø²â¸´ÅÌ\»Ø·Å°ü_WP-B\fix3
+[init] ²ßÂÔ³õÊ¼»¯Íê³É: 1 Ö»±êµÄ
 [ir] 2026-04-24 regime=range score=11.7
-[D6] amount/volume=115.36 close=116.47 â†’ VWAPå•ä½æ¯”=0.9905
-[09:31:00] BASE 000988 åå·¥ç§‘æŠ€ ä¸‹å• 800è‚¡@116.47
-[BASE] 000988 åº•ä»“æˆäº¤ 800è‚¡@116.48
+[D6] amount/volume=115.36 close=116.47 ¡ú VWAPµ¥Î»±È=0.9905
+[09:31:00] BASE 000988 »ª¹¤¿Æ¼¼ ÏÂµ¥ 800¹É@116.47
+[BASE] 000988 µ×²Ö³É½» 800¹É@116.48
 [ir] 2026-04-27 regime=range score=11.7
 [ir] 2026-04-28 regime=range score=11.7
 [09:37:00] BUY 000988 300@115.59 score=48 regime=range
 [10:17:00] BUY 000988 100@117.65 score=47 regime=range
 [10:21:00] SELL 000988 200@117.64 score=67 regime=range
-[14:50:00] TAIL 000988 å°¾ç›˜å½’ä½ 200è‚¡ (pos=1000â†’800 target=800)
+[14:50:00] TAIL 000988 Î²ÅÌ¹éÎ» 200¹É (pos=1000¡ú800 target=800)
 [ir] 2026-04-29 regime=range score=12.2
 [10:06:00] BUY 000988 300@115.66 score=53 regime=range
 [10:15:00] SELL 000988 300@117.20 score=78 regime=range
@@ -33,11 +33,11 @@ c sdk version: 3.8.19
 [ir] 2026-04-30 regime=range score=12.7
 [09:49:00] BUY 000988 100@115.97 score=44 regime=range
 [11:10:00] BUY 000988 100@116.87 score=44 regime=range
-[14:50:00] TAIL 000988 å°¾ç›˜å½’ä½ 200è‚¡ (pos=1000â†’800 target=800)
+[14:50:00] TAIL 000988 Î²ÅÌ¹éÎ» 200¹É (pos=1000¡ú800 target=800)
 [ir] 2026-05-06 regime=uni_up score=12.7
 [09:42:00] BUY 000988 100@123.99 score=44 regime=uni_up
 [10:07:00] BUY 000988 100@123.72 score=45 regime=uni_up
-[14:50:00] TAIL 000988 å°¾ç›˜å½’ä½ 200è‚¡ (pos=1000â†’800 target=800)
+[14:50:00] TAIL 000988 Î²ÅÌ¹éÎ» 200¹É (pos=1000¡ú800 target=800)
 [ir] 2026-05-07 regime=range score=12.7
 [09:39:00] BUY 000988 100@124.92 score=43 regime=range
 [10:06:00] BUY 000988 100@125.81 score=44 regime=range
@@ -45,39 +45,39 @@ c sdk version: 3.8.19
 [ir] 2026-05-08 regime=range score=12.7
 [13:21:00] SELL 000988 200@132.31 score=74 regime=range
 [ir] 2026-05-11 regime=uni_up score=12.7
-[09:31:00] BASE 000988 åå·¥ç§‘æŠ€ ä¸‹å• 200è‚¡@140.27
-[BASE] 000988 åº•ä»“æˆäº¤ 200è‚¡@140.28
+[09:31:00] BASE 000988 »ª¹¤¿Æ¼¼ ÏÂµ¥ 200¹É@140.27
+[BASE] 000988 µ×²Ö³É½» 200¹É@140.28
 [14:52:00] SELL 000988 100@147.48 score=67 regime=uni_up
 [ir] 2026-05-12 regime=range score=12.7
-[09:31:00] BASE 000988 åå·¥ç§‘æŠ€ ä¸‹å• 100è‚¡@146.47
-[BASE] 000988 åº•ä»“æˆäº¤ 100è‚¡@146.48
+[09:31:00] BASE 000988 »ª¹¤¿Æ¼¼ ÏÂµ¥ 100¹É@146.47
+[BASE] 000988 µ×²Ö³É½» 100¹É@146.48
 [ir] 2026-05-13 regime=range score=12.2
 [09:34:00] SELL 000988 200@138.65 score=80 regime=range
 [ir] 2026-05-14 regime=uni_down score=11.7
 [ir] 2026-05-15 regime=uni_down score=11.7
 [10:56:00] SELL 000988 100@137.54 score=67 regime=uni_down
 [ir] 2026-05-18 regime=range score=11.7
-[09:31:00] BASE 000988 åå·¥ç§‘æŠ€ ä¸‹å• 300è‚¡@139.62
-[BASE] 000988 åº•ä»“æˆäº¤ 300è‚¡@139.63
+[09:31:00] BASE 000988 »ª¹¤¿Æ¼¼ ÏÂµ¥ 300¹É@139.62
+[BASE] 000988 µ×²Ö³É½» 300¹É@139.63
 [09:39:00] SELL 000988 200@144.65 score=70 regime=range
 [ir] 2026-05-19 regime=range score=-0.4
-[09:31:00] BASE 000988 åå·¥ç§‘æŠ€ ä¸‹å• 200è‚¡@153.11
-[BASE] 000988 åº•ä»“æˆäº¤ 200è‚¡@153.12
+[09:31:00] BASE 000988 »ª¹¤¿Æ¼¼ ÏÂµ¥ 200¹É@153.11
+[BASE] 000988 µ×²Ö³É½» 200¹É@153.12
 [13:22:00] SELL 000988 100@154.79 score=63 regime=range
 [ir] 2026-05-20 regime=range score=0.1
-[09:31:00] BASE 000988 åå·¥ç§‘æŠ€ ä¸‹å• 100è‚¡@162.28
-[BASE] 000988 åº•ä»“æˆäº¤ 100è‚¡@162.30
+[09:31:00] BASE 000988 »ª¹¤¿Æ¼¼ ÏÂµ¥ 100¹É@162.28
+[BASE] 000988 µ×²Ö³É½» 100¹É@162.30
 [10:09:00] SELL 000988 100@169.21 score=65 regime=range
 [ir] 2026-05-21 regime=uni_down score=-2.7
 [11:10:00] SELL 000988 200@163.53 score=72 regime=uni_down
 [ir] 2026-05-22 regime=range score=-2.7
-[09:31:00] BASE 000988 åå·¥ç§‘æŠ€ ä¸‹å• 300è‚¡@156.37
-[BASE] 000988 åº•ä»“æˆäº¤ 300è‚¡@156.39
+[09:31:00] BASE 000988 »ª¹¤¿Æ¼¼ ÏÂµ¥ 300¹É@156.37
+[BASE] 000988 µ×²Ö³É½» 300¹É@156.39
 [ir] 2026-05-25 regime=range score=-3.9
 [14:02:00] SELL 000988 200@167.82 score=70 regime=range
 [ir] 2026-05-26 regime=range score=-4.2
-[09:31:00] BASE 000988 åå·¥ç§‘æŠ€ ä¸‹å• 200è‚¡@170.60
-[BASE] 000988 åº•ä»“æˆäº¤ 200è‚¡@170.61
+[09:31:00] BASE 000988 »ª¹¤¿Æ¼¼ ÏÂµ¥ 200¹É@170.60
+[BASE] 000988 µ×²Ö³É½» 200¹É@170.61
 [ir] 2026-05-27 regime=uni_down score=-5.0
 [ir] 2026-05-28 regime=range score=-7.2
 [ir] 2026-05-29 regime=range score=-7.3
@@ -85,7 +85,7 @@ c sdk version: 3.8.19
 [09:54:00] BUY 000988 100@151.75 score=46 regime=range
 [09:55:00] SELL 000988 100@152.86 score=78 regime=range
 [10:31:00] BUY 000988 300@150.72 score=50 regime=range
-[14:50:00] TAIL 000988 å°¾ç›˜å½’ä½ 300è‚¡ (pos=1100â†’800 target=800)
+[14:50:00] TAIL 000988 Î²ÅÌ¹éÎ» 300¹É (pos=1100¡ú800 target=800)
 [ir] 2026-06-02 regime=range score=-8.5
 [ir] 2026-06-03 regime=range score=-8.1
 [09:36:00] BUY 000988 300@157.02 score=54 regime=range
@@ -96,47 +96,47 @@ c sdk version: 3.8.19
 [09:45:00] BUY 000988 100@154.25 score=45 regime=range
 [10:11:00] BUY 000988 200@154.69 score=51 regime=range
 [14:08:00] SELL 000988 200@159.85 score=67 regime=range
-[14:50:00] TAIL 000988 å°¾ç›˜å½’ä½ 100è‚¡ (pos=900â†’800 target=800)
+[14:50:00] TAIL 000988 Î²ÅÌ¹éÎ» 100¹É (pos=900¡ú800 target=800)
 [ir] 2026-06-05 regime=range score=-9.4
 [09:37:00] BUY 000988 200@161.08 score=53 regime=range
 [10:04:00] BUY 000988 100@164.73 score=47 regime=range
-[14:50:00] TAIL 000988 å°¾ç›˜å½’ä½ 300è‚¡ (pos=1100â†’800 target=800)
+[14:50:00] TAIL 000988 Î²ÅÌ¹éÎ» 300¹É (pos=1100¡ú800 target=800)
 [ir] 2026-06-08 regime=uni_down score=-9.2
 [ir] 2026-06-09 regime=uni_up score=-9.0
 [ir] 2026-06-10 regime=range score=-8.8
 [09:40:00] BUY 000988 200@151.10 score=48 regime=range
 [13:40:00] BUY 000988 100@147.83 score=46 regime=range
-[14:50:00] TAIL 000988 å°¾ç›˜å½’ä½ 300è‚¡ (pos=1100â†’800 target=800)
+[14:50:00] TAIL 000988 Î²ÅÌ¹éÎ» 300¹É (pos=1100¡ú800 target=800)
 [ir] 2026-06-11 regime=range score=-8.8
 [ir] 2026-06-12 regime=uni_up score=-7.8
 [ir] 2026-06-15 regime=uni_up score=-7.5
 [10:36:00] SELL 000988 100@157.94 score=65 regime=uni_up
 [ir] 2026-06-16 regime=range score=4.6
-[09:31:00] BASE 000988 åå·¥ç§‘æŠ€ ä¸‹å• 100è‚¡@160.35
-[BASE] 000988 åº•ä»“æˆäº¤ 100è‚¡@160.37
+[09:31:00] BASE 000988 »ª¹¤¿Æ¼¼ ÏÂµ¥ 100¹É@160.35
+[BASE] 000988 µ×²Ö³É½» 100¹É@160.37
 [09:58:00] BUY 000988 200@161.92 score=52 regime=range
 [10:46:00] BUY 000988 100@162.24 score=45 regime=range
 [13:08:00] SELL 000988 200@162.21 score=64 regime=range
-[14:50:00] TAIL 000988 å°¾ç›˜å½’ä½ 100è‚¡ (pos=900â†’800 target=800)
+[14:50:00] TAIL 000988 Î²ÅÌ¹éÎ» 100¹É (pos=900¡ú800 target=800)
 [ir] 2026-06-17 regime=range score=4.6
 [09:44:00] BUY 000988 200@165.60 score=51 regime=range
 [09:48:00] SELL 000988 200@170.00 score=64 regime=range
 [10:09:00] BUY 000988 100@168.78 score=48 regime=range
-[14:50:00] TAIL 000988 å°¾ç›˜å½’ä½ 100è‚¡ (pos=900â†’800 target=800)
+[14:50:00] TAIL 000988 Î²ÅÌ¹éÎ» 100¹É (pos=900¡ú800 target=800)
 [ir] 2026-06-18 regime=range score=6.2
 [13:30:00] SELL 000988 100@179.93 score=67 regime=range
 [ir] 2026-06-22 regime=uni_up score=6.2
-[09:31:00] BASE 000988 åå·¥ç§‘æŠ€ ä¸‹å• 100è‚¡@179.50
-[BASE] 000988 åº•ä»“æˆäº¤ 100è‚¡@179.52
+[09:31:00] BASE 000988 »ª¹¤¿Æ¼¼ ÏÂµ¥ 100¹É@179.50
+[BASE] 000988 µ×²Ö³É½» 100¹É@179.52
 [ir] 2026-06-23 regime=uni_down score=7.5
 [10:33:00] SELL 000988 200@169.28 score=70 regime=uni_down
 [ir] 2026-06-24 regime=range score=7.3
-[09:31:00] BASE 000988 åå·¥ç§‘æŠ€ ä¸‹å• 200è‚¡@164.66
-[BASE] 000988 åº•ä»“æˆäº¤ 200è‚¡@164.68
+[09:31:00] BASE 000988 »ª¹¤¿Æ¼¼ ÏÂµ¥ 200¹É@164.66
+[BASE] 000988 µ×²Ö³É½» 200¹É@164.68
 [09:57:00] BUY 000988 100@166.13 score=44 regime=range
 [09:58:00] SELL 000988 100@166.00 score=66 regime=range
 [10:23:00] BUY 000988 100@166.17 score=44 regime=range
-[14:50:00] TAIL 000988 å°¾ç›˜å½’ä½ 100è‚¡ (pos=900â†’800 target=800)
+[14:50:00] TAIL 000988 Î²ÅÌ¹éÎ» 100¹É (pos=900¡ú800 target=800)
 [ir] 2026-06-25 regime=range score=7.8
 [09:36:00] BUY 000988 100@167.13 score=45 regime=range
 [09:48:00] SELL 000988 200@170.98 score=72 regime=range
@@ -150,14 +150,14 @@ c sdk version: 3.8.19
 [ir] 2026-06-30 regime=range score=-0.9
 [10:27:00] SELL 000988 200@184.06 score=68 regime=range
 [ir] 2026-07-01 regime=range score=-2.6
-[09:31:00] BASE 000988 åå·¥ç§‘æŠ€ ä¸‹å• 200è‚¡@184.97
-[BASE] 000988 åº•ä»“æˆäº¤ 200è‚¡@184.99
+[09:31:00] BASE 000988 »ª¹¤¿Æ¼¼ ÏÂµ¥ 200¹É@184.97
+[BASE] 000988 µ×²Ö³É½» 200¹É@184.99
 [ir] 2026-07-02 regime=uni_down score=-4.0
 [ir] 2026-07-03 regime=range score=-6.2
 [09:33:00] PANIC_SELL 000988 800@151.18 profit_pct=-12.51%
 [09:33:00] SELL 000988 200@151.18 score=75 regime=range
 [ir] 2026-07-06 regime=range score=-6.3
-[09:31:00] BASE 000988 åå·¥ç§‘æŠ€ TREND_BREAKDOWNâ†’å»¶è¿Ÿå»ºä»“
+[09:31:00] BASE 000988 »ª¹¤¿Æ¼¼ TREND_BREAKDOWN¡úÑÓ³Ù½¨²Ö
 [09:35:00] PANIC_SELL 000988 600@151.66 profit_pct=-12.24%
 [09:35:00] SELL 000988 100@151.66 score=75 regime=range
 [10:02:00] PANIC_SELL 000988 500@152.05 profit_pct=-12.01%
@@ -170,32 +170,32 @@ c sdk version: 3.8.19
 [11:17:00] SELL 000988 100@148.90 score=75 regime=range
 [ir] 2026-07-07 regime=uni_down score=-6.3
 [ir] 2026-07-08 regime=range score=-8.2
-[09:31:00] BASE 000988 åå·¥ç§‘æŠ€ TREND_BREAKDOWNâ†’å»¶è¿Ÿå»ºä»“
+[09:31:00] BASE 000988 »ª¹¤¿Æ¼¼ TREND_BREAKDOWN¡úÑÓ³Ù½¨²Ö
 [ir] 2026-07-09 regime=uni_up score=-7.6
-[09:31:00] BASE 000988 åå·¥ç§‘æŠ€ TREND_BREAKDOWNâ†’å»¶è¿Ÿå»ºä»“
+[09:31:00] BASE 000988 »ª¹¤¿Æ¼¼ TREND_BREAKDOWN¡úÑÓ³Ù½¨²Ö
 [ir] 2026-07-10 regime=uni_down score=-9.0
 [ir] 2026-07-13 regime=uni_down score=-8.9
 [ir] 2026-07-14 regime=uni_up score=-8.7
-[09:31:00] BASE 000988 åå·¥ç§‘æŠ€ TREND_BREAKDOWNâ†’å»¶è¿Ÿå»ºä»“
+[09:31:00] BASE 000988 »ª¹¤¿Æ¼¼ TREND_BREAKDOWN¡úÑÓ³Ù½¨²Ö
 [ir] 2026-07-15 regime=range score=-9.5
-[09:31:00] BASE 000988 åå·¥ç§‘æŠ€ TREND_BREAKDOWNâ†’å»¶è¿Ÿå»ºä»“
+[09:31:00] BASE 000988 »ª¹¤¿Æ¼¼ TREND_BREAKDOWN¡úÑÓ³Ù½¨²Ö
 [ir] 2026-07-16 regime=uni_down score=-9.3
 [ir] 2026-07-17 regime=uni_down score=-9.1
 [ir] 2026-07-20 regime=range score=-9.0
-[09:31:00] BASE 000988 åå·¥ç§‘æŠ€ TREND_BREAKDOWNâ†’å»¶è¿Ÿå»ºä»“
+[09:31:00] BASE 000988 »ª¹¤¿Æ¼¼ TREND_BREAKDOWN¡úÑÓ³Ù½¨²Ö
 [ir] 2026-07-21 regime=uni_up score=-8.3
-[09:31:00] BASE 000988 åå·¥ç§‘æŠ€ TREND_BREAKDOWNâ†’å»¶è¿Ÿå»ºä»“
+[09:31:00] BASE 000988 »ª¹¤¿Æ¼¼ TREND_BREAKDOWN¡úÑÓ³Ù½¨²Ö
 [ir] 2026-07-22 regime=range score=-7.8
-[09:31:00] BASE 000988 åå·¥ç§‘æŠ€ TREND_BREAKDOWNâ†’å»¶è¿Ÿå»ºä»“
+[09:31:00] BASE 000988 »ª¹¤¿Æ¼¼ TREND_BREAKDOWN¡úÑÓ³Ù½¨²Ö
 [ir] 2026-07-23 regime=range score=-7.8
-[09:31:00] BASE 000988 åå·¥ç§‘æŠ€ TREND_BREAKDOWNâ†’å»¶è¿Ÿå»ºä»“
+[09:31:00] BASE 000988 »ª¹¤¿Æ¼¼ TREND_BREAKDOWN¡úÑÓ³Ù½¨²Ö
 [ir] 2026-07-24 regime=uni_down score=-8.8
 **************************************************
-å›æµ‹å·²å®Œæˆ
+»Ø²âÒÑÍê³É
   account_id: e8bb1f4d-87ce-11f1-97f7-98fa9b8df5e7
   calmar_ratio: 4.895735163490635
   close_count: 43
-  created_at: 2026-07-31 18:11:09.570579+08:00
+  created_at: 2026-08-03 15:47:23.753309+08:00
   lose_count: 9
   max_drawdown: 0.10833613903759849
   open_count: 42
@@ -203,9 +203,9 @@ c sdk version: 3.8.19
   pnl_ratio_annual: 0.5303850453631814
   risk_ratio: 0.0
   sharp_ratio: 1.2598480274408768
-  updated_at: 2026-07-31 18:17:40.378368+08:00
+  updated_at: 2026-08-03 15:53:39.817985+08:00
   win_count: 34
   win_ratio: 0.7906976744186046
-  æ‰‹åŠ¨ç»Ÿè®¡: æˆäº¤ç¬”æ•°=73
-  æ‹’å•ç¬”æ•°=0
+  ÊÖ¶¯Í³¼Æ: ³É½»±ÊÊı=73
+  ¾Üµ¥±ÊÊı=0
 **************************************************
