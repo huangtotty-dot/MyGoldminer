@@ -99,14 +99,23 @@ def _sell_arbiter(context, code, sig, pos_qty, cp, now, holding, threshold,
         except Exception: pass
         if sig.action == "PANIC_SELL":
             context.engine.record_trade_action(code, "PANIC_SELL", 0, cp)
+        _audit_write({"event": "sell_skip", "code": code, "action": sig.action,
+                      "score": sig.score, "reason": "floor",
+                      "base_ref": base_ref, "min_hold": min_hold, "pos_qty": pos_qty, "time": str(now)})
         return False
 
     # 阈值检查
     if sig.score < threshold:
+        _audit_write({"event": "sell_skip", "code": code, "action": sig.action,
+                      "score": sig.score, "reason": "threshold",
+                      "threshold": threshold, "time": str(now)})
         return False
 
     # 日计数检查（保护类卖出豁免）
     if not _is_protection and sc >= max_sells:
+        _audit_write({"event": "sell_skip", "code": code, "action": sig.action,
+                      "score": sig.score, "reason": "daily_count",
+                      "sc": sc, "max_sells": max_sells, "time": str(now)})
         return False
 
     # sizer 计算卖出量
@@ -125,6 +134,9 @@ def _sell_arbiter(context, code, sig, pos_qty, cp, now, holding, threshold,
     # F9: 扣除在途量，委托总量不得超可用持仓
     qty = min(qty, max(0, min(pos_qty, _avail) - _inflight))
     if qty < 100:
+        _audit_write({"event": "sell_skip", "code": code, "action": sig.action,
+                      "score": sig.score, "reason": "qty",
+                      "qty": qty, "pos_qty": pos_qty, "time": str(now)})
         return False
 
     # 下单 + 持仓更新 + 审计
@@ -932,15 +944,17 @@ def on_bar(context, bars):
                   f"profit_pct={feats_cache.get('profit_pct', 0):.2%}")
 
         # ── D5-c: 尾盘回转（14:50-15:00），超底仓部分强制卖出归位 ──
-        if is_tail and pos_qty > getattr(context, '_base_ref_' + code, pos_qty):
+        if is_tail and pos_qty > getattr(context, '_base_ref_' + code, pos_qty) and not _panic_on_cooldown:
             if sig is None or sig.action not in ('SELL_HIGH', 'PANIC_SELL'):
                 target = getattr(context, '_base_ref_' + code, pos_qty)
                 excess = pos_qty - target
                 if excess >= 100:
                     qty = (excess // 100) * 100
-                    # F9: 在途卖单守卫（与仲裁器同口径）
+                    # F14: T+1可用量封顶 + 在途扣除（与仲裁器同口径）
+                    _avail_raw = holding.get("available")
+                    _avail = pos_qty if _avail_raw is None else int(_avail_raw)
                     _tif = int(getattr(context, "_inflight_sell", {}).get(gm_sym, 0) or 0)
-                    qty = min(qty, max(0, pos_qty - _tif))
+                    qty = min(qty, max(0, min(pos_qty, _avail) - _tif))
                     if qty < 100:
                         continue
                     try:
@@ -962,6 +976,14 @@ def on_bar(context, bars):
                     if not hasattr(context, "_inflight_sell") or context._inflight_sell is None:
                         context._inflight_sell = {}
                     context._inflight_sell[gm_sym] = _tif + qty
+                    # F14: tail下单即计虚冷却，拒单后不再重试（与仲裁器同模式）
+                    try:
+                        if not hasattr(context.engine, "sell_cooldown") or context.engine.sell_cooldown is None:
+                            context.engine.sell_cooldown = {}
+                        _cd = int(context.engine._get_params(code).get("cooldown_minutes", 30))
+                    except Exception:
+                        _cd = 30
+                    context.engine.sell_cooldown[code] = now + timedelta(minutes=_cd)
                     # 立即更新 manual_position 防下一分钟重复触发（仅下单成功后；拒单由 status=8 分支回滚）
                     if gm_sym in context.manual_position:
                         new_pos = pos_qty - qty
@@ -1097,6 +1119,10 @@ def on_bar(context, bars):
                 except Exception:
                     pass
                 continue
+            try:
+                write_order(str(now), code, "BUY", qty, cp)
+            except Exception:
+                pass
             try:
                 order_volume(symbol=gm_sym, volume=qty,
                              side=OrderSide_Buy,
@@ -1235,6 +1261,9 @@ def on_order_status(context, order):
             mp["t_qty"] = mp.get("t_qty", 0) + volume
             _audit_write({"event": "sell_rollback", "code": code, "qty": volume,
                           "time": str(getattr(context, "now", None) or datetime.now())})
+            # F14: 拒单不消耗日卖出配额/总成交计数（防止误耗挤占信号通道）
+            context.daily_sell_count[code] = max(0, context.daily_sell_count.get(code, 0) - 1)
+            context.total_trade_count = max(0, context.total_trade_count - 1)
         try:
             _r_code = _raw_code(symbol)
             _r_side = "BUY" if side == 1 else "SELL"
