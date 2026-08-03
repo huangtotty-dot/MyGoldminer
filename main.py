@@ -1262,8 +1262,10 @@ def on_order_status(context, order):
             _audit_write({"event": "sell_rollback", "code": code, "qty": volume,
                           "time": str(getattr(context, "now", None) or datetime.now())})
             # F14: 拒单不消耗日卖出配额/总成交计数（防止误耗挤占信号通道）
-            context.daily_sell_count[code] = max(0, context.daily_sell_count.get(code, 0) - 1)
-            context.total_trade_count = max(0, context.total_trade_count - 1)
+            if hasattr(context, "daily_sell_count") and context.daily_sell_count is not None:
+                context.daily_sell_count[code] = max(0, context.daily_sell_count.get(code, 0) - 1)
+            if hasattr(context, "total_trade_count"):
+                context.total_trade_count = max(0, context.total_trade_count - 1)
         try:
             _r_code = _raw_code(symbol)
             _r_side = "BUY" if side == 1 else "SELL"
