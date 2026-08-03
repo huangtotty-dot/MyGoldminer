@@ -1,0 +1,99 @@
+{"event": "risk", "time": "2026-08-03 09:30:54.860000+08:00", "code": "000988", "kind": "base_deferred", "detail": "_stock_trend_state=TREND_BREAKDOWN", "_ts": 1785720655.161007}
+{"event": "risk", "time": "2026-08-03 09:30:55.161000+08:00", "code": "600481", "kind": "pool_gate", "detail": "amp=5.5% 仅观察", "_ts": 1785720655.3066099}
+{"event": "risk", "time": "2026-08-03 09:30:55.823000+08:00", "code": "603667", "kind": "base_deferred", "detail": "_stock_trend_state=TREND_BREAKDOWN", "_ts": 1785720655.9500072}
+{"event": "risk", "time": "2026-08-03 09:31:54.576000+08:00", "code": "600481", "kind": "pool_gate", "detail": "amp=5.5% 仅观察", "_ts": 1785720714.5976186}
+{"event": "risk", "time": "2026-08-03 09:32:54.550000+08:00", "code": "600481", "kind": "pool_gate", "detail": "amp=5.5% 仅观察", "_ts": 1785720774.570464}
+{"event": "risk", "time": "2026-08-03 09:33:54.619000+08:00", "code": "600481", "kind": "pool_gate", "detail": "amp=5.5% 仅观察", "_ts": 1785720834.6416295}
+{"event": "risk", "time": "2026-08-03 09:34:54.673000+08:00", "code": "600481", "kind": "pool_gate", "detail": "amp=5.5% 仅观察", "_ts": 1785720894.69427}
+{"event": "risk", "time": "2026-08-03 09:35:54.579000+08:00", "code": "600481", "kind": "pool_gate", "detail": "amp=5.5% 仅观察", "_ts": 1785720954.6019335}
+{"event": "risk", "time": "2026-08-03 09:36:54.557000+08:00", "code": "600481", "kind": "pool_gate", "detail": "amp=5.5% 仅观察", "_ts": 1785721014.5793886}
+{"event": "risk", "time": "2026-08-03 09:37:54.544000+08:00", "code": "600481", "kind": "pool_gate", "detail": "amp=5.5% 仅观察", "_ts": 1785721074.5635924}
+{"event": "risk", "time": "2026-08-03 09:38:54.621000+08:00", "code": "600481", "kind": "pool_gate", "detail": "amp=5.5% 仅观察", "_ts": 1785721134.6418612}
+{"event": "risk", "time": "2026-08-03 09:39:54.628000+08:00", "code": "600481", "kind": "pool_gate", "detail": "amp=5.5% 仅观察", "_ts": 1785721194.6479905}
+{"event": "risk", "time": "2026-08-03 09:40:54.543000+08:00", "code": "600481", "kind": "pool_gate", "detail": "amp=5.5% 仅观察", "_ts": 1785721254.5666852}
+{"event": "risk", "time": "2026-08-03 09:41:54.576000+08:00", "code": "600481", "kind": "pool_gate", "detail": "amp=5.5% 仅观察", "_ts": 1785721314.5965595}
+{"event": "risk", "time": "2026-08-03 09:42:54.574000+08:00", "code": "600481", "kind": "pool_gate", "detail": "amp=5.5% 仅观察", "_ts": 1785721374.592904}
+{"event": "risk", "time": "2026-08-03 09:43:54.851000+08:00", "code": "600481", "kind": "pool_gate", "detail": "amp=5.5% 仅观察", "_ts": 1785721434.872292}
+{"event": "risk", "time": "2026-08-03 09:44:54.686000+08:00", "code": "600481", "kind": "pool_gate", "detail": "amp=5.5% 仅观察", "_ts": 1785721494.7049558}
+{"event": "risk", "time": "2026-08-03 09:45:54.563000+08:00", "code": "600481", "kind": "pool_gate", "detail": "amp=5.5% 仅观察", "_ts": 1785721554.587761}
+{"event": "risk", "time": "2026-08-03 09:46:54.610000+08:00", "code": "600481", "kind": "pool_gate", "detail": "amp=5.5% 仅观察", "_ts": 1785721614.6301315}
+{"event": "signal", "time": "2026-08-03 09:46:56.197000+08:00", "code": "600176", "action": "PANIC_SELL", "score": 75.0, "reasons": ["深度亏损恐慌卖出", "profit_pct=-12.27%"], "pos_qty": 500, "_ts": 1785721616.2196438}
+{"event": "order", "time": "2026-08-03 09:46:56.197000+08:00", "code": "600176", "side": "SELL", "qty": 200, "price": 34.83, "order_id": "", "order_type": "MKT", "_ts": 1785721616.2196438}
+{"event": "fill", "time": "2026-08-03 09:46:56.302210", "code": "600176", "side": "SELL", "qty": 200, "price": 34.83000183105469, "order_id": "", "pos_after": 500, "_ts": 1785721616.3022103}
+{"event": "risk", "time": "2026-08-03 09:47:54.601000+08:00", "code": "600481", "kind": "pool_gate", "detail": "amp=5.5% 仅观察", "_ts": 1785721674.6209745}
+{"event": "risk", "time": "2026-08-03 09:48:54.616000+08:00", "code": "600481", "kind": "pool_gate", "detail": "amp=5.5% 仅观察", "_ts": 1785721734.6416042}
+{"event": "risk", "time": "2026-08-03 09:49:54.657000+08:00", "code": "600481", "kind": "pool_gate", "detail": "amp=5.5% 仅观察", "_ts": 1785721794.6761246}
+{"event": "risk", "time": "2026-08-03 09:50:54.542000+08:00", "code": "600481", "kind": "pool_gate", "detail": "amp=5.5% 仅观察", "_ts": 1785721854.566403}
+{"event": "risk", "time": "2026-08-03 09:51:54.553000+08:00", "code": "600481", "kind": "pool_gate", "detail": "amp=5.5% 仅观察", "_ts": 1785721914.5747736}
+{"event": "risk", "time": "2026-08-03 09:52:54.570000+08:00", "code": "600481", "kind": "pool_gate", "detail": "amp=5.5% 仅观察", "_ts": 1785721974.5944633}
+{"event": "risk", "time": "2026-08-03 09:53:54.618000+08:00", "code": "600481", "kind": "pool_gate", "detail": "amp=5.5% 仅观察", "_ts": 1785722034.6373136}
+{"event": "risk", "time": "2026-08-03 09:54:54.773000+08:00", "code": "600481", "kind": "pool_gate", "detail": "amp=5.5% 仅观察", "_ts": 1785722094.793025}
+{"event": "risk", "time": "2026-08-03 09:55:54.574000+08:00", "code": "600481", "kind": "pool_gate", "detail": "amp=5.5% 仅观察", "_ts": 1785722154.5933337}
+{"event": "risk", "time": "2026-08-03 09:56:54.553000+08:00", "code": "600481", "kind": "pool_gate", "detail": "amp=5.5% 仅观察", "_ts": 1785722214.5719314}
+{"event": "risk", "time": "2026-08-03 09:57:54.551000+08:00", "code": "600481", "kind": "pool_gate", "detail": "amp=5.5% 仅观察", "_ts": 1785722274.5723507}
+{"event": "risk", "time": "2026-08-03 09:58:54.858000+08:00", "code": "600481", "kind": "pool_gate", "detail": "amp=5.5% 仅观察", "_ts": 1785722334.8814254}
+{"event": "risk", "time": "2026-08-03 09:59:54.774000+08:00", "code": "600481", "kind": "pool_gate", "detail": "amp=5.5% 仅观察", "_ts": 1785722394.7940223}
+{"event": "risk", "time": "2026-08-03 10:00:54.614000+08:00", "code": "600481", "kind": "pool_gate", "detail": "amp=5.5% 仅观察", "_ts": 1785722454.6383982}
+{"event": "risk", "time": "2026-08-03 10:01:54.557000+08:00", "code": "600481", "kind": "pool_gate", "detail": "amp=5.5% 仅观察", "_ts": 1785722514.581842}
+{"event": "risk", "time": "2026-08-03 10:02:54.815000+08:00", "code": "600481", "kind": "pool_gate", "detail": "amp=5.5% 仅观察", "_ts": 1785722574.8346431}
+{"event": "risk", "time": "2026-08-03 10:03:54.515000+08:00", "code": "600481", "kind": "pool_gate", "detail": "amp=5.5% 仅观察", "_ts": 1785722634.541736}
+{"event": "risk", "time": "2026-08-03 10:04:54.592000+08:00", "code": "600481", "kind": "pool_gate", "detail": "amp=5.5% 仅观察", "_ts": 1785722694.6188862}
+{"event": "risk", "time": "2026-08-03 10:05:54.574000+08:00", "code": "600481", "kind": "pool_gate", "detail": "amp=5.5% 仅观察", "_ts": 1785722754.5974574}
+{"event": "risk", "time": "2026-08-03 10:06:54.551000+08:00", "code": "600481", "kind": "pool_gate", "detail": "amp=5.5% 仅观察", "_ts": 1785722814.5757003}
+{"event": "risk", "time": "2026-08-03 10:07:54.537000+08:00", "code": "600481", "kind": "pool_gate", "detail": "amp=5.5% 仅观察", "_ts": 1785722874.5644283}
+{"event": "risk", "time": "2026-08-03 10:08:54.534000+08:00", "code": "600481", "kind": "pool_gate", "detail": "amp=5.5% 仅观察", "_ts": 1785722934.588278}
+{"event": "risk", "time": "2026-08-03 10:09:54.582000+08:00", "code": "600481", "kind": "pool_gate", "detail": "amp=5.5% 仅观察", "_ts": 1785722994.601976}
+{"event": "risk", "time": "2026-08-03 10:10:54.557000+08:00", "code": "600481", "kind": "pool_gate", "detail": "amp=5.5% 仅观察", "_ts": 1785723054.5879283}
+{"event": "risk", "time": "2026-08-03 10:11:54.558000+08:00", "code": "600481", "kind": "pool_gate", "detail": "amp=5.5% 仅观察", "_ts": 1785723114.5797076}
+{"event": "risk", "time": "2026-08-03 10:12:54.548000+08:00", "code": "600481", "kind": "pool_gate", "detail": "amp=5.5% 仅观察", "_ts": 1785723174.5739238}
+{"event": "risk", "time": "2026-08-03 10:13:54.552000+08:00", "code": "600481", "kind": "pool_gate", "detail": "amp=5.5% 仅观察", "_ts": 1785723234.5770192}
+{"event": "risk", "time": "2026-08-03 10:14:54.588000+08:00", "code": "600481", "kind": "pool_gate", "detail": "amp=5.5% 仅观察", "_ts": 1785723294.6069915}
+{"event": "risk", "time": "2026-08-03 10:15:54.519000+08:00", "code": "600481", "kind": "pool_gate", "detail": "amp=5.5% 仅观察", "_ts": 1785723354.5380754}
+{"event": "risk", "time": "2026-08-03 10:16:54.559000+08:00", "code": "600481", "kind": "pool_gate", "detail": "amp=5.5% 仅观察", "_ts": 1785723414.5832827}
+{"event": "risk", "time": "2026-08-03 10:17:54.539000+08:00", "code": "600481", "kind": "pool_gate", "detail": "amp=5.5% 仅观察", "_ts": 1785723474.5572195}
+{"event": "signal", "time": "2026-08-03 10:17:56.143000+08:00", "code": "600176", "action": "PANIC_SELL", "score": 75.0, "reasons": ["深度亏损恐慌卖出", "profit_pct=-13.68%"], "pos_qty": 300, "_ts": 1785723476.1838708}
+{"event": "order", "time": "2026-08-03 10:17:56.143000+08:00", "code": "600176", "side": "SELL", "qty": 100, "price": 34.27, "order_id": "", "order_type": "MKT", "_ts": 1785723476.184872}
+{"event": "fill", "time": "2026-08-03 10:17:56.248422", "code": "600176", "side": "SELL", "qty": 100, "price": 34.27000045776367, "order_id": "", "pos_after": 300, "_ts": 1785723476.2484224}
+{"event": "risk", "time": "2026-08-03 10:18:54.536000+08:00", "code": "600481", "kind": "pool_gate", "detail": "amp=5.5% 仅观察", "_ts": 1785723534.554619}
+{"event": "risk", "time": "2026-08-03 10:19:54.863000+08:00", "code": "600481", "kind": "pool_gate", "detail": "amp=5.5% 仅观察", "_ts": 1785723594.881658}
+{"event": "risk", "time": "2026-08-03 10:20:54.548000+08:00", "code": "600481", "kind": "pool_gate", "detail": "amp=5.5% 仅观察", "_ts": 1785723654.587496}
+{"event": "risk", "time": "2026-08-03 10:21:54.504000+08:00", "code": "600481", "kind": "pool_gate", "detail": "amp=5.5% 仅观察", "_ts": 1785723714.52576}
+{"event": "risk", "time": "2026-08-03 10:22:54.560000+08:00", "code": "600481", "kind": "pool_gate", "detail": "amp=5.5% 仅观察", "_ts": 1785723774.5794294}
+{"event": "risk", "time": "2026-08-03 10:23:54.508000+08:00", "code": "600481", "kind": "pool_gate", "detail": "amp=5.5% 仅观察", "_ts": 1785723834.5336485}
+{"event": "risk", "time": "2026-08-03 10:24:54.586000+08:00", "code": "600481", "kind": "pool_gate", "detail": "amp=5.5% 仅观察", "_ts": 1785723894.6181355}
+{"event": "risk", "time": "2026-08-03 10:25:54.560000+08:00", "code": "600481", "kind": "pool_gate", "detail": "amp=5.5% 仅观察", "_ts": 1785723954.580989}
+{"event": "risk", "time": "2026-08-03 10:26:54.529000+08:00", "code": "600481", "kind": "pool_gate", "detail": "amp=5.5% 仅观察", "_ts": 1785724014.5503528}
+{"event": "risk", "time": "2026-08-03 10:27:54.556000+08:00", "code": "600481", "kind": "pool_gate", "detail": "amp=5.5% 仅观察", "_ts": 1785724074.580987}
+{"event": "risk", "time": "2026-08-03 10:28:54.566000+08:00", "code": "600481", "kind": "pool_gate", "detail": "amp=5.5% 仅观察", "_ts": 1785724134.591374}
+{"event": "risk", "time": "2026-08-03 10:29:54.664000+08:00", "code": "600481", "kind": "pool_gate", "detail": "amp=5.5% 仅观察", "_ts": 1785724194.6956086}
+{"event": "risk", "time": "2026-08-03 10:30:54.523000+08:00", "code": "600481", "kind": "pool_gate", "detail": "amp=5.5% 仅观察", "_ts": 1785724254.5516357}
+{"event": "signal", "time": "2026-08-03 10:30:54.523000+08:00", "code": "600481", "action": "BUY_LOW", "score": 76.6, "reasons": ["评分达标"], "pos_qty": 1200, "_ts": 1785724254.5546467}
+{"event": "fill", "time": "2026-08-03 10:30:54.608781", "code": "600481", "side": "BUY", "qty": 2300, "price": 4.199999809265137, "order_id": "", "pos_after": 3500, "_ts": 1785724254.6087813}
+{"event": "signal", "time": "2026-08-03 10:48:56.118000+08:00", "code": "600176", "action": "PANIC_SELL", "score": 75.0, "reasons": ["深度亏损恐慌卖出", "profit_pct=-13.17%"], "pos_qty": 200, "_ts": 1785725336.143275}
+{"event": "order", "time": "2026-08-03 10:48:56.118000+08:00", "code": "600176", "side": "SELL", "qty": 100, "price": 34.47, "order_id": "", "order_type": "MKT", "_ts": 1785725336.143275}
+{"event": "fill", "time": "2026-08-03 10:48:56.222403", "code": "600176", "side": "SELL", "qty": 100, "price": 34.470001220703125, "order_id": "", "pos_after": 200, "_ts": 1785725336.2224033}
+{"event": "signal", "time": "2026-08-03 11:18:56.213000+08:00", "code": "600176", "action": "PANIC_SELL", "score": 75.0, "reasons": ["深度亏损恐慌卖出", "profit_pct=-13.35%"], "pos_qty": 100, "_ts": 1785727136.2489498}
+{"event": "order", "time": "2026-08-03 11:18:56.213000+08:00", "code": "600176", "side": "SELL", "qty": 100, "price": 34.4, "order_id": "", "order_type": "MKT", "_ts": 1785727136.2499173}
+{"event": "fill", "time": "2026-08-03 11:18:56.298550", "code": "600176", "side": "SELL", "qty": 100, "price": 34.43000030517578, "order_id": "", "pos_after": 100, "_ts": 1785727136.2995572}
+{"event": "order", "time": "2026-08-03 14:50:54.422000+08:00", "code": "600481", "side": "SELL", "qty": 2100, "price": 4.28, "order_id": "tail", "order_type": "MKT", "_ts": 1785739854.4490888}
+{"event": "reject", "time": "2026-08-03 14:50:54.496052", "code": "600481", "side": "SELL", "qty": 2100, "reason": "status=8 [GMBROKER] 仓位不足: 委托冻结(2100) > 可用持仓(1200)", "raw": "{'status': 8, 'side': 2, 'volume': 2100, 'rej_detail': '[GMBROKER] 仓位不足: 委托冻结(2100) > 可用持仓(1200)'}", "_ts": 1785739854.4960523}
+{"event": "risk", "time": "2026-08-03 14:50:54.496052", "code": "600481", "kind": "order_rejected", "detail": "SELL 2100股被拒 status=8 [GMBROKER] 仓位不足: 委托冻结(2100) > 可用持仓(1200)", "_ts": 1785739854.4960523}
+{"event": "order", "time": "2026-08-03 14:51:54.422000+08:00", "code": "600481", "side": "SELL", "qty": 2100, "price": 4.28, "order_id": "tail", "order_type": "MKT", "_ts": 1785739914.445583}
+{"event": "reject", "time": "2026-08-03 14:51:54.490812", "code": "600481", "side": "SELL", "qty": 2100, "reason": "status=8 [GMBROKER] 仓位不足: 委托冻结(2100) > 可用持仓(1200)", "raw": "{'status': 8, 'side': 2, 'volume': 2100, 'rej_detail': '[GMBROKER] 仓位不足: 委托冻结(2100) > 可用持仓(1200)'}", "_ts": 1785739914.4908123}
+{"event": "risk", "time": "2026-08-03 14:51:54.490812", "code": "600481", "kind": "order_rejected", "detail": "SELL 2100股被拒 status=8 [GMBROKER] 仓位不足: 委托冻结(2100) > 可用持仓(1200)", "_ts": 1785739914.4908123}
+{"event": "order", "time": "2026-08-03 14:52:54.448000+08:00", "code": "600481", "side": "SELL", "qty": 2100, "price": 4.29, "order_id": "tail", "order_type": "MKT", "_ts": 1785739974.4701867}
+{"event": "reject", "time": "2026-08-03 14:52:54.515037", "code": "600481", "side": "SELL", "qty": 2100, "reason": "status=8 [GMBROKER] 仓位不足: 委托冻结(2100) > 可用持仓(1200)", "raw": "{'status': 8, 'side': 2, 'volume': 2100, 'rej_detail': '[GMBROKER] 仓位不足: 委托冻结(2100) > 可用持仓(1200)'}", "_ts": 1785739974.5150373}
+{"event": "risk", "time": "2026-08-03 14:52:54.516037", "code": "600481", "kind": "order_rejected", "detail": "SELL 2100股被拒 status=8 [GMBROKER] 仓位不足: 委托冻结(2100) > 可用持仓(1200)", "_ts": 1785739974.5160377}
+{"event": "order", "time": "2026-08-03 14:53:54.427000+08:00", "code": "600481", "side": "SELL", "qty": 2100, "price": 4.29, "order_id": "tail", "order_type": "MKT", "_ts": 1785740034.4613743}
+{"event": "reject", "time": "2026-08-03 14:53:54.537800", "code": "600481", "side": "SELL", "qty": 2100, "reason": "status=8 [GMBROKER] 仓位不足: 委托冻结(2100) > 可用持仓(1200)", "raw": "{'status': 8, 'side': 2, 'volume': 2100, 'rej_detail': '[GMBROKER] 仓位不足: 委托冻结(2100) > 可用持仓(1200)'}", "_ts": 1785740034.5377998}
+{"event": "risk", "time": "2026-08-03 14:53:54.538840", "code": "600481", "kind": "order_rejected", "detail": "SELL 2100股被拒 status=8 [GMBROKER] 仓位不足: 委托冻结(2100) > 可用持仓(1200)", "_ts": 1785740034.5388405}
+{"event": "order", "time": "2026-08-03 14:54:54.464000+08:00", "code": "600481", "side": "SELL", "qty": 2100, "price": 4.29, "order_id": "tail", "order_type": "MKT", "_ts": 1785740094.494776}
+{"event": "reject", "time": "2026-08-03 14:54:54.541551", "code": "600481", "side": "SELL", "qty": 2100, "reason": "status=8 [GMBROKER] 仓位不足: 委托冻结(2100) > 可用持仓(1200)", "raw": "{'status': 8, 'side': 2, 'volume': 2100, 'rej_detail': '[GMBROKER] 仓位不足: 委托冻结(2100) > 可用持仓(1200)'}", "_ts": 1785740094.5415518}
+{"event": "risk", "time": "2026-08-03 14:54:54.542550", "code": "600481", "kind": "order_rejected", "detail": "SELL 2100股被拒 status=8 [GMBROKER] 仓位不足: 委托冻结(2100) > 可用持仓(1200)", "_ts": 1785740094.5425503}
+{"event": "order", "time": "2026-08-03 14:55:54.768000+08:00", "code": "600481", "side": "SELL", "qty": 2100, "price": 4.3, "order_id": "tail", "order_type": "MKT", "_ts": 1785740154.7902248}
+{"event": "reject", "time": "2026-08-03 14:55:54.835476", "code": "600481", "side": "SELL", "qty": 2100, "reason": "status=8 [GMBROKER] 仓位不足: 委托冻结(2100) > 可用持仓(1200)", "raw": "{'status': 8, 'side': 2, 'volume': 2100, 'rej_detail': '[GMBROKER] 仓位不足: 委托冻结(2100) > 可用持仓(1200)'}", "_ts": 1785740154.8354764}
+{"event": "risk", "time": "2026-08-03 14:55:54.836457", "code": "600481", "kind": "order_rejected", "detail": "SELL 2100股被拒 status=8 [GMBROKER] 仓位不足: 委托冻结(2100) > 可用持仓(1200)", "_ts": 1785740154.836458}
+{"event": "signal", "time": "2026-08-03 14:56:54.494000+08:00", "code": "600481", "action": "SELL_HIGH", "score": 67.1, "reasons": ["评分达标"], "pos_qty": 3500, "_ts": 1785740214.5180736}
+{"event": "order", "time": "2026-08-03 14:57:54.356000+08:00", "code": "600481", "side": "SELL", "qty": 2100, "price": 4.29, "order_id": "tail", "order_type": "MKT", "_ts": 1785740274.3823338}
+{"event": "reject", "time": "2026-08-03 14:57:54.427307", "code": "600481", "side": "SELL", "qty": 2100, "reason": "status=8 [GMBROKER] 仓位不足: 委托冻结(2100) > 可用持仓(1200)", "raw": "{'status': 8, 'side': 2, 'volume': 2100, 'rej_detail': '[GMBROKER] 仓位不足: 委托冻结(2100) > 可用持仓(1200)'}", "_ts": 1785740274.4273074}
+{"event": "risk", "time": "2026-08-03 14:57:54.428329", "code": "600481", "kind": "order_rejected", "detail": "SELL 2100股被拒 status=8 [GMBROKER] 仓位不足: 委托冻结(2100) > 可用持仓(1200)", "_ts": 1785740274.4283292}
