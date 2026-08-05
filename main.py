@@ -38,6 +38,13 @@ STOCKS = {
     "002639": "SZSE.002639",
     "300153": "SZSE.300153",
     "300456": "SZSE.300456",
+    "002202": "SZSE.002202",
+    "002536": "SZSE.002536",
+    "002176": "SZSE.002176",
+    "600584": "SHSE.600584",
+    "002261": "SZSE.002261",
+    "600089": "SHSE.600089",
+    "002451": "SZSE.002451",
 }
 STOCK_NAMES = {
     "000988": "华工科技",
@@ -49,6 +56,13 @@ STOCK_NAMES = {
     "002639": "雪人集团",
     "300153": "科泰电源",
     "300456": "赛微电子",
+    "002202": "金风科技",
+    "002536": "飞龙股份",
+    "002176": "江特电机",
+    "600584": "长电科技",
+    "002261": "拓维信息",
+    "600089": "特变电工",
+    "002451": "摩恩电气",
 }
 REVERSE_MAP = {v: k for k, v in STOCKS.items()}
 
@@ -61,15 +75,22 @@ MIRROR_HOLDINGS = {
     "600481": {"qty": 1400, "cost": 0},
     "600176": {"qty": 500,  "cost": 0},
     "603667": {"qty": 800,  "cost": 0},
-    # 2026-08-05 owner决策: 鼎龙股份入池。目标底仓400股≈2.96万(按08-05收盘74.02)，
-    # 与池内单票底仓市值同量级(600481约0.6万~603667约4.4万区间)。新票前3天实盘仅观察(C5-3)
-    "300054": {"qty": 400,  "cost": 0},
-    # 2026-08-05 owner决策: 四票批量入池。定仓逻辑：五只新票合计建仓额≤10万，
-    # 建仓后现金余量≥权益20%三段式底线(≈3.77万)——按08-05收盘倒算：
-    "300364": {"qty": 700,  "cost": 0},   # 中文在线 26.46 → ≈1.85万
-    "002639": {"qty": 1400, "cost": 0},   # 雪人集团 12.87 → ≈1.80万
-    "300153": {"qty": 800,  "cost": 0},   # 科泰电源 21.60 → ≈1.73万
-    "300456": {"qty": 500,  "cost": 0},   # 赛微电子 ≈31.5(08-04收30.55+3.18%估) → ≈1.58万
+    # 2026-08-05 owner决策: 12只新票批量入池（5只自选 + 7只实盘亏损票）。
+    # 定仓逻辑：12票合计建仓额 ≤ 10.06万（现金13.83万 − 权益20%底线3.77万），
+    # 按 ≈0.84万/票均摊整百取整，合计 ≈9.0万；G4支撑闸上线后建仓分批择时，不会同日打满。
+    # 价格为 08-05 收盘或近日估值（金风/飞龙/长电/特变为估值，误差±10%内，仅影响定仓精度）。
+    "300054": {"qty": 100,  "cost": 0},   # 鼎龙股份 ≈74.02 → ≈0.74万
+    "300364": {"qty": 300,  "cost": 0},   # 中文在线 ≈26.46 → ≈0.79万
+    "002639": {"qty": 600,  "cost": 0},   # 雪人集团 ≈12.87 → ≈0.77万
+    "300153": {"qty": 300,  "cost": 0},   # 科泰电源 ≈21.60 → ≈0.65万
+    "300456": {"qty": 200,  "cost": 0},   # 赛微电子 ≈31.5 → ≈0.63万
+    "002202": {"qty": 300,  "cost": 0},   # 金风科技 ≈26 → ≈0.78万（实盘 -14.95%）
+    "002536": {"qty": 100,  "cost": 0},   # 飞龙股份 ≈45 → ≈0.45万（实盘 -6.32%）
+    "002176": {"qty": 1000, "cost": 0},   # 江特电机 ≈8.2 → ≈0.82万（实盘 -6.56%）
+    "600584": {"qty": 200,  "cost": 0},   # 长电科技 ≈45 → ≈0.90万（实盘 -2.47%）
+    "002261": {"qty": 300,  "cost": 0},   # 拓维信息 ≈28.02 → ≈0.84万（实盘 -4.95%）
+    "600089": {"qty": 400,  "cost": 0},   # 特变电工 ≈20 → ≈0.80万（实盘 -6.87%）
+    "002451": {"qty": 1200, "cost": 0},   # 摩恩电气 ≈6.93 → ≈0.83万（实盘 -11.98%）
     # 588170 ETF 已移除：T+0机制/最小单位与策略不兼容，首日仅观察
 }
 
@@ -382,6 +403,31 @@ def _refresh_daily_ctx(context, code: str, gm_symbol: str, now: datetime) -> dic
             ctx["_m2_pool_pass"] = _pass
             if not _pass:
                 ctx["daily_status"] = "pool_gate_fail"
+        # G4: 支撑建仓闸指标（2026-08-05 owner决策：RSI/MACD/BOLL/缩量/MA60）
+        if len(c) >= 26:
+            _d = c.diff()
+            _up = _d.clip(lower=0).rolling(14).mean()
+            _dn = (-_d.clip(upper=0)).rolling(14).mean()
+            _rs = _up / _dn.replace(0, 1e-10)
+            ctx["daily_rsi14"] = float((100 - 100 / (1 + _rs)).iloc[-1])
+            _ema12 = c.ewm(span=12, adjust=False).mean()
+            _ema26 = c.ewm(span=26, adjust=False).mean()
+            _dif = _ema12 - _ema26
+            _dea = _dif.ewm(span=9, adjust=False).mean()
+            ctx["daily_macd_dif"] = float(_dif.iloc[-1])
+            ctx["daily_macd_dea"] = float(_dea.iloc[-1])
+            ctx["daily_macd_bull"] = bool(_dif.iloc[-1] >= _dea.iloc[-1])
+            _mid = c.rolling(20).mean()
+            _std = c.rolling(20).std()
+            ctx["daily_boll_mid"] = float(_mid.iloc[-1])
+            ctx["daily_boll_upper"] = float((_mid + 2 * _std).iloc[-1])
+            ctx["daily_boll_lower"] = float((_mid - 2 * _std).iloc[-1])
+        if len(c) >= 60:
+            ctx["daily_ma60"] = float(c.rolling(60).mean().iloc[-1])
+        if len(c) >= 20 and "volume" in df.columns:
+            _v = df["volume"].astype(float)
+            ctx["_vol3"] = float(_v.iloc[-3:].mean())
+            ctx["_vol20"] = float(_v.iloc[-20:].mean())
         prev_close = float(c.iloc[-1]) if len(c) > 0 else 0
         ctx["daily_prev_close"] = prev_close
         ctx.setdefault("daily_status", "ok")  # F7: 不覆盖 pool_gate_fail
@@ -415,6 +461,44 @@ def _refresh_daily_ctx(context, code: str, gm_symbol: str, now: datetime) -> dic
 
     context._daily_ctx_cache_map[_cache_key] = ctx
     return ctx
+
+
+def _base_entry_gate(cp: float, dc: dict):
+    """G4 支撑建仓闸（2026-08-05 owner决策）：多票池不可能同时买入——
+    仅"回踩重要支撑不破 + RSI/MACD/BOLL 日线联动 + 缩量"同时成立才放行建仓/回补。
+    返回 (是否放行, 判定明细)。数值均为 TODO(PhaseD) 临时值，日常复盘只记录不调整。
+    日线指标冻结于昨收（_refresh_daily_ctx 口径），盘中变量仅为现价 cp。"""
+    if dc.get("daily_status") == "unavailable":
+        return False, "G4: 日线数据不足→保守拦截"
+    sup_gap = float(PARAMS.get("daily_ma_support_gap", 0.025))
+    brk_gap = float(PARAMS.get("daily_ma_breakdown_gap", 0.015))
+    # ① 回踩重要支撑不破：现价落在任一支撑位 [lv*(1-brk), lv*(1+sup)] 带内
+    supports = {k: dc.get(k, 0) for k in ("daily_ma10", "daily_ma20", "daily_ma60", "daily_boll_lower")}
+    supports = {k: v for k, v in supports.items() if v and v > 0}
+    near = [k for k, lv in supports.items() if lv * (1 - brk_gap) <= cp <= lv * (1 + sup_gap)]
+    if not near:
+        return False, (f"G4: 未回踩支撑带 cp={cp:.2f} "
+                       + " ".join(f"{k}={v:.2f}" for k, v in supports.items()))
+    # ② RSI 企稳区间（回踩未超买、未崩盘）
+    rsi = float(dc.get("daily_rsi14", 0) or 0)
+    rsi_lo, rsi_hi = PARAMS.get("entry_rsi_low", 30), PARAMS.get("entry_rsi_high", 55)
+    if not (rsi_lo <= rsi <= rsi_hi):
+        return False, f"G4: RSI={rsi:.1f} 不在[{rsi_lo},{rsi_hi}] 支撑={near}"
+    # ③ MACD 多头未破坏（DIF ≥ DEA）
+    if not dc.get("daily_macd_bull", False):
+        return False, (f"G4: MACD非多头 DIF={dc.get('daily_macd_dif',0):.3f}"
+                       f"<DEA={dc.get('daily_macd_dea',0):.3f} 支撑={near} RSI={rsi:.1f}")
+    # ④ BOLL 联动：不深破下轨
+    bl = float(dc.get("daily_boll_lower", 0) or 0)
+    if bl > 0 and cp < bl * (1 - brk_gap):
+        return False, f"G4: 深破BOLL下轨 cp={cp:.2f} lower={bl:.2f} 支撑={near}"
+    # ⑤ 缩量回调：近3日均量 < 20日均量 × 系数
+    v3, v20 = float(dc.get("_vol3", 0) or 0), float(dc.get("_vol20", 0) or 0)
+    shrink = PARAMS.get("entry_vol_shrink", 0.95)
+    if v20 > 0 and v3 >= v20 * shrink:
+        return False, f"G4: 未缩量 v3/v20={v3 / v20:.2f}≥{shrink} 支撑={near} RSI={rsi:.1f}"
+    return True, (f"G4放行: 支撑={near} RSI={rsi:.1f} MACD多头 "
+                  f"v3/v20={(v3 / v20 if v20 else 0):.2f}")
 
 
 # ── 审计 JSONL ──
@@ -791,6 +875,25 @@ def on_bar(context, bars):
                     context._base_settled.add(code)
                     return
                 _topup_blocked = True  # F8: 回补被M2闸拦截，信号评估照常
+            # G4: 支撑建仓闸（2026-08-05 owner决策：多票池不可能同时买入——
+            # 仅"回踩重要支撑不破 + RSI/MACD/BOLL日线联动 + 缩量"才放行建仓/回补。
+            # 初建仓被拦不归档 settled，下一 bar 继续等回踩，与趋势闸同语义）
+            if not _topup_blocked:
+                _g4_ok, _g4_why = _base_entry_gate(cp, _dc)
+                if not _g4_ok:
+                    _g4_key = f'_g4_last_{code}'
+                    _g4_sig = _g4_why.split(" cp=")[0][:40]
+                    if getattr(context, _g4_key, None) != _g4_sig:
+                        setattr(context, _g4_key, _g4_sig)
+                        print(f"[{now:%H:%M:%S}] BASE {code} {STOCK_NAMES.get(code,code)} G4支撑闸→仅观察 {_g4_why}")
+                        try: write_risk(str(now), "entry_gate", _g4_why, code=code)
+                        except: pass
+                    if not _is_topup:
+                        return
+                    _topup_blocked = True  # G4 拦截回补，信号评估照常（F8 同模式）
+                elif getattr(context, f'_g4_last_{code}', None) is not None:
+                    setattr(context, f'_g4_last_{code}', None)
+                    print(f"[{now:%H:%M:%S}] BASE {code} {STOCK_NAMES.get(code,code)} {_g4_why}")
             if not _topup_blocked:
                 try:
                     try:
