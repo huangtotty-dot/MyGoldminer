@@ -1,0 +1,4 @@
+{"event": "risk", "time": "2026-08-05 09:30:53.510000+08:00", "code": "000988", "kind": "base_deferred", "detail": "_stock_trend_state=TREND_BREAKDOWN", "_ts": 1785893453.9370713}
+{"event": "order", "time": "2026-08-05 09:30:54.074000+08:00", "code": "603667", "side": "BUY", "qty": 200, "price": 54.22, "order_id": "base", "order_type": "MKT", "_ts": 1785893454.2815018}
+{"event": "fill", "time": "2026-08-05 09:30:54.349501", "code": "603667", "side": "BUY", "qty": 200, "price": 54.29999923706055, "order_id": "", "pos_after": 800, "_ts": 1785893454.3495011}
+{"event": "risk", "time": "2026-08-05 09:30:54.731000+08:00", "code": "600176", "kind": "base_deferred", "detail": "_stock_trend_state=TREND_BREAKDOWN", "_ts": 1785893454.8792338}
