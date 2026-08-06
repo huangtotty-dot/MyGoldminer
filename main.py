@@ -23,7 +23,7 @@ from signals.position_sizer import PositionSizer
 from utils.helpers import SIM_NOW, _now, get_today_str, _default_daily_context
 from gm_bridge.writer import (
     write_signal, write_order, write_fill, write_reject, write_risk,
-    write_heartbeat, check_kill_switch,
+    write_heartbeat, check_kill_switch, write_snapshot,
 )
 from gm_bridge import ops_guard
 
@@ -872,6 +872,10 @@ def on_bar(context, bars):
                     print(f'[{now:%H:%M:%S}] BASE {code} {STOCK_NAMES.get(code,code)} TREND_BREAKDOWN→延迟建仓')
                     try: write_risk(str(now), "base_deferred", f"_stock_trend_state={_trend}", code=code)
                     except: pass
+                if _hb_live:
+                    try: write_snapshot(str(now), code, cp, bar=f"{now:%H:%M}",
+                                        gate="trend_breakdown", gate_detail=_trend)
+                    except Exception: pass
                 if not _is_topup:
                     return
                 _topup_blocked = True  # F8: 回补被趋势闸拦截，但持仓信号评估照常落地
@@ -882,6 +886,12 @@ def on_bar(context, bars):
                       f"lot={_dc.get('_m2_lot_value',0):.0f}元)")
                 try: write_risk(str(now), "pool_gate", f"amp={_dc.get('_m2_amp20',0):.1%} 仅观察", code=code)
                 except: pass
+                if _hb_live:
+                    try: write_snapshot(str(now), code, cp, bar=f"{now:%H:%M}", gate="pool_gate",
+                                        gate_detail=(f"amp={_dc.get('_m2_amp20',0):.1%} "
+                                                     f"amt={_dc.get('_m2_amount20',0)/1e8:.1f}亿 "
+                                                     f"lot={_dc.get('_m2_lot_value',0):.0f}元"))
+                    except Exception: pass
                 if not _is_topup:
                     context._base_settled.add(code)
                     return
@@ -899,12 +909,21 @@ def on_bar(context, bars):
                         print(f"[{now:%H:%M:%S}] BASE {code} {STOCK_NAMES.get(code,code)} G4支撑闸→仅观察 {_g4_why}")
                         try: write_risk(str(now), "entry_gate", _g4_why, code=code)
                         except: pass
+                    if _hb_live:
+                        try: write_snapshot(str(now), code, cp, bar=f"{now:%H:%M}",
+                                            gate="entry_gate", gate_detail=_g4_why)
+                        except Exception: pass
                     if not _is_topup:
                         return
                     _topup_blocked = True  # G4 拦截回补，信号评估照常（F8 同模式）
-                elif getattr(context, f'_g4_last_{code}', None) is not None:
-                    setattr(context, f'_g4_last_{code}', None)
-                    print(f"[{now:%H:%M:%S}] BASE {code} {STOCK_NAMES.get(code,code)} {_g4_why}")
+                else:
+                    if _hb_live:
+                        try: write_snapshot(str(now), code, cp, bar=f"{now:%H:%M}",
+                                            gate="entry_gate_pass", gate_detail=_g4_why)
+                        except Exception: pass
+                    if getattr(context, f'_g4_last_{code}', None) is not None:
+                        setattr(context, f'_g4_last_{code}', None)
+                        print(f"[{now:%H:%M:%S}] BASE {code} {STOCK_NAMES.get(code,code)} {_g4_why}")
             if not _topup_blocked:
                 try:
                     try:
@@ -918,6 +937,11 @@ def on_bar(context, bars):
                     context._base_ordered.add(code)
                     print(f"[{now:%H:%M:%S}] BASE {code} {STOCK_NAMES.get(code,code)} 下单 {base_qty}股@{cp:.2f}")
                     _audit_write({"event": "base_order", "code": code, "qty": base_qty, "price": cp, "time": str(now)})
+                    if _hb_live:
+                        try: write_snapshot(str(now), code, cp, bar=f"{now:%H:%M}",
+                                            gate="base_order", action="BUY",
+                                            gate_detail=f"qty={base_qty}")
+                        except Exception: pass
                 except Exception as e:
                     print(f"[{now:%H:%M:%S}] BASE {code} 下单失败: {e}")
                     try:
@@ -1155,6 +1179,12 @@ def on_bar(context, bars):
                 "daily_atr": feats_cache.get("daily_atr", 0),
                 "is_deep_loss": feats_cache.get("is_deep_loss", False),
             })
+            if _hb_live:
+                try: write_snapshot(str(now), code, cp, bar=f"{now:%H:%M}",
+                                    buy_score=buy_score, sell_score=sell_score,
+                                    gate="evaluated", pos_qty=pos_qty,
+                                    gate_detail=_last_dec.get("reason", ""))
+                except Exception: pass
             continue
 
         # ── 信号事件写入 ──
@@ -1164,6 +1194,12 @@ def on_bar(context, bars):
                              reasons=sig.reasons, pos_qty=pos_qty)
             except Exception:
                 pass
+            if _hb_live:
+                try: write_snapshot(str(now), code, cp, bar=f"{now:%H:%M}",
+                                    buy_score=buy_score, sell_score=sell_score,
+                                    gate="signal", action=sig.action, pos_qty=pos_qty,
+                                    gate_detail=";".join(sig.reasons or []))
+                except Exception: pass
 
         # ── 参数准备 ──
         stock_params = STOCK_PARAMS.get(code, {})

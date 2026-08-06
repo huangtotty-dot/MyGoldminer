@@ -46,6 +46,12 @@ def _kill_switch_path() -> str:
     return os.path.join(BRIDGE_DIR, "KILL_SWITCH")
 
 
+def _snapshot_path(date_str: str = None) -> str:
+    if date_str is None:
+        date_str = datetime.now().strftime("%Y%m%d")
+    return os.path.join(BRIDGE_DIR, f"signals_{date_str}.jsonl")
+
+
 # ── 写入工具 ──
 
 def _append_jsonl(path: str, rec: dict):
@@ -153,6 +159,33 @@ def write_heartbeat(time_str: str, bar: str, positions: Dict[str, Any],
     _write_json(_heartbeat_path(), rec)
     # L3: 追加历史时序快照(不覆盖)
     _append_jsonl(os.path.join(BRIDGE_DIR, f"heartbeat_{time_str[:10]}.jsonl"), rec)
+
+
+def write_snapshot(time_str: str, code: str, price: float, bar: str = "",
+                   buy_score=None, sell_score=None, gate: str = "",
+                   gate_detail: str = "", action: str = "", pos_qty: int = 0):
+    """全票每 bar 决策快照（0806 红日整改）：
+    16 票 × 每 bar 一条 → signals_YYYYMMDD.jsonl。
+    回放"策略活着会不会有卖点 / 改阈值会怎样"类问题的数据底座。
+    纯监控产物，不参与决策；仅 MODE_LIVE 调用（回测省 I/O）。"""
+    rec = {
+        "event": "snapshot",
+        "time": time_str,
+        "bar": bar,
+        "code": code,
+        "price": price,
+        "pos_qty": pos_qty,
+        "gate": gate,
+    }
+    if buy_score is not None:
+        rec["buy_score"] = round(float(buy_score), 1)
+    if sell_score is not None:
+        rec["sell_score"] = round(float(sell_score), 1)
+    if gate_detail:
+        rec["gate_detail"] = gate_detail[:120]
+    if action:
+        rec["action"] = action
+    _append_jsonl(_snapshot_path(), rec)
 
 
 # ── 公开 API：风控文件 ──
