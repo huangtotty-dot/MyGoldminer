@@ -458,6 +458,10 @@ def _refresh_daily_ctx(context, code: str, gm_symbol: str, now: datetime) -> dic
     else:
         context.latest_pre_close[code] = 0
         ctx["daily_status"] = "unavailable"
+        # G4-FIX(2026-08-06, 复盘0806-①): 取数失败不写日缓存、次 bar 重试——
+        # 瞬时失败不再锁死全天（0806 实战:7 只新票 09:31 取数抽风被整日关在 G4 门外）。
+        # 口径不变：成功后的数据仍冻结于昨收，仅失败分支允许重试。
+        return ctx
 
     context._daily_ctx_cache_map[_cache_key] = ctx
     return ctx
