@@ -69,8 +69,22 @@ except Exception as e:
     print(f"[watcher] 飞书不可用 ({e}), 降级为 stdout")
 
 
+def _log_push(title: str, content: str, level: str, sent: bool):
+    """推送留痕（0806 红日整改）：每次推送尝试落 pushes_YYYYMMDD.jsonl，
+    C1-5 对账不再依赖做T系统共用的 sender 日志。"""
+    try:
+        rec = {"time": datetime.now().isoformat(timespec="seconds"),
+               "title": title, "level": level, "sent": sent,
+               "content": content[:300]}
+        path = os.path.join(BRIDGE_DIR, f"pushes_{datetime.now().strftime('%Y%m%d')}.jsonl")
+        with open(path, "a", encoding="utf-8") as f:
+            f.write(json.dumps(rec, ensure_ascii=False) + "\n")
+    except Exception:
+        pass
+
+
 def _push(title: str, content: str, level: str = "info"):
-    """推送通知（飞书优先，不可用时 print）"""
+    """推送通知（飞书优先，不可用时 print）；每次尝试落 pushes 留痕"""
     if FEISHU_AVAILABLE:
         try:
             template = {"green": "green", "orange": "orange", "red": "red"}.get(level, "blue")
@@ -85,11 +99,13 @@ def _push(title: str, content: str, level: str = "info"):
                     "elements": [{"tag": "markdown", "content": content}],
                 },
             }
-            _send_feishu(payload=card, success_log="", error_prefix="watcher",
-                         trigger_urgent_alarm_after_success=(level == "red"))
+            sent = bool(_send_feishu(payload=card, success_log="", error_prefix="watcher",
+                                     trigger_urgent_alarm_after_success=(level == "red")))
+            _log_push(title, content, level, sent)
             return
         except Exception:
             pass
+    _log_push(title, content, level, False)
     print(f"[watcher] {level.upper()} {title}: {content[:200]}")
 
 
@@ -261,8 +277,21 @@ def run(date_str: str = None):
         except Exception as e:
             print(f"[watcher] 读取异常: {e}")
 
+        _write_self_heartbeat()
         _check_heartbeat()
         time.sleep(2)
+
+
+def _write_self_heartbeat():
+    """watcher 自心跳（0806 红日整改）：供策略侧双向看门狗检测 watcher 死活。"""
+    try:
+        rec = {"event": "watcher_heartbeat",
+               "time": datetime.now().isoformat(timespec="seconds"),
+               "pid": os.getpid()}
+        with open(os.path.join(BRIDGE_DIR, "watcher_heartbeat.json"), "w", encoding="utf-8") as f:
+            json.dump(rec, f, ensure_ascii=False)
+    except Exception:
+        pass
 
 
 if __name__ == "__main__":

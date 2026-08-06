@@ -25,6 +25,7 @@ from gm_bridge.writer import (
     write_signal, write_order, write_fill, write_reject, write_risk,
     write_heartbeat, check_kill_switch,
 )
+from gm_bridge import ops_guard
 
 # ── 标的 ──
 # 代码 → gm_symbol 映射
@@ -613,6 +614,9 @@ def _base_topup_qty(context, code, gm_sym):
 def init(context):
     global _AUDIT_RUN_ID
     _AUDIT_RUN_ID = datetime.now().strftime("%Y%m%d_%H%M%S")
+    # 运维自举（0806 红日整改）：控制台日志落盘 + watcher 自动拉起
+    ops_guard.bootstrap_logging(PROJECT_DIR)
+    ops_guard.ensure_watcher(PROJECT_DIR)
     # D8/F10: 仅回测模式清空审计文件（模拟盘重启不丢当日段）
     _maybe_clear_audit_log(context)
     context.bar_cache = {}
@@ -721,6 +725,9 @@ def on_bar(context, bars):
 
     # ── KILL_SWITCH 检查 ──
     _killed = check_kill_switch()
+
+    # 双向看门狗：watcher 心跳缺失/过期自动重生（0806 红日整改）
+    ops_guard.ensure_watcher(PROJECT_DIR)
 
     if t < dtime(9, 30) or (dtime(11, 30) < t < dtime(13, 0)) or t > dtime(15, 0):
         return
