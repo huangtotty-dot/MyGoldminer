@@ -2,3 +2,7 @@ __pycache__/
 gmcache/
 *.pyc
 .claude/
+
+# 运行时数据（0806 桥目录迁入项目内，不入库）
+runtime/
+logs/

@@ -18,20 +18,16 @@ from datetime import datetime
 from typing import Dict, Any, Optional
 
 # ── 桥目录配置 ──
-_06T_BRIDGE = r"E:\06_T\t_io\gm_bridge"
-_LOCAL_BRIDGE = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "gm_bridge")
+# 0806 owner 决策：模拟盘运行时数据与 E:\06_T 手工做T系统彻底分离——
+# 桥目录固定在项目内 runtime/bridge（可用环境变量 GM_BRIDGE_DIR 覆盖）。
+# 历史数据（2026-07-27 ~ 08-06）留存在 E:\06_T\t_io\gm_bridge，复盘证据已逐日归档 docs/。
+_PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 def _bridge_dir() -> str:
-    """桥目录：E:\06_T\t_io\gm_bridge 优先，不存在则用本地 gm_bridge"""
-    try:
-        if os.path.exists(r"E:\06_T"):
-            d = _06T_BRIDGE
-            os.makedirs(d, exist_ok=True)
-            return d
-    except Exception:
-        pass
-    os.makedirs(_LOCAL_BRIDGE, exist_ok=True)
-    return _LOCAL_BRIDGE
+    env = (os.environ.get("GM_BRIDGE_DIR") or "").strip()
+    d = env if env else os.path.join(_PROJECT_ROOT, "runtime", "bridge")
+    os.makedirs(d, exist_ok=True)
+    return d
 
 BRIDGE_DIR = _bridge_dir()
 

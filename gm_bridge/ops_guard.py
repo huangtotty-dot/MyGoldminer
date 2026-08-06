@@ -29,6 +29,12 @@ _STALE_SECONDS = 90          # watcher 心跳超过 90s 未刷新视为死亡
 _RESPAWN_COOLDOWN = 300      # 重生冷却，防反复拉起
 _state = {"last_respawn": 0.0, "bootstrapped": False}
 
+# 桥目录统一由 writer 决定（0806 迁移：项目内 runtime/bridge）
+try:
+    from gm_bridge.writer import BRIDGE_DIR as _BRIDGE_DIR
+except ImportError:
+    from writer import BRIDGE_DIR as _BRIDGE_DIR
+
 
 class _TeeStream:
     """同时写原控制台与日志文件的流。"""
@@ -57,14 +63,8 @@ class _TeeStream:
                 pass
 
 
-def _bridge_dir():
-    if os.path.exists(r"E:\06_T"):
-        return r"E:\06_T\t_io\gm_bridge"
-    return os.path.dirname(os.path.abspath(__file__))
-
-
 def watcher_heartbeat_path():
-    return os.path.join(_bridge_dir(), _WATCHER_HB_NAME)
+    return os.path.join(_BRIDGE_DIR, _WATCHER_HB_NAME)
 
 
 def bootstrap_logging(project_dir):

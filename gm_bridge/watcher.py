@@ -20,10 +20,11 @@ import signal
 from datetime import datetime, timedelta
 from typing import Dict, Set, Optional
 
-# ── 桥路径 ──
-_06T_BRIDGE = r"E:\06_T\t_io\gm_bridge"
-_LOCAL = os.path.dirname(os.path.abspath(__file__))
-BRIDGE_DIR = _06T_BRIDGE if os.path.exists(r"E:\06_T") else _LOCAL
+# ── 桥路径（0806 迁移：与手工做T系统分离，统一由 writer 决定） ──
+try:
+    from writer import BRIDGE_DIR
+except ImportError:  # python -m gm_bridge.watcher 方式启动
+    from gm_bridge.writer import BRIDGE_DIR
 
 # ── 股票名称映射 ──
 STOCK_NAMES = {
