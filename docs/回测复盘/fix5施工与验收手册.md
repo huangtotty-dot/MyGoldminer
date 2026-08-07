@@ -297,3 +297,36 @@
 3. **Phase D 之前禁止 Optuna**：结构未定型的寻优只会把缺陷拟合进参数（fix1→fix2 的教训）；
 4. **模拟盘并行原则**：fix5 施工期间，周一上线的 fix4 版本模拟盘继续运行收集数据（仅观察纪律不变），施工在分支进行，合并前不切换线上版本；
 5. **本手册与审核报告的关系**：报告（为什么）→ 蓝图（第七章：改什么）→ 本手册（怎么做、怎么测、什么算过）。三者冲突时以最新 commit 的事实为准，并回写修订。
+
+
+---
+
+## 九、W32 追加立项包
+
+### WP-B07：回补价格记忆（awaiting_buyback 接通 + 高接门控）
+
+- **来源**：2026-W32 周复盘 B-07 立项（W32 表决批准方案：回补价 > 前卖价×(1+容忍) 时延迟/降档）。0805 实证：603667 五洲新春 52.14 卖出 → 54.30 回补，高接 +4.15%，隐性成本 -432 超过当日做T差价 +233。
+- **缺陷定位**：
+  1. `signals/engine.py` `SignalEngine.__init__`（约 435 行）声明 `self.awaiting_buyback` 但全项目从未写入——死状态；`_check_date_reset`（约 453-466 行）每日清空它；
+  2. `config/params.py` 84-92 行一整组 `awaiting_buyback_*` 参数为死参数（移植自 `E:\06_T\signal_engine.py`，原实现见其 284-322/566-583 行，本 WP 仅作语义参考）；
+  3. 卖出后是否接回、以什么价接回无任何纪律约束。
+- **改动内容**：
+  1. **记忆生命周期**：卖出成交（main.py `on_order_status` status=3 side=2 分支，实际调用 `engine.record_trade_action(code, 'SELL_HIGH', volume, price)`，真实通道名由 `_pending_sell_action` 提供：SELL_HIGH/PANIC_SELL/TRAIL_SELL/TREND_EXIT/TARGET_SELL/TAIL 全覆盖）写入 `awaiting_buyback[code] = {sell_price, sell_time, sell_qty, sell_action, target_price}`；回补成交（BUY_LOW 类买入成交）后清除；TTL 用既有参数 `awaiting_buyback_ttl_minutes`（240 分钟），过期清除；**每日清零保留不变**（跨日接回由趋势闸等机制管，本 WP 只管日内）；
+  2. **高接门控（核心新增）**：`evaluate()` 买入判定形成 BUY_LOW 信号后、返回前——
+     - 新增全局参数（PARAMS，带 `# TODO(PhaseD)`）：`buyback_above_sell_delay_pct = 0.01`（硬延迟线）、`buyback_above_sell_downgrade_pct = 0.0`（软降档线，0=只要回补价高于前卖价即降档）；
+     - 当前价 > sell_price×(1+delay_pct) → **延迟**：不产生 BUY_LOW，`last_decision[code]` 记 `{"action":"HOLD","reason":"buyback_above_sell_delayed"}`，`diagnostics` 留明细（前卖价/当前价/溢价幅度）；
+     - sell_price×(1+downgrade_pct) < 当前价 ≤ sell_price×(1+delay_pct) → **降档**：信号保留，`sig.details` 加 `{"buyback_downgrade": True, ...}`；main.py 调用 sizer 处（`_apply_buyback_downgrade`，on_bar 买入段）数量减半后向下取整到 min_unit 整数倍，不足 min_unit 则延迟（等同不产生买入）；
+     - 当前价 ≤ 前卖价 → 不受限制，且接通原系统激励（价格不高于前卖价版本）：`awaiting_buyback_score_boost`（折让>0.5%）/ `_weak`（折让>0.1%）加分 + `awaiting_buyback_threshold_relax` 降阈值；高接门控优先于激励；
+  3. **可观测性**：事件桥新增 `write_buyback`（gm_bridge/writer.py），事件名 snake_case：`buyback_armed`（含前卖价/数量/通道）、`buyback_delayed`（含溢价%，门控延迟与降档不足 min_unit 延迟共用，reason 区分）、`buyback_downgrade`（降档成交，含数量/溢价%）、`buyback_filled`（回补完成清除，含前卖价/回补价）。
+- **数值纪律**：除上述两个新增参数（带 TODO(PhaseD)）外，不修改任何既有阈值/参数数值；激励档折让刻度 0.5%/0.1% 沿用原系统 `E:\06_T\signal_engine.py` 既有语义（非本项目既有参数）。
+- **测试方案**：
+  1. 新建 `tests/test_wp_b07.py`（逐文件运行，不用 unittest discover）：记忆建立（全卖出通道）/ TTL 过期 / 高接延迟 / 降档带 / 低价接回激励与不受限 / 回补成交清除 / 每日清零 / main.py 成交回调事件（armed/filled）/ `_apply_buyback_downgrade` 减半取整与不足延迟；
+  2. 回放验证：`replay_wp_b07.py` 单票 603667 / 底仓 800 / 15 万 / 2026-08-04~2026-08-06，对照 0805"52.14 卖出 → 54.30 回补"场景；若回放环境不可用则以合成 bar 单测场景替代并在报告中说明；
+  3. 回归：`tests/test_fix_20260731.py` 18/18、`tests/test_fix_20260728.py` 22/22。
+- **验收标准（可证伪）**：
+  - [ ] 0805 场景回放（或等效合成场景）中 52.14 卖出后 54.30（溢价 >1%）的回补买单不再出现（被延迟），事件桥有 `buyback_delayed` 记录（含溢价%）；
+  - [ ] 溢价 (0, 1%] 区间的回补单数量降为 sizer 结果的一半（向下取整到 100 的整数倍），事件桥有 `buyback_downgrade` 记录；
+  - [ ] 价格 ≤ 前卖价的正常回补不受影响（照常产生 BUY_LOW 且享受激励加分/降阈值）；
+  - [ ] 回补成交后记忆清除，事件桥有 `buyback_filled`；TTL 过期与每日清零行为可证；
+  - [ ] 回归测试全绿（18/18 + 22/22 + 新单测全过）。
+- **回退**：单 commit revert；运行时可将 PARAMS `buyback_above_sell_delay_pct` 调至 ≥1.0（延迟线名存实亡）并将 `buyback_above_sell_downgrade_pct` 调至 ≥1.0 即整体失活。
