@@ -83,18 +83,18 @@ check("T1b 无 bar 价格退化成本价估值(20000+800×52)",
 eq1c = main._total_equity(SimpleNamespace(manual_position={}, bar_cache={}), 150000.0)
 check("T1c 空仓时总权益=纯现金", abs(eq1c - 150000.0) < 0.01, f"equity={eq1c}")
 
-# ══ T2: 等权预算与 max_pos_shares ══
+# ══ T2: 等权预算与 max_pos_shares（WP-E3 修订：分母 len(STOCKS)=16 → 槽位数=4） ══
 bud2, mps2 = main._stock_budget_cap(None, "603667", 50.0, 150000.0)
-n_stocks = len(main.STOCKS)
-check("T2a 等权预算=150000×80%/16=7500",
-      n_stocks == 16 and abs(bud2 - 150000 * 0.8 / 16) < 0.01,
-      f"n={n_stocks} budget={bud2}")
-check("T2b cp=50 → max_pos_shares=floor(7500/50/100)×100=100", mps2 == 100, f"mps={mps2}")
+n_slots = main.PARAMS.get("max_concurrent_positions", 4)
+check("T2a 等权预算=150000×80%/4=30000（WP-E3 槽位制分母）",
+      n_slots == 4 and abs(bud2 - 150000 * 0.8 / 4) < 0.01,
+      f"slots={n_slots} budget={bud2}")
+check("T2b cp=50 → max_pos_shares=floor(30000/50/100)×100=600", mps2 == 600, f"mps={mps2}")
 _, mps2b = main._stock_budget_cap(None, "603667", 74.0, 150000.0)
 _, mps2c = main._stock_budget_cap(None, "603667", 100.0, 150000.0)
 _, mps2d = main._stock_budget_cap(None, "603667", 0.0, 150000.0)
-check("T2c 取整边界: cp=74→100 / cp=100→0(不足一手) / cp=0→0",
-      mps2b == 100 and mps2c == 0 and mps2d == 0,
+check("T2c 取整边界: cp=74→400 / cp=100→300 / cp=0→0",
+      mps2b == 400 and mps2c == 300 and mps2d == 0,
       f"74→{mps2b} 100→{mps2c} 0→{mps2d}")
 
 # ══ T3: 到顶拦截 + 事件 + 去重 ══

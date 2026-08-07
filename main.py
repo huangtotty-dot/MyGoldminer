@@ -276,17 +276,69 @@ def _total_equity(context, available_cash: float) -> float:
 
 
 def _stock_budget_cap(context, code, cp: float, total_eq: float):
-    """WP-E2: 个股预算与最大仓位。
+    """WP-E2/E3: 个股预算与最大仓位。
 
-    stock_budget = total_equity × (1 − cash_reserve_pct) / len(STOCKS)（等权）
-    TODO(PhaseD): 预算权重改趋势加权
+    stock_budget = total_equity × (1 − cash_reserve_pct) / max_concurrent_positions
+    （WP-E3 槽位制：同时持仓不超 4 支，预算按 4 槽分解；TODO(PhaseD) 趋势加权语义保留）
     max_pos_shares = floor(stock_budget / cp / 100) × 100
     返回 (stock_budget, max_pos_shares)。"""
     reserve = float(PARAMS.get("cash_reserve_pct", 0.20))
-    n = max(len(STOCKS), 1)
+    n = max(int(PARAMS.get("max_concurrent_positions", 4)), 1)
     budget = float(total_eq or 0) * (1 - reserve) / n
     mps = int(budget / cp / 100) * 100 if cp > 0 else 0
     return budget, mps
+
+
+def _held_codes(context):
+    """WP-E3: 当前持仓(qty>0)代码列表——槽位占用。
+    数据源与 _total_equity 一致（context.manual_position）。"""
+    codes = []
+    for sym, mp in (getattr(context, "manual_position", None) or {}).items():
+        try:
+            if int(mp.get("qty", 0) or 0) > 0:
+                codes.append(_raw_code(sym))
+        except Exception:
+            continue
+    return codes
+
+
+def _held_position_count(context) -> int:
+    """WP-E3: 当前占用槽位数（qty>0 的票数）。"""
+    return len(_held_codes(context))
+
+
+def _slot_full(context) -> bool:
+    """WP-E3: 槽位是否已满（≥ max_concurrent_positions）。"""
+    return _held_position_count(context) >= int(PARAMS.get("max_concurrent_positions", 4))
+
+
+def _emit_slot_full(context, code, now, where: str) -> bool:
+    """WP-E3: slot_full 事件（每票每日去重，O-03 风格）。True=首次已写事件。
+
+    where="buy"  → risk kind=slot_full（on_bar 全新建仓信号被挡）；
+    where="base" → risk kind=base_deferred、detail 含 reason=slot_full
+                   （底仓建仓块复用既有延迟机制，下一根 bar 自然重试）。
+    两处统一写 audit event=slot_full（where 字段区分）。"""
+    _key = f'_slot_full_{where}_{code}'
+    _today = now.strftime("%Y-%m-%d")
+    if getattr(context, _key, '') == _today:
+        return False
+    setattr(context, _key, _today)
+    held = _held_codes(context)
+    mx = int(PARAMS.get("max_concurrent_positions", 4))
+    _base = f"held_count={len(held)}/{mx} held_codes={','.join(held)} candidate={code}"
+    try:
+        if where == "base":
+            write_risk(str(now), "base_deferred", f"reason=slot_full {_base}", code=code)
+        else:
+            write_risk(str(now), "slot_full", _base, code=code)
+    except Exception:
+        pass
+    _audit_write({"event": "slot_full", "code": code, "where": where,
+                  "held_count": len(held), "max_slots": mx,
+                  "held_codes": held, "time": str(now)})
+    print(f"[{now:%H:%M:%S}] {where.upper()} {code} 槽位满({len(held)}/{mx})→等待 held={held}")
+    return True
 
 
 def _check_max_pos_cap(context, code, now, pos_qty: int, base_ref: int,
@@ -810,21 +862,22 @@ def init(context):
         ir.GM_DATA_READY = False
 
     symbols = list(STOCKS.values())
-    # WP-E2: 启动预算表（复盘核对用——equity/现金保留/每股预算/各票 max_pos_shares）
+    # WP-E2/E3: 启动预算表（复盘核对用——equity/现金保留/每股预算(按槽分解)/各票 max_pos_shares）
     try:
         _eq0 = _total_equity(context, INITIAL_CASH)
         _reserve0 = float(PARAMS.get("cash_reserve_pct", 0.20))
-        _bud0 = _eq0 * (1 - _reserve0) / max(len(symbols), 1)
+        _slots0 = max(int(PARAMS.get("max_concurrent_positions", 4)), 1)
+        _bud0 = _eq0 * (1 - _reserve0) / _slots0
         _caps = []
         for _c, _s in STOCKS.items():
             _rows = context.bar_cache.get(_s) or []
             _px = float(_rows[-1].get("close", 0) or 0) if _rows else 0.0
             _mps = int(_bud0 / _px / 100) * 100 if _px > 0 else 0
             _caps.append(f"{_c}:{_mps}")
-        print(f"[init] WP-E2 预算表: equity={_eq0:.0f} reserve={_reserve0:.0%} "
-              f"每股预算={_bud0:.0f} max_pos_shares={' '.join(_caps)}")
+        print(f"[init] WP-E2/E3 预算表: equity={_eq0:.0f} reserve={_reserve0:.0%} "
+              f"每股预算={_bud0:.0f}(按{_slots0}槽分解) max_pos_shares={' '.join(_caps)}")
     except Exception as _e:
-        print(f"[init] WP-E2 预算表生成失败: {_e}")
+        print(f"[init] WP-E2/E3 预算表生成失败: {_e}")
     subscribe(symbols=symbols, frequency="60s", count=240,
               fields="symbol,eob,open,high,low,close,volume,amount")
     # 确保事件桥目录存在
@@ -1020,6 +1073,15 @@ def on_bar(context, bars):
                 if not _is_topup:
                     return
                 _topup_blocked = True  # F8: 回补被趋势闸拦截，但持仓信号评估照常落地
+            # WP-E3: 持仓槽位闸（底仓建仓块）——该票当前持仓为 0（建仓=新增持票数）
+            # 且槽满 → 以 base_deferred(reason=slot_full) 延迟，下一根 bar 自然重试
+            # （复用既有延迟机制，不新建重试）；该票已持仓的 topup 回补不受限。
+            _held_now = int(context.manual_position.get(gm_sym, {}).get("qty", 0) or 0)
+            if not _topup_blocked and _held_now <= 0 and _slot_full(context):
+                _emit_slot_full(context, code, now, "base")
+                if not _is_topup:
+                    return
+                _topup_blocked = True
             # 默认 False: 数据不足时保守不放行（F5: 恢复M2门槛）
             if not _topup_blocked and not _dc.get("_m2_pool_pass", False):
                 # O-03(2026-08-07 W32表决): pool_gate 每票每日只报一次（0807 实战:3票×237bar=711条刷屏）
@@ -1387,6 +1449,12 @@ def on_bar(context, bars):
                 continue
             bc = context.daily_buy_count.get(code, 0)
             if bc >= max_buys:
+                continue
+
+            # WP-E3: 持仓槽位闸（买入执行块）——仅全新建仓(pos_qty<=0)检查；
+            # 已持仓票的做T买入不新增持票数，不受槽位闸限制
+            if pos_qty <= 0 and _slot_full(context):
+                _emit_slot_full(context, code, now, "buy")
                 continue
 
             # N3: 现金预检（移到 sizer 之前，供 target_t 计算）

@@ -29,6 +29,10 @@ PARAMS = {
     # 每股预算 = 总权益×(1−cash_reserve_pct)/股票池只数（等权）
     # TODO(PhaseD): 现金保留线寻优定值；预算权重改趋势加权
     "cash_reserve_pct": 0.20,
+    # WP-E3 持仓槽位制（2026-08-07 owner决策："持股小于4支可买入，否则继续等待"）：
+    # 同时持股(qty>0) ≤ max_concurrent_positions 支；每股预算按槽位数分解
+    # TODO(PhaseD): 槽位数寻优定值
+    "max_concurrent_positions": 4,
     "repeat_signal_gap_minutes": 60,
     "repeat_signal_price_move": 0.004,
     "repeat_signal_score_boost": 10,
