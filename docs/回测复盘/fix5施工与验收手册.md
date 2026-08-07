@@ -356,3 +356,29 @@
   - [ ] N2 拦截分母 = 现金+全部持仓市值（含其他票），单票 80% 安全帽语义不变；
   - [ ] 回归测试全绿（18/18 + 18/18 + 22/22 + 新单测全过）。
 - **回退**：单 commit revert；运行时将 PARAMS `cash_reserve_pct` 调回 0 且恢复 `_stock_budget = available_cash / _n_stocks` 一行即回旧口径（`_check_max_pos_cap` 随 revert 移除）。
+
+
+### WP-E3：持仓槽位制（≤4 支 + 预算按 4 支分解）
+
+- **来源**：owner 决策（2026-08-07 17:13 原话）："目前我控制买入 4 支股票：如果待选的股票满足条件并且我现在的持股小于 4 支可以买入，否则继续等待；这样资金分配在 4 支股票应该是够用的。"
+- **缺陷定位**：WP-E2 上线后 16 票等权预算 = 总权益×80%/16 ≈ 7500 元/票，多数票只够一手（000988@100 元甚至不足一手），资金摊得太薄、做T空间名存实亡——owner 据此拍板槽位制：同时持股 ≤4 支、预算按 4 支分解（15 万口径约 3 万/票）。
+- **改动内容**：
+  1. 新增参数 `max_concurrent_positions = 4`（PARAMS，带 `# TODO(PhaseD)`）；
+  2. 槽位计数：新增 `_held_codes(context)` / `_held_position_count(context)`（复用 WP-E2 `_total_equity` 的持仓数据源 `context.manual_position`，qty>0 计 1 槽）与 `_slot_full(context)`；
+  3. 预算分母：`_stock_budget_cap` 除数从 `len(STOCKS)` 改为 `max_concurrent_positions`（注释：槽位制下同时持仓不超 4 支，预算按 4 分解；TODO(PhaseD) 趋势加权语义保留）；
+  4. 槽位闸两处接线：
+     - on_bar 买入执行块：`pos_qty == 0`（全新建仓信号）且槽满 → 跳过，写事件 `slot_full`（detail 含 held_count/held_codes/候选 code，risk kind=`slot_full` + audit），**每票每日去重**（O-03 风格），print 一行；`pos_qty > 0` 的做T买入不检查槽位（不增加持票数）；
+     - 底仓建仓块（on_bar D2 段，M2 检查前）：该票当前持仓为 0 且槽满 → 以 `base_deferred` 事件延迟（detail 含 `reason=slot_full`），下一根 bar 自然重试（复用既有 base_deferred 机制，不新建重试）；该票已持仓的 topup 回补不受限；
+  5. 可观测：init 预算表打印加分母说明（"按 4 槽分解"）；`slot_full` 进事件桥 + audit（两处统一写 audit event=`slot_full`，where=buy/base 区分）。
+- **测试方案**：
+  1. 新建 `tests/test_wp_e3.py`：①槽位计数（qty=0 不占槽）②第 5 支建仓被 `slot_full` 拦截+去重+次日重置 ③已持仓票做T买入不受限（源码接线断言）④清仓到 0 释放槽位 ⑤预算分母=4 计算 ⑥base_deferred 含 `reason=slot_full`；
+  2. 同步修订 `tests/test_wp_e2.py` T2 预算期望值（分母 16→4，WP-E3 取代 E2 等权口径）；
+  3. 回归：test_wp_e2 20/20、test_wp_b07 18/18、test_fix_20260731 18/18、test_fix_20260728 22/22。
+- **验收标准（可证伪）**：
+  - [ ] 每股预算 = 总权益×(1−20%)/4（15 万口径 ≈3 万/票），init 预算表打印与手算一致且带"按 4 槽分解"说明；
+  - [ ] 持有 4 支时第 5 支全新建仓信号被 `slot_full` 拦截（事件桥+audit 各一条，每票每日仅一条），下一根 bar 继续重试；
+  - [ ] 已持有票的做T买入（pos_qty>0）不受槽位闸限制；
+  - [ ] 某票清仓到 0 即释放槽位，新候选票下一根 bar 可建仓；
+  - [ ] 底仓建仓块槽满时写 `base_deferred`（reason=slot_full）并延迟，不新建重试机制；
+  - [ ] 回归测试全绿（20/20 + 18/18 + 18/18 + 22/22 + 新单测全过）。
+- **回退**：单 commit revert；运行时将 PARAMS `max_concurrent_positions` 调至 ≥len(STOCKS) 即槽位闸名存实亡（预算分母同步回到全池等权）。
