@@ -90,6 +90,11 @@ PARAMS = {
     "awaiting_buyback_vwap_gap": 0.998,
     "awaiting_buyback_rsi_strong": 45,
     "awaiting_buyback_rsi_weak": 50,
+    # WP-B07 回补价格记忆·高接门控（2026-08-08 W32表决）：
+    # 回补价 > 前卖价×(1+delay_pct) → BUY_LOW 延迟；(downgrade_pct, delay_pct] 区间 → 数量降档减半
+    # TODO(PhaseD): 以下两值为临时定值，寻优前日常复盘只记录不调整
+    "buyback_above_sell_delay_pct": 0.01,
+    "buyback_above_sell_downgrade_pct": 0.0,
     "peak_decline_pct_threshold": 0.01,
     "peak_decline_min_minutes": 3,
     "peak_decline_penalty": 5,

@@ -1,0 +1,2 @@
+{"event": "risk", "time": "2026-08-04 09:31:00+08:00", "code": "603667", "kind": "base_deferred", "detail": "_stock_trend_state=TREND_BREAKDOWN", "_ts": 1786090913.443041}
+{"event": "risk", "time": "2026-08-05 09:31:00+08:00", "code": "603667", "kind": "entry_gate", "detail": "G4: 日线数据不足→保守拦截", "_ts": 1786090927.6848516}

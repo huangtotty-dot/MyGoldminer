@@ -144,6 +144,20 @@ def write_risk(time_str: str, kind: str, detail: str = "", code: str = ""):
     })
 
 
+def write_buyback(time_str: str, code: str, kind: str, detail: str = "", **kw):
+    """WP-B07 回补价格记忆事件：
+    kind ∈ armed(记忆建立) / delayed(高接延迟) / downgrade(降档成交) / filled(回补完成清除)
+    事件名为 buyback_<kind>（snake_case），与 write_risk/write_signal 同文件同风格。"""
+    rec = {
+        "event": f"buyback_{kind}",
+        "time": time_str,
+        "code": code,
+        "detail": detail,
+    }
+    rec.update(kw)
+    _append_jsonl(_events_path(), rec)
+
+
 def write_heartbeat(time_str: str, bar: str, positions: Dict[str, Any],
                     cash: float = 0.0, index_regime: str = "", index_score: float = 0.0):
     """每分钟心跳（同时写实时覆盖文件 + 追加历史jsonl）"""

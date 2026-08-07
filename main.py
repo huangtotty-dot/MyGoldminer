@@ -23,7 +23,7 @@ from signals.position_sizer import PositionSizer
 from utils.helpers import SIM_NOW, _now, get_today_str, _default_daily_context
 from gm_bridge.writer import (
     write_signal, write_order, write_fill, write_reject, write_risk,
-    write_heartbeat, check_kill_switch, write_snapshot,
+    write_heartbeat, check_kill_switch, write_snapshot, write_buyback,
 )
 from gm_bridge import ops_guard
 
@@ -225,6 +225,27 @@ def _sell_arbiter(context, code, sig, pos_qty, cp, now, holding, threshold,
 
 def _raw_code(symbol: str) -> str:
     return symbol.replace("SHSE.", "").replace("SZSE.", "").replace("BJ.", "")
+
+
+def _apply_buyback_downgrade(context, code, sig, qty):
+    """WP-B07: 高接降档 — 回补价落入 (前卖价×(1+downgrade_pct), 前卖价×(1+delay_pct)]
+    区间时，sizer 结果减半后向下取整到 min_unit 的整数倍。
+
+    返回 (qty, dg_info, min_unit)；dg_info 非 None 表示命中降档。
+    qty < min_unit 时调用方应延迟（等同不产生买入）。"""
+    dg = None
+    for d in (getattr(sig, "details", None) or []):
+        if isinstance(d, dict) and d.get("buyback_downgrade"):
+            dg = d
+            break
+    try:
+        min_unit = int(context.sizer._effective_params(code).get("stock_min_trade_unit", 100))
+    except Exception:
+        min_unit = 100
+    if dg is None:
+        return int(qty), None, min_unit
+    qty2 = (int(qty) // 2 // min_unit) * min_unit
+    return qty2, dg, min_unit
 
 
 def _dedup_bar(context, gm_sym: str, eob: str) -> bool:
@@ -1202,6 +1223,26 @@ def on_bar(context, bars):
 
         if sig is None:
             _last_dec = context.engine.last_decision.get(code, {})
+            # WP-B07: 高接延迟事件（每次记忆建立后只报一次，防每 bar 刷屏）
+            if _last_dec.get("reason") == "buyback_above_sell_delayed":
+                _bb_key = f"{code}|{_last_dec.get('sell_time', '')}"
+                _bb_notified = getattr(context, "_buyback_delayed_notified", None)
+                if _bb_notified is None:
+                    _bb_notified = set()
+                    context._buyback_delayed_notified = _bb_notified
+                if _bb_key not in _bb_notified:
+                    _bb_notified.add(_bb_key)
+                    try:
+                        write_buyback(str(now), code, "delayed",
+                                      detail=(f"sell={_last_dec.get('sell_price')} "
+                                              f"cur={_last_dec.get('price')} "
+                                              f"premium={float(_last_dec.get('premium', 0) or 0):.2%} "
+                                              f"reason=above_sell_delay"),
+                                      sell_price=_last_dec.get("sell_price"),
+                                      price=_last_dec.get("price"),
+                                      premium=_last_dec.get("premium"))
+                    except Exception:
+                        pass
             _audit_write({
                 "event": "no_signal", "code": code, "time": str(now),
                 "buy_score": buy_score, "sell_score": sell_score,
@@ -1298,6 +1339,24 @@ def on_bar(context, bars):
             if qty <= 0:
                 qty = 300  # sizer 返回 0 时的最小交易量
 
+            # WP-B07: 高接降档 — 数量减半取整到 min_unit，不足 min_unit 则延迟
+            qty, _bb_dg, _bb_min_unit = _apply_buyback_downgrade(context, code, sig, qty)
+            if _bb_dg is not None and qty < _bb_min_unit:
+                try:
+                    write_buyback(str(now), code, "delayed",
+                                  detail=(f"downgrade_below_min_unit: sizer_halved<{_bb_min_unit} "
+                                          f"sell={_bb_dg.get('sell_price')} cur={_bb_dg.get('price')} "
+                                          f"premium={float(_bb_dg.get('premium', 0) or 0):.2%}"),
+                                  sell_price=_bb_dg.get("sell_price"),
+                                  price=_bb_dg.get("price"),
+                                  premium=_bb_dg.get("premium"))
+                except Exception:
+                    pass
+                _audit_write({"event": "buyback_downgrade_defer", "code": code,
+                              "sell_price": _bb_dg.get("sell_price"), "price": _bb_dg.get("price"),
+                              "premium": _bb_dg.get("premium"), "time": str(now)})
+                continue
+
             # N3: 现金预检
             max_by_cash = int(available_cash * 0.95 / cp / 100) * 100 if cp > 0 else 0
             qty = min(qty, max_by_cash) if max_by_cash > 0 else qty
@@ -1347,6 +1406,18 @@ def on_bar(context, bars):
                 _audit_write({"event": "buy", "code": code, "qty": qty, "price": cp, "score": sig.score,
                               "time": str(now), "regime": context.last_index_regime,
                               "pos_after_buy": new_q, "buy_count": bc + 1})
+                # WP-B07: 降档成交事件
+                if _bb_dg is not None:
+                    try:
+                        write_buyback(str(now), code, "downgrade",
+                                      detail=(f"qty={qty}@{cp:.2f} "
+                                              f"sell={_bb_dg.get('sell_price')} "
+                                              f"premium={float(_bb_dg.get('premium', 0) or 0):.2%}"),
+                                      qty=qty, price=cp,
+                                      sell_price=_bb_dg.get("sell_price"),
+                                      premium=_bb_dg.get("premium"))
+                    except Exception:
+                        pass
             except Exception as e:
                 print(f"[{now:%H:%M:%S}] BUY {code} 失败: {e}")
 
@@ -1383,9 +1454,12 @@ def on_order_status(context, order):
         except Exception:
             pass
         # P0-2: 成交回调接线冷却（只有真的成交了才计冷却，避免下单即计）
+        # WP-B07: 捕获返回值——卖成交建回补记忆(armed) / 买成交清记忆(buyback_filled)
+        _rta = None
         if code in STOCKS:
             _action = 'BUY_LOW' if side == 1 else 'SELL_HIGH'
-            context.engine.record_trade_action(code, _action, volume, price)
+            _rta = context.engine.record_trade_action(code, _action, volume, price)
+        _rta = _rta or {}
         if side == 1:  # 买入
             old = context.executed_orders.get(symbol, {"qty": 0, "available": 0, "cost": price})
             old_qty = int(old.get("qty", 0))
@@ -1402,6 +1476,19 @@ def on_order_status(context, order):
                 "type": "stock",
                 "pre_close": price,
             }
+            # WP-B07: 买入成交 → 回补闭环完成，清除记忆并写事件
+            _bb_filled = _rta.get("buyback_filled")
+            if _bb_filled:
+                try:
+                    write_buyback(str(getattr(context, "now", None) or datetime.now()),
+                                  code, "filled",
+                                  detail=(f"sell={_bb_filled.get('sell_price')} "
+                                          f"buyback={price:.2f} qty={volume}"),
+                                  sell_price=_bb_filled.get("sell_price"),
+                                  price=price, qty=volume,
+                                  sell_action=_bb_filled.get("sell_action", ""))
+                except Exception:
+                    pass
             # 底仓确认（含F7回补单：已settled标的回补成交同样同步台账并释放_base_ordered）
             if code in context._base_ordered:
                 context._base_settled.add(code)
@@ -1438,6 +1525,21 @@ def on_order_status(context, order):
             _audit_write({"event": "sell", "code": code, "qty": volume, "price": price,
                           "time": _ts_now, "pos_after_sell": new_qty,
                           "action": _act, "score": _sc})
+            # WP-B07: 卖出成交 → 建立回补价格记忆并写事件（通道名以 _pending_sell_action 为准）
+            _bb_armed = _rta.get("armed") or getattr(context.engine, "awaiting_buyback", {}).get(code)
+            if _bb_armed:
+                _bb_armed["sell_action"] = _act or _bb_armed.get("sell_action", "SELL_HIGH")
+                try:
+                    write_buyback(_ts_now, code, "armed",
+                                  detail=(f"sell={_bb_armed.get('sell_price')} qty={volume} "
+                                          f"action={_bb_armed.get('sell_action')} "
+                                          f"target={_bb_armed.get('target_price')}"),
+                                  sell_price=_bb_armed.get("sell_price"),
+                                  qty=volume,
+                                  sell_action=_bb_armed.get("sell_action"),
+                                  target_price=_bb_armed.get("target_price"))
+                except Exception:
+                    pass
     elif status in (4, 5, 6, 8, 12):  # 拒单/撤单/待撤/已拒绝(8)/已过期(12) —— F2修复: 2026-07-28前漏掉8导致所有拒单静默
         _rej_detail = ""
         try:

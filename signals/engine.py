@@ -511,12 +511,77 @@ class SignalEngine:
             buy_threshold = float(p.get("notify_buy_threshold", 68))
             if t_val >= 1000:
                 buy_threshold = float(p.get("notify_buy_threshold", 68))
+
+            # ── WP-B07: 回补价格记忆 — TTL清理 + 低吸激励 + 高接门控 ──
+            buyback_gate = None  # None / "delayed" / "downgrade"
+            buyback_info = None
+            ab = self.awaiting_buyback.get(code)
+            if ab and float(ab.get("sell_price", 0) or 0) > 0 and feats.get("price", 0) > 0:
+                _ttl = int(p.get("awaiting_buyback_ttl_minutes", 240))
+                _elapsed = (now - ab["sell_time"]).total_seconds() / 60
+                if _elapsed > _ttl:
+                    self.awaiting_buyback.pop(code, None)  # 过期清除
+                    self.diagnostics[code] = {
+                        "buyback_ttl_expired": True,
+                        "sell_price": ab.get("sell_price"),
+                        "elapsed_min": round(_elapsed, 1),
+                    }
+                else:
+                    _sp = float(ab["sell_price"])
+                    _cp = float(feats.get("price", 0))
+                    _premium = (_cp - _sp) / _sp  # >0=回补价高于前卖价(高接)
+                    _delay_pct = float(p.get("buyback_above_sell_delay_pct", 0.01))
+                    _dg_pct = float(p.get("buyback_above_sell_downgrade_pct", 0.0))
+                    buyback_info = {
+                        "sell_price": _sp, "price": _cp,
+                        "premium": round(_premium, 6),
+                        "sell_time": str(ab.get("sell_time")),
+                        "sell_action": ab.get("sell_action", ""),
+                    }
+                    if _premium > _delay_pct:
+                        buyback_gate = "delayed"      # 硬延迟线之上：不接
+                    elif _premium > _dg_pct:
+                        buyback_gate = "downgrade"    # 软降档带：信号保留、数量减半
+                    else:
+                        # 价格不高于前卖价（正常低吸接回）：接通原系统激励
+                        # （E:\06_T\signal_engine.py 语义——折让>0.5% 强激励 / >0.1% 弱激励）
+                        _discount = -_premium
+                        _boost = 0.0
+                        if _discount > 0.005:
+                            _boost = float(p.get("awaiting_buyback_score_boost", 15))
+                            _tag = "接回追踪(已卖待接)"
+                        elif _discount > 0.001:
+                            _boost = float(p.get("awaiting_buyback_score_boost_weak", 8))
+                            _tag = "接回追踪(微利)"
+                        if _boost > 0:
+                            buy_score = round(buy_score + _boost, 1)
+                            buy_details.append({
+                                "指标": _tag,
+                                "当前": f"卖{_sp:.2f}现{_cp:.2f}折{_discount:.1%}",
+                                "加分": round(_boost, 1)})
+                        buy_threshold -= float(p.get("awaiting_buyback_threshold_relax", 10))
+                        buyback_info["incentive"] = {"boost": _boost,
+                                                     "threshold_relax": float(p.get("awaiting_buyback_threshold_relax", 10))}
+
             buy_allowed = not buy_blocks
             buy_cooldown_ok = code not in self.buy_cooldown or now >= self.buy_cooldown.get(code, now)
             max_buys = int(p.get("max_buy_times_per_stock", 3))
             buy_count_ok = self.buy_count_per_stock.get(code, 0) < max_buys
 
             if buy_score >= buy_threshold and buy_allowed and buy_cooldown_ok and buy_count_ok:
+                if buyback_gate == "delayed":
+                    # WP-B07 高接延迟：不产生 BUY_LOW，留痕后按 HOLD 返回
+                    self.diagnostics[code] = {"buyback_delayed": buyback_info}
+                    self.last_decision[code] = {
+                        "action": "HOLD",
+                        "reason": "buyback_above_sell_delayed",
+                        "buy_score": buy_score,
+                        "sell_score": sell_score,
+                        "buy_blocks": buy_blocks,
+                        "sell_blocks": sell_blocks,
+                        **buyback_info,
+                    }
+                    return buy_score, sell_score, None
                 action = "BUY_LOW"
                 sig = Signal(code=code, name=name, action=action,
                              price=feats.get("price", 0), score=buy_score,
@@ -525,6 +590,15 @@ class SignalEngine:
                                          "market_state": "normal",
                                          "today_ret": feats.get("today_ret", 0)},
                              details=buy_details)
+                if buyback_gate == "downgrade":
+                    # WP-B07 高接降档：信号保留，main.py 在 sizer 处数量减半
+                    sig.details.append({
+                        "buyback_downgrade": True,
+                        "sell_price": buyback_info["sell_price"],
+                        "price": buyback_info["price"],
+                        "premium": buyback_info["premium"],
+                    })
+                    self.diagnostics[code] = {"buyback_downgrade": buyback_info}
 
         if sig:
             self.signals.append(sig)
@@ -545,12 +619,43 @@ class SignalEngine:
             "time": _engine_now(),
         }
 
+    # WP-B07: 卖出类成交动作（回补价格记忆对全部卖出通道生效，
+    # 以 main.py on_order_status 成交回调为实际写入点）
+    BUYBACK_SELL_ACTIONS = ("SELL_HIGH", "PANIC_SELL", "TRAIL_SELL",
+                            "TREND_EXIT", "TARGET_SELL", "TAIL")
+    BUYBACK_BUY_ACTIONS = ("BUY_LOW", "ADD_POS")
+
+    def arm_awaiting_buyback(self, code: str, price: float, qty: int,
+                             action: str = "SELL_HIGH") -> Optional[Dict[str, Any]]:
+        """WP-B07: 卖出成交后建立回补价格记忆。返回记忆记录（price<=0 时返回 None）。"""
+        price = float(price or 0)
+        if price <= 0:
+            return None
+        now = _engine_now()
+        p = self._get_params(code)
+        # awaiting_buyback_vwap_gap: 乘数（如0.975=低于卖价2.5%接回），兼容百分比（0.003→0.997）
+        _gap = float(p.get("awaiting_buyback_vwap_gap", 0.998))
+        if _gap < 0.1:
+            _gap = 1.0 - _gap
+        rec = {
+            "sell_price": price,
+            "sell_time": now,
+            "sell_qty": int(qty or 0),
+            "sell_action": action,
+            "target_price": round(price * _gap, 2),
+        }
+        self.awaiting_buyback[code] = rec
+        return rec
+
     def record_trade_action(self, code, action, qty=0, price=0.0):
+        """成交回报登记。返回值（WP-B07 新增，旧调用方忽略不影响）：
+        {"armed": 新建回补记忆|None, "buyback_filled": 被清除的回补记忆|None}"""
         now = _engine_now()
         p = self._get_params(code)
         self.last_trade_state[code] = {
             "action": action, "qty": qty, "price": price, "time": now,
         }
+        ret = {"armed": None, "buyback_filled": None}
         if action in ("SELL_HIGH", "PANIC_SELL"):
             cd = int(p.get("cooldown_minutes", 30))
             self.sell_cooldown[code] = now + timedelta(minutes=cd)
@@ -559,3 +664,11 @@ class SignalEngine:
             cd = int(p.get("cooldown_minutes", 30))
             self.buy_cooldown[code] = now + timedelta(minutes=cd)
             self.buy_count_per_stock[code] = self.buy_count_per_stock.get(code, 0) + 1
+        # WP-B07: 回补价格记忆生命周期（仅真实成交 qty>0 才建立/清除；
+        # 地板保护等 qty=0 的账面登记不动记忆）
+        if int(qty or 0) > 0:
+            if action in self.BUYBACK_SELL_ACTIONS:
+                ret["armed"] = self.arm_awaiting_buyback(code, price, qty, action)
+            elif action in self.BUYBACK_BUY_ACTIONS:
+                ret["buyback_filled"] = self.awaiting_buyback.pop(code, None)
+        return ret
