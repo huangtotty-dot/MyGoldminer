@@ -373,8 +373,13 @@ def _refresh_daily_ctx(context, code: str, gm_symbol: str, now: datetime) -> dic
                           fields="eob,open,high,low,close,volume",
                           fill_missing="Previous", adjust=ADJUST_PREV,
                           end_time=end_of_yesterday)
-    except Exception:
+    except Exception as _e:
         daily = None
+        # O-01(2026-08-07 W32表决): 异常不再裸吞——每票每日打印一次，供确诊
+        _de_key = f'_daily_fetch_err_{code}'
+        if getattr(context, _de_key, '') != today_str:
+            setattr(context, _de_key, today_str)
+            print(f"[daily] {code} 日线取数异常: {type(_e).__name__}: {str(_e)[:200]}")
 
     ctx = dict(_default_daily_context(code))
 
@@ -456,12 +461,27 @@ def _refresh_daily_ctx(context, code: str, gm_symbol: str, now: datetime) -> dic
 
         # 将 latest_pre_close 暴露给 _get_holding
         context.latest_pre_close[code] = prev_close
+        # O-01: 取数成功则清零连续失败计数
+        if getattr(context, "_daily_fail_cnt", None):
+            context._daily_fail_cnt[code] = 0
     else:
         context.latest_pre_close[code] = 0
         ctx["daily_status"] = "unavailable"
         # G4-FIX(2026-08-06, 复盘0806-①): 取数失败不写日缓存、次 bar 重试——
         # 瞬时失败不再锁死全天（0806 实战:7 只新票 09:31 取数抽风被整日关在 G4 门外）。
         # 口径不变：成功后的数据仍冻结于昨收，仅失败分支允许重试。
+        # O-01(2026-08-07 W32表决): 无异常但数据为空/不足也要留痕；连续失败升级 risk 事件告警
+        _fc = getattr(context, "_daily_fail_cnt", None) or {}
+        _fc[code] = _fc.get(code, 0) + 1
+        context._daily_fail_cnt = _fc
+        _dn_key = f'_daily_fetch_none_{code}'
+        if getattr(context, _dn_key, '') != today_str:
+            setattr(context, _dn_key, today_str)
+            print(f"[daily] {code} 日线数据不足(无异常): daily={'None' if daily is None else len(daily)}")
+        if _fc[code] == 10:
+            try: write_risk(str(now), "data_fetch_fail",
+                            f"{code} 日线连续10次取数失败, G4/趋势闸失效中", code=code)
+            except Exception: pass
         return ctx
 
     context._daily_ctx_cache_map[_cache_key] = ctx
@@ -759,14 +779,25 @@ def on_bar(context, bars):
                         ir.GM_DATA_READY = True
                 except Exception as e:
                     print(f"[ir] 指数日线刷新失败: {e}")
+                    # R-3(2026-08-07 W32表决): regime 数据故障不再静默——fail-open 保留但要告警
+                    try: write_risk(str(now), "regime_degraded", f"指数日线刷新失败: {str(e)[:120]}", code="")
+                    except Exception: pass
 
+                # R-1(2026-08-07 W32表决): 实盘传 mode="live"，剔除当日未成形K线再判定
+                try:
+                    _ir_mode = "live" if context.mode == MODE_LIVE else "eod"
+                except Exception:
+                    _ir_mode = "eod"
                 ir_regime, ir_score, ir_ctx = ir.detect_index_regime(
-                    as_of=now.strftime("%Y-%m-%d"), force=True, mode="eod")
+                    as_of=now.strftime("%Y-%m-%d"), force=True, mode=_ir_mode)
                 context.last_index_regime = ir_regime.value if hasattr(ir_regime, "value") else str(ir_regime)
                 context.last_index_score = float(ir_score)
                 degraded = ir_ctx.get("degraded", [])
                 if degraded:
                     print(f"[ir] {str(today)} regime={context.last_index_regime} score={context.last_index_score:.1f} degraded={degraded}")
+                    # R-3: degraded fail-open 但写 risk 告警
+                    try: write_risk(str(now), "regime_degraded", f"degraded={degraded} regime={context.last_index_regime}", code="")
+                    except Exception: pass
                 else:
                     print(f"[ir] {str(today)} regime={context.last_index_regime} score={context.last_index_score:.1f}")
         except Exception as e:
@@ -881,11 +912,15 @@ def on_bar(context, bars):
                 _topup_blocked = True  # F8: 回补被趋势闸拦截，但持仓信号评估照常落地
             # 默认 False: 数据不足时保守不放行（F5: 恢复M2门槛）
             if not _topup_blocked and not _dc.get("_m2_pool_pass", False):
-                print(f"[{now:%H:%M:%S}] BASE {code} {STOCK_NAMES.get(code,code)} 门槛未过→仅观察 "
-                      f"(amp={_dc.get('_m2_amp20',0):.1%} amt={_dc.get('_m2_amount20',0)/1e8:.1f}亿 "
-                      f"lot={_dc.get('_m2_lot_value',0):.0f}元)")
-                try: write_risk(str(now), "pool_gate", f"amp={_dc.get('_m2_amp20',0):.1%} 仅观察", code=code)
-                except: pass
+                # O-03(2026-08-07 W32表决): pool_gate 每票每日只报一次（0807 实战:3票×237bar=711条刷屏）
+                _pg_key = f'_pool_gate_{code}'
+                if getattr(context, _pg_key, '') != now.strftime("%Y-%m-%d"):
+                    setattr(context, _pg_key, now.strftime("%Y-%m-%d"))
+                    print(f"[{now:%H:%M:%S}] BASE {code} {STOCK_NAMES.get(code,code)} 门槛未过→仅观察 "
+                          f"(amp={_dc.get('_m2_amp20',0):.1%} amt={_dc.get('_m2_amount20',0)/1e8:.1f}亿 "
+                          f"lot={_dc.get('_m2_lot_value',0):.0f}元)")
+                    try: write_risk(str(now), "pool_gate", f"amp={_dc.get('_m2_amp20',0):.1%} 仅观察", code=code)
+                    except: pass
                 if _hb_live:
                     try: write_snapshot(str(now), code, cp, bar=f"{now:%H:%M}", gate="pool_gate",
                                         gate_detail=(f"amp={_dc.get('_m2_amp20',0):.1%} "

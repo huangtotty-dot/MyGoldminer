@@ -170,6 +170,15 @@ def _track_position(rec: dict):
 _last_hb_ts: float = time.time()
 
 
+def _in_trading_window(dt: datetime) -> bool:
+    """O-02(2026-08-07 W32表决): 仅在交易时段内允许心跳告警——
+    午休(11:30-13:00)与收盘后策略本就不写心跳，0807 每日两条假警报(11:39/15:08)。
+    窗口留缓冲：09:33 起（等首根 bar 心跳落地）、11:35/15:05 止。"""
+    t = dt.time()
+    from datetime import time as _t
+    return (_t(9, 33) <= t <= _t(11, 35)) or (_t(12, 55) <= t <= _t(15, 5))
+
+
 def _check_heartbeat():
     global _last_hb_ts, _last_heartbeat_ok
     now = time.time()
@@ -180,6 +189,10 @@ def _check_heartbeat():
     except Exception:
         pass
     gap = now - _last_hb_ts
+    # O-02: 非交易时段不报警，并清除报警状态避免开盘即误报
+    if not _in_trading_window(datetime.now()):
+        _last_heartbeat_ok = True
+        return
     if gap > 600 and _last_heartbeat_ok:
         _last_heartbeat_ok = False
         _push("🚨 心跳中断", f"最后心跳 {gap/60:.0f} 分钟前，策略可能已停止", "red")

@@ -672,6 +672,16 @@ class _IndexRegimeEngine:
                    "score": 0.0, "degraded": ["无指数日线"], "gate_advice": "normal_t"}
             return IndexRegime.RANGE, 0.0, ctx
 
+        # R-1(2026-08-07 W32表决): 实盘剔除当日未成形K线——K-day/评分只基于已完成交易日，
+        # 消除"09:31开盘1分钟±1%定死全天"（0806审计F-R2）。回测(eod)为完整数据不剔除。
+        if mode == "live" and str(df["date"].iloc[-1]) == target:
+            df = df.iloc[:-1].reset_index(drop=True)
+            if len(df) == 0:
+                ctx = {"date": target, "regime": IndexRegime.RANGE.value,
+                       "score": 0.0, "degraded": ["剔除未成形K线后无数据"],
+                       "gate_advice": "normal_t", "mode": mode}
+                return IndexRegime.RANGE, 0.0, ctx
+
         date_str = str(df["date"].iloc[-1])
         close = df["close"].astype(float)
 
