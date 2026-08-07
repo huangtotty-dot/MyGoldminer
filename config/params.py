@@ -25,6 +25,10 @@ PARAMS = {
     "sell_floor_ratio": 0.5,
     "index_regime_intraday_lock": True,
     "max_single_position_pct": 0.80,
+    # WP-E2 总权益预算制（2026-08-05 owner决策：底仓+活动仓+现金三段式，现金保留20%）：
+    # 每股预算 = 总权益×(1−cash_reserve_pct)/股票池只数（等权）
+    # TODO(PhaseD): 现金保留线寻优定值；预算权重改趋势加权
+    "cash_reserve_pct": 0.20,
     "repeat_signal_gap_minutes": 60,
     "repeat_signal_price_move": 0.004,
     "repeat_signal_score_boost": 10,

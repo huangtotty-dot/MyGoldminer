@@ -248,6 +248,80 @@ def _apply_buyback_downgrade(context, code, sig, qty):
     return qty2, dg, min_unit
 
 
+def _total_equity(context, available_cash: float) -> float:
+    """WP-E2: 总权益 = 可用现金 + Σ(全部持仓市值)。
+
+    持仓复用 manual_position（_get_holding 的第一优先数据源，含即时缓存与对账结果），
+    定价取 bar_cache 最新收盘价；某票 qty>0 但无 bar 价格数据时退化为成本价估值
+    （mark-to-cost——开盘价前/数据缺失场景不用 0 低估、也不 fail-closed 误杀全天）。"""
+    total = float(available_cash or 0)
+    for sym, mp in (getattr(context, "manual_position", None) or {}).items():
+        try:
+            q = int(mp.get("qty", 0) or 0)
+        except Exception:
+            continue
+        if q <= 0:
+            continue
+        px = 0.0
+        rows = (getattr(context, "bar_cache", None) or {}).get(sym)
+        if rows:
+            try:
+                px = float(rows[-1].get("close", 0) or 0)
+            except Exception:
+                px = 0.0
+        if px <= 0:
+            px = float(mp.get("cost", 0) or 0)  # 退化：成本价估值
+        total += q * px
+    return total
+
+
+def _stock_budget_cap(context, code, cp: float, total_eq: float):
+    """WP-E2: 个股预算与最大仓位。
+
+    stock_budget = total_equity × (1 − cash_reserve_pct) / len(STOCKS)（等权）
+    TODO(PhaseD): 预算权重改趋势加权
+    max_pos_shares = floor(stock_budget / cp / 100) × 100
+    返回 (stock_budget, max_pos_shares)。"""
+    reserve = float(PARAMS.get("cash_reserve_pct", 0.20))
+    n = max(len(STOCKS), 1)
+    budget = float(total_eq or 0) * (1 - reserve) / n
+    mps = int(budget / cp / 100) * 100 if cp > 0 else 0
+    return budget, mps
+
+
+def _check_max_pos_cap(context, code, now, pos_qty: int, base_ref: int,
+                       max_pos_shares: int, budget: float, total_eq: float,
+                       force: bool = False) -> bool:
+    """WP-E2: 个股最大仓位闸。True=拦截（调用方 continue）。
+
+    触发条件：pos_qty>0 且 pos_qty >= max(max_pos_shares, base_ref)
+    （预算帽与底仓取高——永不在底仓下方收口，不逼卖出，与 target_t 语义一致）。
+    force=True 用于 sizer 返回 0 的确认分支（reason=sizer_zero_at_cap）。
+    拦截时写 risk 事件 max_pos_cap + audit，每票每日去重（O-03 风格）。"""
+    ceiling = max(int(max_pos_shares or 0), int(base_ref or 0))
+    if pos_qty <= 0 or (not force and pos_qty < ceiling):
+        return False
+    _key = f'_max_pos_cap_{code}'
+    _today = now.strftime("%Y-%m-%d")
+    if getattr(context, _key, '') != _today:
+        setattr(context, _key, _today)
+        _weight = (budget / total_eq) if total_eq > 0 else 0
+        _reason = "sizer_zero_at_cap" if force else "pos_at_cap"
+        _detail = (f"budget={budget:.0f} equity={total_eq:.0f} weight={_weight:.1%} "
+                   f"max_pos_shares={max_pos_shares} base_ref={base_ref} pos_qty={pos_qty} "
+                   f"reason={_reason}")
+        try:
+            write_risk(str(now), "max_pos_cap", _detail, code=code)
+        except Exception:
+            pass
+        _audit_write({"event": "max_pos_cap", "code": code, "budget": round(budget, 2),
+                      "equity": round(total_eq, 2), "weight": round(_weight, 4),
+                      "max_pos_shares": max_pos_shares, "base_ref": base_ref,
+                      "pos_qty": pos_qty, "reason": _reason, "time": str(now)})
+        print(f"[{now:%H:%M:%S}] BUY {code} 个股仓位到顶拦截: {_detail}")
+    return True
+
+
 def _dedup_bar(context, gm_sym: str, eob: str) -> bool:
     """F9: 同 eob 重复 bar 判定（True=重复应跳过）。
 
@@ -736,6 +810,21 @@ def init(context):
         ir.GM_DATA_READY = False
 
     symbols = list(STOCKS.values())
+    # WP-E2: 启动预算表（复盘核对用——equity/现金保留/每股预算/各票 max_pos_shares）
+    try:
+        _eq0 = _total_equity(context, INITIAL_CASH)
+        _reserve0 = float(PARAMS.get("cash_reserve_pct", 0.20))
+        _bud0 = _eq0 * (1 - _reserve0) / max(len(symbols), 1)
+        _caps = []
+        for _c, _s in STOCKS.items():
+            _rows = context.bar_cache.get(_s) or []
+            _px = float(_rows[-1].get("close", 0) or 0) if _rows else 0.0
+            _mps = int(_bud0 / _px / 100) * 100 if _px > 0 else 0
+            _caps.append(f"{_c}:{_mps}")
+        print(f"[init] WP-E2 预算表: equity={_eq0:.0f} reserve={_reserve0:.0%} "
+              f"每股预算={_bud0:.0f} max_pos_shares={' '.join(_caps)}")
+    except Exception as _e:
+        print(f"[init] WP-E2 预算表生成失败: {_e}")
     subscribe(symbols=symbols, frequency="60s", count=240,
               fields="symbol,eob,open,high,low,close,volume,amount")
     # 确保事件桥目录存在
@@ -1323,21 +1412,30 @@ def on_bar(context, bars):
                     context._cash_warned = True
                     print(f'[N8] WARN: 无法读取可用现金 → fail-closed: 禁止买入')
 
-            # N10: 算 target_t（仓位上限约束下的最大仓位，供 sizer 算 max_buyable）
+            # N10/WP-E2: 算 target_t（总权益预算制下的个股最大仓位，供 sizer 算 max_buyable）
             pos_limit_pct = float(PARAMS.get('max_single_position_pct', 0.80))
-            # N16: 单票预算制（等权 25%/票，Phase C 全量后改趋势加权）
-            # TODO(PhaseD): 寻优预算权重
-            _n_stocks = max(len(STOCKS), 1)
-            _stock_budget = available_cash / _n_stocks
-            estimated_equity = _stock_budget + pos_qty * cp
-            max_pos_shares = int(estimated_equity * pos_limit_pct / cp / 100) * 100 if cp > 0 else 0
+            # WP-E2: 总权益 = 现金 + Σ全部持仓市值（旧口径用 available_cash 等权分，无视其他票持仓）
+            _total_eq = _total_equity(context, available_cash)
+            _stock_budget, max_pos_shares = _stock_budget_cap(context, code, cp, _total_eq)
             _base_ref = getattr(context, f'_base_ref_{code}', 0) or pos_qty
             target_t = max(max_pos_shares, _base_ref, pos_qty)
             holding_with_target = dict(holding, target_t=target_t)
 
+            # WP-E2: 个股最大仓位闸——到顶直接拦截（堵 sizer 内部 1.5× 兜底洞）
+            if _check_max_pos_cap(context, code, now, pos_qty, _base_ref,
+                                  max_pos_shares, _stock_budget, _total_eq):
+                continue
+
             qty = context.sizer.calc_buy_qty(code, holding_with_target, sig.score, threshold)
             if qty <= 0:
-                qty = 300  # sizer 返回 0 时的最小交易量
+                # WP-E2: 区分兜底——全新建仓(pos_qty<=0)保留 300 股兜底；
+                # 已有持仓 sizer 返回 0 = 已到个股上限 → max_pos_cap（堵 qty=300 强制兜底洞）
+                if pos_qty <= 0:
+                    qty = 300  # 全新建仓信号的最小交易量兜底
+                else:
+                    _check_max_pos_cap(context, code, now, pos_qty, _base_ref,
+                                       max_pos_shares, _stock_budget, _total_eq, force=True)
+                    continue
 
             # WP-B07: 高接降档 — 数量减半取整到 min_unit，不足 min_unit 则延迟
             qty, _bb_dg, _bb_min_unit = _apply_buyback_downgrade(context, code, sig, qty)
@@ -1370,10 +1468,11 @@ def on_bar(context, bars):
                     pass
                 continue
 
-            # N2: 仓位上限检查
+            # N2: 仓位上限检查（WP-E2: 分母修正为总权益——现金+全部持仓市值，
+            # 旧口径只算本票市值，"账户总权益"名不副实；max_single_position_pct=0.80 保留为外层安全帽）
             current_pos_value = pos_qty * cp
             new_pos_value = current_pos_value + qty * cp
-            total_equity_value = available_cash + current_pos_value
+            total_equity_value = _total_eq if _total_eq > 0 else (available_cash + current_pos_value)
             if total_equity_value > 0 and new_pos_value / total_equity_value > pos_limit_pct:
                 print(f'[{now:%H:%M:%S}] BUY {code} 仓位上限拦截: {new_pos_value/total_equity_value:.0%}>{pos_limit_pct:.0%}')
                 try:
