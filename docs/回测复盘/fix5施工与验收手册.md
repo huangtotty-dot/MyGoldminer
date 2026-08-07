@@ -330,3 +330,29 @@
   - [ ] 回补成交后记忆清除，事件桥有 `buyback_filled`；TTL 过期与每日清零行为可证；
   - [ ] 回归测试全绿（18/18 + 22/22 + 新单测全过）。
 - **回退**：单 commit revert；运行时可将 PARAMS `buyback_above_sell_delay_pct` 调至 ≥1.0（延迟线名存实亡）并将 `buyback_above_sell_downgrade_pct` 调至 ≥1.0 即整体失活。
+
+
+### WP-E2：max_pos 接线（总权益预算制 + 个股最大仓位约束）
+
+- **来源**：owner 决策（2026-08-05 原话）："加仓的数量要根据总仓位分解到个股的最大仓位做约束"、"我这么多票不可能同时买入"。持仓框架：底仓+活动仓+现金三段式，现金保留 20%；当前股票池 16 只（main.py STOCKS）。
+- **缺陷定位**：
+  1. **预算口径错**（main.py 约 1330-1332 行）：`_stock_budget = available_cash / _n_stocks`——用可用现金等权分而非总权益，现金水位低时每股预算虚低/水位高时虚高，且完全无视其他 15 只票的持仓市值；
+  2. **N2 仓位上限分母错**（约 1376 行）：`total_equity_value = available_cash + current_pos_value`——只算本票市值，"账户总权益"名不副实；
+  3. **兜底洞 ×2**（约 1339-1340 行 + sizer 内部）：sizer 在 `max_buyable<=0`（已到顶）时返回 0，被 `qty=300` 强制兜底顶破上限；且 sizer 内部 `target_t<=hold_qty` 时私自放大为 `1.5×hold_qty`——到顶票仍可再买 50%；
+  4. `position_allocator/` 为线下规划工具（底仓55%/活动仓25%/现金20%），未接入交易链路，本 WP 不接它，仅将"现金保留 20%"语义进参数。
+- **改动内容**：
+  1. **总权益口径**：新增 `_total_equity(context, available_cash)`——总权益 = 可用现金 + Σ(全部持仓市值)；持仓复用 `manual_position`（`_get_holding` 的第一优先数据源），定价取 `bar_cache` 最新收盘，某票 qty>0 但无价格数据时退化为成本价估值（mark-to-cost，注释说明）；
+  2. **个股最大仓位**：新增参数 `cash_reserve_pct = 0.20`（PARAMS，带 `# TODO(PhaseD)`）；`stock_budget = total_equity × (1 - cash_reserve_pct) / len(STOCKS)`（等权，注释 TODO(PhaseD) 趋势加权）；`max_pos_shares = floor(stock_budget / cp / 100) × 100`；`target_t = max(max_pos_shares, base_ref, pos_qty)` 不变（永不在持仓下方收口，不逼卖出）；既有 `max_single_position_pct=0.80` 保留为外层安全帽，N2 检查逻辑不变、仅分母改为 `_total_equity`；
+  3. **堵兜底洞**：新增 `_check_max_pos_cap` 闸——`pos_qty >= max(max_pos_shares, base_ref)` 且 `pos_qty>0` → 拦截并写 risk 事件 `max_pos_cap`（detail 含 budget/equity/weight/max_pos_shares/pos_qty），每票每日去重（O-03 风格）；sizer 返回 0 时区分：`pos_qty<=0`（全新建仓信号）保留 300 股兜底，`pos_qty>0`（已到顶）走同一 `max_pos_cap` 拦截；
+  4. **可观测**：`max_pos_cap` 进事件桥（write_risk kind）+ backtrace/audit；init 启动时 print 一行当日预算表（equity/reserve/每股预算/各票 max_pos_shares 摘要）。
+- **测试方案**：
+  1. 新建 `tests/test_wp_e2.py`（仿 test_wp_b07.py 风格）：①总权益口径含多票持仓与成本价退化 ②等权预算与 max_pos_shares 取整 ③到顶拦截+事件+每票每日去重 ④新票 300 股兜底保留/持仓票不再兜底 ⑤N2 分母改用总权益（公式+源码接线断言）；
+  2. 回归：`test_wp_b07.py` 18/18、`test_fix_20260731.py` 18/18、`test_fix_20260728.py` 22/22（已自查：三份回归均不经 on_bar 买入执行块，无 qty=300 兜底依赖）。
+- **验收标准（可证伪）**：
+  - [ ] 16 票等权预算 = 总权益×(1−20%)/16，init 预算表打印与手算一致；
+  - [ ] 持仓已达 max_pos_shares（或 ≥ base_ref 取高者）的票买入信号被 `max_pos_cap` 拦截，事件桥与 audit 各一条（每票每日仅一条）；
+  - [ ] 到顶票不再出现 sizer 1.5× 放大买入或 qty=300 强制兜底买入；
+  - [ ] 全新建仓票（pos_qty=0）sizer 返回 0 时 300 股兜底保留；
+  - [ ] N2 拦截分母 = 现金+全部持仓市值（含其他票），单票 80% 安全帽语义不变；
+  - [ ] 回归测试全绿（18/18 + 18/18 + 22/22 + 新单测全过）。
+- **回退**：单 commit revert；运行时将 PARAMS `cash_reserve_pct` 调回 0 且恢复 `_stock_budget = available_cash / _n_stocks` 一行即回旧口径（`_check_max_pos_cap` 随 revert 移除）。
