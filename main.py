@@ -500,6 +500,7 @@ def _refresh_daily_ctx(context, code: str, gm_symbol: str, now: datetime) -> dic
         return context._daily_ctx_cache_map[_cache_key]
 
     # 取 120 个交易日日线
+    _exc_info = None
     try:
         end_of_yesterday = (now - timedelta(days=1)).strftime("%Y-%m-%d") + " 15:00:00"
         daily = history_n(symbol=gm_symbol, frequency="1d", count=120,
@@ -508,11 +509,9 @@ def _refresh_daily_ctx(context, code: str, gm_symbol: str, now: datetime) -> dic
                           end_time=end_of_yesterday)
     except Exception as _e:
         daily = None
-        # O-01(2026-08-07 W32表决): 异常不再裸吞——每票每日打印一次，供确诊
-        _de_key = f'_daily_fetch_err_{code}'
-        if getattr(context, _de_key, '') != today_str:
-            setattr(context, _de_key, today_str)
-            print(f"[daily] {code} 日线取数异常: {type(_e).__name__}: {str(_e)[:200]}")
+        # O-01(2026-08-07 W32表决): 异常不再裸吞——留痕在下方失败分支统一打印，
+        # 每票每日一条（O-04 修正：原双分支各打一次，同一失败出两行且"无异常"字样误导）
+        _exc_info = f"{type(_e).__name__}: {str(_e)[:200]}"
 
     ctx = dict(_default_daily_context(code))
 
@@ -569,7 +568,13 @@ def _refresh_daily_ctx(context, code: str, gm_symbol: str, now: datetime) -> dic
             ctx["_vol20"] = float(_v.iloc[-20:].mean())
         prev_close = float(c.iloc[-1]) if len(c) > 0 else 0
         ctx["daily_prev_close"] = prev_close
-        ctx.setdefault("daily_status", "ok")  # F7: 不覆盖 pool_gate_fail
+        # F7-2(2026-08-10 复盘①)：setdefault 对默认 "unavailable" 无效——
+        # _default_daily_context 自带 daily_status="unavailable"，setdefault 永不覆盖，
+        # 致 G4 对所有 M2 通过票恒报"日线数据不足→保守拦截"（五要素上线 3 日零运行的
+        # 真根因；0806/0807 归因"取数失败"系误判），且引擎 daily_buy_t_ok 恒 False。
+        # 仅 pool_gate_fail 需保留可观测，其余成功路径必须置 ok（F7 验收：正常票仍为 ok）。
+        if ctx.get("daily_status") == "unavailable":
+            ctx["daily_status"] = "ok"  # F7: 不覆盖 pool_gate_fail
         ctx["daily_buy_t_ok"] = True
 
         # 破位/过热简化判断 + R1 个股趋势状态
@@ -610,7 +615,10 @@ def _refresh_daily_ctx(context, code: str, gm_symbol: str, now: datetime) -> dic
         _dn_key = f'_daily_fetch_none_{code}'
         if getattr(context, _dn_key, '') != today_str:
             setattr(context, _dn_key, today_str)
-            print(f"[daily] {code} 日线数据不足(无异常): daily={'None' if daily is None else len(daily)}")
+            if _exc_info:
+                print(f"[daily] {code} 日线取数异常: {_exc_info}")
+            else:
+                print(f"[daily] {code} 日线数据不足(无异常): daily={'None' if daily is None else len(daily)}")
         if _fc[code] == 10:
             try: write_risk(str(now), "data_fetch_fail",
                             f"{code} 日线连续10次取数失败, G4/趋势闸失效中", code=code)
