@@ -179,26 +179,65 @@ def _in_trading_window(dt: datetime) -> bool:
     return (_t(9, 33) <= t <= _t(11, 35)) or (_t(12, 55) <= t <= _t(15, 5))
 
 
+def _push_throttled(key: str, title: str, content: str, level: str, window: int = 120):
+    """O-04(2026-08-10 复盘①)：推送级去重安全网——
+    0810 实战多实例并存致同一告警双发/三发（12:55×2、13:01×3）。
+    单例锁为主防线，此处兜底：同 key 推送 window 秒内只发一次。"""
+    now = time.time()
+    if now - _last_push.get(key, 0) < window:
+        return
+    _last_push[key] = now
+    _push(title, content, level)
+
+
 def _check_heartbeat():
     global _last_hb_ts, _last_heartbeat_ok
     now = time.time()
+    # O-04(2026-08-10 复盘①)：非交易时段冻结基线=当前时间并清除报警态。
+    # 0810 实战：旧逻辑只清报警态不动基线，12:55 进入午后窗口时以 11:29 的
+    # 陈旧心跳计算 gap≈86min → 开门即误报"中断"，13:01 再报"恢复"。
+    if not _in_trading_window(datetime.now()):
+        _last_hb_ts = now
+        _last_heartbeat_ok = True
+        return
     try:
         if os.path.exists(_heartbeat_path()):
-            mtime = os.path.getmtime(_heartbeat_path())
-            _last_hb_ts = mtime
+            # max()：窗口外冻结的基线带入窗内，进窗 gap 从 ~0 起算；
+            # 有新心跳（mtime 更新）则自然取代基线
+            _last_hb_ts = max(_last_hb_ts, os.path.getmtime(_heartbeat_path()))
     except Exception:
         pass
     gap = now - _last_hb_ts
-    # O-02: 非交易时段不报警，并清除报警状态避免开盘即误报
-    if not _in_trading_window(datetime.now()):
-        _last_heartbeat_ok = True
-        return
     if gap > 600 and _last_heartbeat_ok:
         _last_heartbeat_ok = False
-        _push("🚨 心跳中断", f"最后心跳 {gap/60:.0f} 分钟前，策略可能已停止", "red")
+        _push_throttled("hb|down", "🚨 心跳中断",
+                        f"最后心跳 {gap/60:.0f} 分钟前，策略可能已停止", "red")
     elif gap <= 600 and not _last_heartbeat_ok:
         _last_heartbeat_ok = True
-        _push("✅ 心跳恢复", f"心跳已恢复 ({gap:.0f}s)", "green")
+        _push_throttled("hb|up", "✅ 心跳恢复", f"心跳已恢复 ({gap:.0f}s)", "green")
+
+
+def _ensure_singleton():
+    """O-04(2026-08-10 复盘①)：watcher 单例锁（newest-wins）——
+    0810 实战确诊多实例并存：周五 21:34 启动的旧代码实例 + 当日策略自动拉起
+    的新实例同时运行，同一告警双发/三发。ensure_watcher 以心跳文件 mtime 判活，
+    无法感知"另一个实例正在写心跳"，双击 start_monitor.bat 也会叠加实例。
+    策略：启动时若自心跳 30s 内由他进程刷新（文件由其本人刚写，pid 可信），
+    终止该实例并接管——保证最新代码生效；心跳过期则直接接管（旧实例已死/僵死）。"""
+    hb = os.path.join(BRIDGE_DIR, "watcher_heartbeat.json")
+    try:
+        if os.path.exists(hb) and (time.time() - os.path.getmtime(hb)) < 30:
+            with open(hb, "r", encoding="utf-8") as f:
+                pid = int(json.load(f).get("pid", 0) or 0)
+            if pid and pid != os.getpid():
+                try:
+                    os.kill(pid, signal.SIGTERM)  # Windows: TerminateProcess
+                    print(f"[watcher] 检测到存活实例 pid={pid}，已终止并接管（单例）")
+                    time.sleep(1)
+                except OSError:
+                    pass
+    except Exception:
+        pass
 
 
 # ── 事件处理 ──
@@ -264,6 +303,7 @@ def handle_event(rec: dict):
 
 # ── 主循环 ──
 def run(date_str: str = None):
+    _ensure_singleton()  # O-04: 单例锁，newest-wins
     if date_str is None:
         date_str = datetime.now().strftime("%Y%m%d")
     path = _events_path(date_str)
