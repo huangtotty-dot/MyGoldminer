@@ -302,16 +302,36 @@ def handle_event(rec: dict):
 
 
 # ── 主循环 ──
+def _roll_events_path(cur_date: str, fixed_date: bool):
+    """O-05: 跨日滚动判定。返回 (日期, 路径, 是否发生滚动)。
+    显式 --date 回放模式（fixed_date=True）不滚动。"""
+    if fixed_date:
+        return cur_date, _events_path(cur_date), False
+    today = datetime.now().strftime("%Y%m%d")
+    return today, _events_path(today), today != cur_date
+
+
 def run(date_str: str = None):
     _ensure_singleton()  # O-04: 单例锁，newest-wins
-    if date_str is None:
-        date_str = datetime.now().strftime("%Y%m%d")
-    path = _events_path(date_str)
+    fixed_date = date_str is not None  # 显式 --date 回放模式不滚动
+    cur_date = date_str or datetime.now().strftime("%Y%m%d")
+    path = _events_path(cur_date)
     print(f"[watcher] 监听 {path}")
     print(f"[watcher] 飞书: {'可用' if FEISHU_AVAILABLE else '不可用(stdout)'}")
 
     last_size = 0
     while True:
+        # O-05(2026-08-11 复盘①)：跨日滚动——旧实现启动时定死事件文件日期，
+        # 长驻实例次日仍 tail 昨日文件，当日事件全天零推送（0811 实战：
+        # 6 笔成交+4 条信号飞书零推送）。每个循环核对日期，跨日切换文件
+        # 并重置去重/限流状态（新一日的事件不应被昨日 key 挡掉）。
+        new_date, path, rolled = _roll_events_path(cur_date, fixed_date)
+        if rolled:
+            cur_date = new_date
+            last_size = 0
+            _seen_signals.clear()
+            _last_push.clear()
+            print(f"[watcher] 跨日切换 → {path}")
         try:
             if os.path.exists(path):
                 size = os.path.getsize(path)

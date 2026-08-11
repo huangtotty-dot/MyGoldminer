@@ -169,5 +169,16 @@ src = inspect.getsource(watcher._ensure_singleton)
 check("T5c 单例锁接线（os.kill + run()调用）",
       "os.kill" in src and "_ensure_singleton()" in inspect.getsource(watcher.run))
 
+# ══ T6: O-05 跨日滚动（2026-08-11 复盘①：长驻实例 tail 昨日文件致全天零推送） ══
+_d1, _p1, _r1 = watcher._roll_events_path("20260810", fixed_date=False)
+_today = datetime.now().strftime("%Y%m%d")
+check("T6a 跨日滚动切换到当日文件", _r1 == (_today != "20260810") and _d1 == _today
+      and _p1.endswith(f"events_{_today}.jsonl"), f"→ {_p1}")
+_d2, _p2, _r2 = watcher._roll_events_path(_today, fixed_date=False)
+check("T6b 当日不滚动", _r2 is False and _d2 == _today)
+_d3, _p3, _r3 = watcher._roll_events_path("20260807", fixed_date=True)
+check("T6c --date 回放模式不滚动", _r3 is False and _d3 == "20260807"
+      and _p3.endswith("events_20260807.jsonl"))
+
 print("\n===== %d/%d PASS =====" % (sum(1 for _, ok, _ in results if ok), len(results)))
 sys.exit(0 if all(ok for _, ok, _ in results) else 1)
