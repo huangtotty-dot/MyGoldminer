@@ -1608,7 +1608,10 @@ def on_order_status(context, order):
 
     if status == 3:  # 全部成交
         _side = "BUY" if side == 1 else "SELL"
-        _pos_after = int(context.executed_orders.get(symbol, {}).get("qty", 0)) if _side == "SELL" else                      int(context.executed_orders.get(symbol, {}).get("qty", 0)) + volume if symbol in context.executed_orders else volume
+        # O-06(2026-08-11 复盘①轻)：台账在本回调内尚未更新（更新在下方），
+        # SELL 分支直接读台账得到的是成交前持仓（0811 实战：卖 200 后 pos_after 仍报 1400）。
+        _pre_qty = int(context.executed_orders.get(symbol, {}).get("qty", 0))
+        _pos_after = max(0, _pre_qty - volume) if _side == "SELL" else _pre_qty + volume
         try:
             write_fill(str(datetime.now()), _raw_code(symbol), _side, volume, price,
                        pos_after=_pos_after)
@@ -1641,12 +1644,15 @@ def on_order_status(context, order):
             _bb_filled = _rta.get("buyback_filled")
             if _bb_filled:
                 try:
+                    # O-06(2026-08-11 复盘①轻)：qty 记 armed 匹配量（sell_qty），
+                    # 而非整笔买入成交量（0811 实战：armed 200，事件误报 qty=2500）。
+                    _matched = int(_bb_filled.get("sell_qty") or 0)
                     write_buyback(str(getattr(context, "now", None) or datetime.now()),
                                   code, "filled",
                                   detail=(f"sell={_bb_filled.get('sell_price')} "
-                                          f"buyback={price:.2f} qty={volume}"),
+                                          f"buyback={price:.2f} matched={_matched} fill={volume}"),
                                   sell_price=_bb_filled.get("sell_price"),
-                                  price=price, qty=volume,
+                                  price=price, qty=(_matched or volume), fill_qty=volume,
                                   sell_action=_bb_filled.get("sell_action", ""))
                 except Exception:
                     pass

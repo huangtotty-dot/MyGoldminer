@@ -180,5 +180,37 @@ _d3, _p3, _r3 = watcher._roll_events_path("20260807", fixed_date=True)
 check("T6c --date 回放模式不滚动", _r3 is False and _d3 == "20260807"
       and _p3.endswith("events_20260807.jsonl"))
 
+# ══ T7/T8: O-06 成交事件字段语义（2026-08-11 复盘①轻） ══
+main._audit_file = None  # 绑到 TMP 审计路径
+for _f in (EVENTS_PATH,):
+    if os.path.exists(_f):
+        os.remove(_f)
+
+# T7: SELL 成交 pos_after 应为成交后持仓（台账回调内尚未更新）
+_ctx7 = SimpleNamespace(
+    executed_orders={"SHSE.600481": {"qty": 1400, "available": 1400, "cost": 4.1126}},
+    engine=main.SignalEngine(), _pending_sell_action={"SHSE.600481": ("SELL_HIGH", 65.0)},
+    manual_position={}, _base_ordered=set(), _base_settled=set(), now=None,
+    latest_pre_close={},
+)
+main.on_order_status(_ctx7, {"symbol": "SHSE.600481", "status": 3, "volume": 200,
+                             "side": 2, "filled_vwap": 4.40})
+_fills = [e for e in read_events() if e.get("event") == "fill"]
+check("T7 SELL pos_after=成交后持仓", _fills and _fills[0].get("pos_after") == 1200,
+      f"pos_after={_fills[0].get('pos_after') if _fills else '无fill事件'}")
+
+# T8: buyback_filled qty=armed 匹配量，fill_qty=整笔成交量
+_ctx7.engine.arm_awaiting_buyback("600481", 4.40, 200, "SELL_HIGH")
+main.on_order_status(_ctx7, {"symbol": "SHSE.600481", "status": 3, "volume": 2500,
+                             "side": 1, "filled_vwap": 4.39})
+_bb = [e for e in read_events() if e.get("event") == "buyback_filled"]
+check("T8a buyback_filled qty=匹配量200", _bb and _bb[0].get("qty") == 200,
+      f"qty={_bb[0].get('qty') if _bb else '无事件'}")
+check("T8b fill_qty=整笔2500", _bb and _bb[0].get("fill_qty") == 2500,
+      f"fill_qty={_bb[0].get('fill_qty') if _bb else '无事件'}")
+_fills2 = [e for e in read_events() if e.get("event") == "fill"]
+check("T8c BUY pos_after=1200+2500", _fills2 and _fills2[-1].get("pos_after") == 3700,
+      f"pos_after={_fills2[-1].get('pos_after') if _fills2 else '无'}")
+
 print("\n===== %d/%d PASS =====" % (sum(1 for _, ok, _ in results if ok), len(results)))
 sys.exit(0 if all(ok for _, ok, _ in results) else 1)
