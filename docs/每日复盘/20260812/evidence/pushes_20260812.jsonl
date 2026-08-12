@@ -1,0 +1,5 @@
+{"time": "2026-08-12T09:31:02", "title": "⚠️ 风控 — 华工科技(000988)", "level": "orange", "sent": true, "content": "base_deferred: _stock_trend_state=TREND_BREAKDOWN"}
+{"time": "2026-08-12T09:31:02", "title": "⚠️ 风控 — 五洲新春(603667)", "level": "orange", "sent": true, "content": "entry_gate: G4: 未回踩支撑带 cp=56.21 daily_ma10=53.52 daily_ma20=53.69 daily_ma60=64.38 daily_boll_lower=48.08"}
+{"time": "2026-08-12T09:31:03", "title": "⚠️ 风控 — 中国巨石(600176)", "level": "orange", "sent": true, "content": "entry_gate: G4: 未回踩支撑带 cp=42.95 daily_ma10=39.35 daily_ma20=40.68 daily_ma60=47.20 daily_boll_lower=31.87"}
+{"time": "2026-08-12T09:32:03", "title": "🔴 TARGET_SELL信号 — 五洲新春(603667)", "level": "orange", "sent": true, "content": "动作: TARGET_SELL | 评分: 75分 | 持仓: 400股"}
+{"time": "2026-08-12T14:51:03", "title": "🔴 成交 — 双良节能(600481)", "level": "green", "sent": true, "content": "卖出 1100股 @ 4.50 | 成交后持仓: 1400股"}

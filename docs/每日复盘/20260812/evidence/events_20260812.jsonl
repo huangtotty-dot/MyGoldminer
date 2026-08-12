@@ -1,0 +1,8 @@
+{"event": "risk", "time": "2026-08-12 09:31:00.322000+08:00", "code": "000988", "kind": "base_deferred", "detail": "_stock_trend_state=TREND_BREAKDOWN", "_ts": 1786498260.6316514}
+{"event": "risk", "time": "2026-08-12 09:31:01.161000+08:00", "code": "603667", "kind": "entry_gate", "detail": "G4: 未回踩支撑带 cp=56.21 daily_ma10=53.52 daily_ma20=53.69 daily_ma60=64.38 daily_boll_lower=48.08", "_ts": 1786498261.3581157}
+{"event": "risk", "time": "2026-08-12 09:31:01.439000+08:00", "code": "600176", "kind": "entry_gate", "detail": "G4: 未回踩支撑带 cp=42.95 daily_ma10=39.35 daily_ma20=40.68 daily_ma60=47.20 daily_boll_lower=31.87", "_ts": 1786498261.5989463}
+{"event": "signal", "time": "2026-08-12 09:32:02.141000+08:00", "code": "603667", "action": "TARGET_SELL", "score": 75.0, "reasons": ["目标止盈L1: profit=10.2%"], "pos_qty": 400, "_ts": 1786498322.1678}
+{"event": "risk", "time": "2026-08-12 09:32:02.141000+08:00", "code": "603667", "kind": "floor_protection", "detail": "base_ref=800 min_hold=400 pos_qty=400 action=TARGET_SELL", "_ts": 1786498322.1687925}
+{"event": "order", "time": "2026-08-12 14:51:02.265000+08:00", "code": "600481", "side": "SELL", "qty": 1100, "price": 4.5, "order_id": "tail", "order_type": "MKT", "_ts": 1786517462.288672}
+{"event": "fill", "time": "2026-08-12 14:51:02.356974", "code": "600481", "side": "SELL", "qty": 1100, "price": 4.5, "order_id": "", "pos_after": 1400, "_ts": 1786517462.3569741}
+{"event": "buyback_armed", "time": "2026-08-12 14:51:02.357000+08:00", "code": "600481", "detail": "sell=4.5 qty=1100 action=TAIL target=4.49", "sell_price": 4.5, "qty": 1100, "sell_action": "TAIL", "target_price": 4.49, "_ts": 1786517462.3579688}
