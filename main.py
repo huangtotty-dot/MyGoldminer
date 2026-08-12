@@ -1256,12 +1256,6 @@ def on_bar(context, bars):
             context.manual_position[gm_sym]["_trail_peak"] = 0.0
 
         # ── D5/N4: 深度亏损 → PANIC_SELL ──
-        # R3/B5: 开盘卖出缓冲 — 09:35前 SELL_HIGH 延后
-        if sig and sig.action in ("SELL_HIGH", "TARGET_SELL") and now.hour == 9 and now.minute <= 35:
-            sig = None
-            _audit_write({"event": "morning_sell_blocked", "code": code, "time": str(now),
-                          "action": "SELL_HIGH", "reason": "开盘缓冲延后"})
-
         # B2/T3: 趋势破坏止盈 TREND_EXIT
         _profit = feats_cache.get("profit_pct", 0)
         _base_ref = getattr(context, f'_base_ref_{code}', 0) or pos_qty
@@ -1355,6 +1349,14 @@ def on_bar(context, bars):
                     context.total_trade_count += 1
                     context.daily_sell_count[code] = context.daily_sell_count.get(code, 0) + 1
                     continue
+
+        # ── R3/B5': 开盘卖出缓冲 —— 09:35 前非保护类卖出延后 ──
+        # 覆盖全部生成路径（引擎 SELL_HIGH + 门控链 TARGET_SELL）；
+        # PANIC/TRAIL/TREND_EXIT/TAIL 保留即时性（fix5 B5 条款）
+        if sig and sig.action in ("SELL_HIGH", "TARGET_SELL") and now.hour == 9 and now.minute <= 35:
+            _audit_write({"event": "morning_sell_blocked", "code": code, "time": str(now),
+                          "action": sig.action, "reason": "开盘缓冲延后"})
+            sig = None
 
         # ── N6: 开盘5分钟拦截买入信号 ──
         if morning_no_buy and sig and sig.action in ('BUY_LOW', 'ADD_POS'):
