@@ -195,6 +195,10 @@ def _sell_arbiter(context, code, sig, pos_qty, cp, now, holding, threshold,
             context.manual_position[gm_sym]["qty"] = new_pos
             context.manual_position[gm_sym]["available"] = new_pos
             context.manual_position[gm_sym]["t_qty"] = new_pos
+        # WP-B14: TARGET 下单即置 pending 落盘——防下单→成交回调间竞态重复触发
+        if sig.action == "TARGET_SELL" and gm_sym in context.manual_position:
+            context.manual_position[gm_sym]["_target_l1_state"] = "pending"
+            _sell_state_persist(context, code, gm_sym)
         context.engine.sell_count_per_stock[code] = context.daily_sell_count.get(code, 0)
         print(f"[{now:%H:%M:%S}] SELL {code} {qty}@{cp:.2f} score={sig.score:.0f} regime={context.last_index_regime}")
         # N28: 挂接通道信息，成交回调写入action/score
@@ -693,6 +697,109 @@ def _audit_close():
         _audit_file = None
 
 
+# ═══════════════════════════════════════════
+# WP-B14: 卖出体系状态持久化（TARGET L1 位图 + TRAIL）
+# ═══════════════════════════════════════════
+# 内存权威源 = manual_position 的 _target_l1_state/_trail_state/_trail_peak，
+# 本文件只做镜像落盘（runtime/state/sell_state.json），供跨日 INIT 恢复。
+# 仅 live 生效；回测模式跳过（与 _get_holding F2 口径一致，防回测数据污染实盘文件）。
+SELL_STATE_PATH = os.path.join(PROJECT_DIR, "runtime", "state", "sell_state.json")
+
+
+def _sell_state_load():
+    """读取卖出状态文件；异常/缺失 fail-open 为空 dict（等同现状不持久化，不致劣化）。"""
+    try:
+        if not os.path.exists(SELL_STATE_PATH):
+            return {}
+        with open(SELL_STATE_PATH, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        return data if isinstance(data, dict) else {}
+    except Exception as e:
+        print(f"[sell_state] 读取失败 fail-open: {e}")
+        return {}
+
+
+def _sell_state_save(state):
+    try:
+        os.makedirs(os.path.dirname(SELL_STATE_PATH), exist_ok=True)
+        with open(SELL_STATE_PATH, "w", encoding="utf-8") as f:
+            json.dump(state, f, ensure_ascii=False, indent=2)
+    except Exception as e:
+        print(f"[sell_state] 写入失败: {e}")
+
+
+def _pos_key(qty, cost):
+    """持仓指纹：qty@cost（4 位小数），用于校验状态文件是否仍属于当前持仓期。"""
+    return f"{int(qty or 0)}@{float(cost or 0):.4f}"
+
+
+def _sell_state_persist(context, code, gm_sym):
+    """把该票内存卖出状态镜像落盘。清仓(qty<=0)时作废该票状态段。"""
+    try:
+        _is_live = context.mode == MODE_LIVE
+    except Exception:
+        _is_live = False
+    if not _is_live:
+        return
+    mp = (getattr(context, "manual_position", None) or {}).get(gm_sym) or {}
+    qty = int(mp.get("qty", 0) or 0)
+    state = _sell_state_load()
+    if qty <= 0:
+        state.pop(code, None)
+    else:
+        state[code] = {
+            "_target_l1_state": mp.get("_target_l1_state"),
+            "_trail_state": mp.get("_trail_state", "INACTIVE"),
+            "_trail_peak": mp.get("_trail_peak", 0.0),
+            "pos_key": _pos_key(qty, float(mp.get("cost", 0) or 0)),
+            "updated": str(getattr(context, "now", None) or datetime.now()),
+        }
+    _sell_state_save(state)
+
+
+def _sell_state_restore(context):
+    """INIT 对账后执行：券商持仓 qty>0 且 pos_key 一致 → 恢复状态；否则作废。
+    保守原则：状态存疑即重置——宁多触发一档，也不错杀新持仓期。
+    pending 为进程中断遗留（下单后结果未知）→ 作废（防永久封档）。"""
+    try:
+        _is_live = context.mode == MODE_LIVE
+    except Exception:
+        _is_live = False
+    if not _is_live:
+        return
+    state = _sell_state_load()
+    if not state:
+        return
+    for code, st in list(state.items()):
+        sym = STOCKS.get(code)
+        if not sym:
+            continue
+        mp = (getattr(context, "manual_position", None) or {}).get(sym) or {}
+        qty = int(mp.get("qty", 0) or 0)
+        cost = float(mp.get("cost", 0) or 0)
+        if qty <= 0:
+            state.pop(code, None)
+            print(f"[INIT] {code} sell_state 作废: 已清仓")
+            continue
+        if st.get("pos_key") != _pos_key(qty, cost):
+            state.pop(code, None)
+            print(f"[INIT] {code} sell_state 作废: pos_key 不符 "
+                  f"file={st.get('pos_key')} now={_pos_key(qty, cost)}")
+            continue
+        if sym not in context.manual_position:
+            continue
+        _l1 = st.get("_target_l1_state")
+        if _l1 == "pending":
+            print(f"[INIT] {code} sell_state pending 作废: 进程中断遗留，状态存疑即重置")
+            _l1 = None
+        context.manual_position[sym]["_target_l1_state"] = _l1
+        context.manual_position[sym]["_trail_state"] = st.get("_trail_state", "INACTIVE")
+        context.manual_position[sym]["_trail_peak"] = st.get("_trail_peak", 0.0)
+        print(f"[INIT] {code} sell_state 恢复: l1={_l1} trail={st.get('_trail_state')} "
+              f"peak={st.get('_trail_peak')}")
+    _sell_state_save(state)
+
+
 # ==================== 策略生命周期 ====================
 
 def _reconcile_positions_at_init(context):
@@ -804,6 +911,8 @@ def init(context):
 
     # F1: 启动全量持仓对账——已持仓标的入 _base_settled，防止重启重发底仓单
     _reconcile_positions_at_init(context)
+    # WP-B14: 卖出体系状态跨日恢复（pos_key 校验；qty<=0/不符 → 作废）
+    _sell_state_restore(context)
 
     # 预取分钟数据
     for code, sym in STOCKS.items():
@@ -1231,6 +1340,7 @@ def on_bar(context, bars):
         if gm_sym in context.manual_position:
             _trail_state = context.manual_position[gm_sym].get("_trail_state", "INACTIVE")
             _trail_peak = context.manual_position[gm_sym].get("_trail_peak", 0.0)
+        _trail_state0, _trail_peak0 = _trail_state, _trail_peak
         # 激活: 浮盈 > +8%
         if _trail_state == "INACTIVE" and _profit > 0.08:
             _trail_state = "ARMED"
@@ -1254,6 +1364,11 @@ def on_bar(context, bars):
         if pos_qty <= 0 and gm_sym in context.manual_position:
             context.manual_position[gm_sym]["_trail_state"] = "INACTIVE"
             context.manual_position[gm_sym]["_trail_peak"] = 0.0
+        # WP-B14: TRAIL 状态变更即落盘（跨日续接；仅实际变更才写，避免每 bar 刷盘）
+        if gm_sym in context.manual_position and (
+                _trail_state0 != context.manual_position[gm_sym].get("_trail_state")
+                or _trail_peak0 != context.manual_position[gm_sym].get("_trail_peak")):
+            _sell_state_persist(context, code, gm_sym)
 
         # ── D5/N4: 深度亏损 → PANIC_SELL ──
         # B2/T3: 趋势破坏止盈 TREND_EXIT
@@ -1275,17 +1390,20 @@ def on_bar(context, bars):
         if (_profit > 0.10 and not _panic_on_cooldown
                 # N20: 不得覆盖更高优先级信号(P1/P2/P3)
                 and not (sig and sig.action in ("PANIC_SELL", "TRAIL_SELL", "TREND_EXIT"))):
-            _filled = context.manual_position.get(gm_sym, {}).get("_target_filled_l1", False) if gm_sym in context.manual_position else False
-            if not _filled:
+            # WP-B14: 三段式状态机——state is None 才生成；置位移到下单/成交回调
+            # （被缓冲拦/地板拦/未成交的信号不耗档，条件满足后可再触发）
+            _l1_state = (context.manual_position.get(gm_sym, {}).get("_target_l1_state")
+                         if gm_sym in context.manual_position else None)
+            if _l1_state is None:
                 from data.indicators import Signal as _Sig
                 sig = _Sig(code=code, name=STOCK_NAMES.get(code, code),
                            action="TARGET_SELL", price=cp, score=75.0,
                            reasons=[f"目标止盈L1: profit={_profit:.1%}"])
-                if gm_sym in context.manual_position:
-                    context.manual_position[gm_sym]["_target_filled_l1"] = True
-        # 复位: 全仓清空时重置目标位图
+        # 复位: 全仓清空时重置目标位图（新持仓期重新计数）
         if pos_qty <= 0 and gm_sym in context.manual_position:
-            context.manual_position[gm_sym]["_target_filled_l1"] = False
+            if context.manual_position[gm_sym].get("_target_l1_state") is not None:
+                context.manual_position[gm_sym]["_target_l1_state"] = None
+                _sell_state_persist(context, code, gm_sym)
 
         if feats_cache.get("is_deep_loss") and not _panic_on_cooldown:
             from data.indicators import Signal
@@ -1694,6 +1812,10 @@ def on_order_status(context, order):
             _audit_write({"event": "sell", "code": code, "qty": volume, "price": price,
                           "time": _ts_now, "pos_after_sell": new_qty,
                           "action": _act, "score": _sc})
+            # WP-B14: TARGET 成交 → 置 filled 落盘（真实落袋才封档）
+            if _act == "TARGET_SELL" and symbol in context.manual_position:
+                context.manual_position[symbol]["_target_l1_state"] = "filled"
+                _sell_state_persist(context, _raw_code(symbol), symbol)
             # WP-B07: 卖出成交 → 建立回补价格记忆并写事件（通道名以 _pending_sell_action 为准）
             _bb_armed = _rta.get("armed") or getattr(context.engine, "awaiting_buyback", {}).get(code)
             if _bb_armed:
@@ -1736,6 +1858,11 @@ def on_order_status(context, order):
             mp["t_qty"] = mp.get("t_qty", 0) + volume
             _audit_write({"event": "sell_rollback", "code": code, "qty": volume,
                           "time": str(getattr(context, "now", None) or datetime.now())})
+            # WP-B14: TARGET 拒单 → 状态清回 None 落盘（拒单不耗档，条件满足后可再触发）
+            _pending_act = getattr(context, "_pending_sell_action", {}).get(symbol, ("", 0))[0]
+            if _pending_act == "TARGET_SELL":
+                mp["_target_l1_state"] = None
+                _sell_state_persist(context, _raw_code(symbol), symbol)
             # F14: 拒单不消耗日卖出配额/总成交计数（防止误耗挤占信号通道）
             if hasattr(context, "daily_sell_count") and context.daily_sell_count is not None:
                 context.daily_sell_count[code] = max(0, context.daily_sell_count.get(code, 0) - 1)
