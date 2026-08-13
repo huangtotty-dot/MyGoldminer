@@ -1,0 +1,30 @@
+
+===== strategy run start 2026-08-13T08:06:30 pid=23500 =====
+[ops] 控制台日志已落盘: C:\Users\Lenovo\.goldminer3\projects\e8bb1f4d-87ce-11f1-97f7-98fa9b8df5e7\logs\strategy_20260813.log
+[INIT] 600481 双良节能 持仓对账: 1400股 可用1400 成本4.30
+[INIT] 603667 五洲新春 持仓对账: 400股 可用400 成本52.00
+[init] 大盘日线已缓存: 900 行, 2022-11-25 ~ 2026-08-12
+[init] WP-E2/E3 预算表: equity=178880 reserve=20% 每股预算=35776(按4槽分解) max_pos_shares=000988:300 600481:7900 600176:800 603667:600 300054:400 300364:1400 002639:2800 300153:1500 300456:1000 002202:1700 002536:800 002176:3800 600584:400 002261:1300 600089:1600 002451:4700
+[init] 事件桥: C:\Users\Lenovo\.goldminer3\projects\e8bb1f4d-87ce-11f1-97f7-98fa9b8df5e7\runtime\bridge
+[init] 策略初始化完成: 16 只标的
+[ir] 2026-08-13 regime=range score=8.2
+[D6] amount/volume=4.48 close=4.46 → VWAP单位比=1.0051
+[09:31:00] BASE 000988 华工科技 G4支撑闸→仅观察 G4: 未回踩支撑带 cp=109.64 daily_ma10=100.41 daily_ma20=105.88 daily_ma60=141.83 daily_boll_lower=87.73
+[09:31:01] BASE 002176 跳过: MIRROR_HOLDINGS 中无此标的或 qty<100
+[09:31:01] BASE 002202 跳过: MIRROR_HOLDINGS 中无此标的或 qty<100
+[09:31:01] BASE 002639 跳过: MIRROR_HOLDINGS 中无此标的或 qty<100
+[09:31:01] BASE 002261 跳过: MIRROR_HOLDINGS 中无此标的或 qty<100
+[09:31:01] BASE 002451 跳过: MIRROR_HOLDINGS 中无此标的或 qty<100
+[09:31:01] BASE 002536 跳过: MIRROR_HOLDINGS 中无此标的或 qty<100
+[09:31:01] BASE 300054 跳过: MIRROR_HOLDINGS 中无此标的或 qty<100
+[09:31:01] BASE 300153 跳过: MIRROR_HOLDINGS 中无此标的或 qty<100
+[09:31:01] BASE 300364 跳过: MIRROR_HOLDINGS 中无此标的或 qty<100
+[09:31:01] BASE 300456 跳过: MIRROR_HOLDINGS 中无此标的或 qty<100
+[09:31:01] BASE 600176 中国巨石 G4支撑闸→仅观察 G4: 未回踩支撑带 cp=44.06 daily_ma10=39.84 daily_ma20=40.19 daily_ma60=47.34 daily_boll_lower=33.41
+[09:31:01] BASE 603667 五洲新春 G4支撑闸→仅观察 G4: 未回踩支撑带 cp=56.30 daily_ma10=54.15 daily_ma20=53.55 daily_ma60=63.93 daily_boll_lower=48.41
+[09:31:01] BASE 600584 跳过: MIRROR_HOLDINGS 中无此标的或 qty<100
+[09:31:01] BASE 600089 跳过: MIRROR_HOLDINGS 中无此标的或 qty<100
+[09:38:59] BASE 000988 华工科技 G4放行: 支撑=['daily_ma20'] RSI=44.8 MACD多头 v3/v20=0.81
+[09:38:59] BASE 000988 华工科技 下单 500股@108.11
+[BASE] 000988 底仓成交 500股@108.11
+[10:10:59] BUY 000988 个股仓位到顶拦截: budget=38265 equity=191324 weight=20.0% max_pos_shares=300 base_ref=500 pos_qty=500 reason=pos_at_cap
