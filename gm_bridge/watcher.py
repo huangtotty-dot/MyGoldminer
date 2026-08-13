@@ -249,15 +249,8 @@ def handle_event(rec: dict):
     label = _stock_label(code)
 
     if event == "signal":
-        if _should_push("signal", dk, code):
-            action_cn = {"BUY_LOW": "低吸", "SELL_HIGH": "高抛", "PANIC_SELL": "恐慌卖出", "ADD_POS": "加仓"}.get(rec.get("action"), rec.get("action"))
-            emoji = "🟢" if "BUY" in str(rec.get("action", "")) else "🔴"
-            _push(
-                f"{emoji} {action_cn}信号 — {label}",
-                f"动作: {rec['action']} | 评分: {rec.get('score',0):.0f}分 | "
-                f"持仓: {rec.get('pos_qty',0)}股",
-                "green" if "BUY" in str(rec.get("action", "")) else "orange"
-            )
+        # 2026-08-13 owner决策：关闭信号推送（动作/评分/持仓类飞书噪音）；事件仍落盘留痕
+        return
 
     elif event == "fill":
         _track_position(rec)
