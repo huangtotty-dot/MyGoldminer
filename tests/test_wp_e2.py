@@ -151,7 +151,7 @@ check("T4a pos_qty<=0 全新建仓保留 qty=300 兜底",
 check("T4b 旧的无条件 qty=300 兜底已移除",
       "qty = 300  # sizer 返回 0 时的最小交易量" not in _src)
 check("T4c 持仓票 sizer=0 走 max_pos_cap(force) 拦截后 continue",
-      "force=True)" in _src)
+      "force=True, action=sig.action)" in _src)
 
 # ══ T5: N2 分母修正 ══
 # 场景：现金 5000 / 本票 1000 股@50 / 其他票持仓 80000 → 买 500 股@50

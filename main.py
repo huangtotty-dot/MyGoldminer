@@ -120,15 +120,23 @@ def _sell_arbiter(context, code, sig, pos_qty, cp, now, holding, threshold,
     sell_floor_ratio = 0.0 if _is_protection else float(PARAMS.get("sell_floor_ratio", 0.5))
     min_hold = int(base_ref * sell_floor_ratio)
     if pos_qty - 100 < min_hold:
-        try:
-            write_risk(str(now), "floor_protection",
-                       f"base_ref={base_ref} min_hold={min_hold} pos_qty={pos_qty} action={sig.action}", code=code)
-        except Exception: pass
+        # WP-B15: 地板拦截去重——同持仓状态重复拦截静默，状态(pos/min_hold)变化再写（O-03 风格）
+        _floor_key = f'_floor_logged_{code}_{sig.action}'
+        _floor_state = f'{now.strftime("%Y-%m-%d")}_{pos_qty}_{min_hold}'
+        if getattr(context, _floor_key, '') != _floor_state:
+            setattr(context, _floor_key, _floor_state)
+            try:
+                write_risk(str(now), "floor_protection",
+                           f"base_ref={base_ref} min_hold={min_hold} pos_qty={pos_qty} action={sig.action}", code=code)
+            except Exception: pass
+            _audit_write({"event": "sell_skip", "code": code, "action": sig.action,
+                          "score": sig.score, "reason": "floor",
+                          "base_ref": base_ref, "min_hold": min_hold, "pos_qty": pos_qty, "time": str(now)})
+        # WP-B15: TARGET 地板可预见拦截 → mute 同源信号（事件层去重；决策/执行不受影响）
+        if sig.action == "TARGET_SELL":
+            setattr(context, f'_sig_muted_{code}_TARGET_SELL', now.strftime("%Y-%m-%d"))
         if sig.action == "PANIC_SELL":
             context.engine.record_trade_action(code, "PANIC_SELL", 0, cp)
-        _audit_write({"event": "sell_skip", "code": code, "action": sig.action,
-                      "score": sig.score, "reason": "floor",
-                      "base_ref": base_ref, "min_hold": min_hold, "pos_qty": pos_qty, "time": str(now)})
         return False
 
     # 阈值检查
@@ -331,9 +339,21 @@ def _emit_slot_full(context, code, now, where: str) -> bool:
     return True
 
 
+def _clear_signal_mute_keys(context, code: str):
+    """WP-B15: 持仓变化（成交/对账/拒单回滚）→ 解除信号 mute 与地板去重键。
+    键含日期串，置空即可——同状态重新被拦会再次置位，信息不丢。"""
+    try:
+        _keys = [k for k in context.__dict__
+                 if k.startswith(f'_sig_muted_{code}_') or k.startswith(f'_floor_logged_{code}_')]
+        for _k in _keys:
+            context.__dict__[_k] = ''
+    except Exception:
+        pass
+
+
 def _check_max_pos_cap(context, code, now, pos_qty: int, base_ref: int,
                        max_pos_shares: int, budget: float, total_eq: float,
-                       force: bool = False) -> bool:
+                       force: bool = False, action: str = "") -> bool:
     """WP-E2: 个股最大仓位闸。True=拦截（调用方 continue）。
 
     触发条件：pos_qty>0 且 pos_qty >= max(max_pos_shares, base_ref)
@@ -343,8 +363,12 @@ def _check_max_pos_cap(context, code, now, pos_qty: int, base_ref: int,
     ceiling = max(int(max_pos_shares or 0), int(base_ref or 0))
     if pos_qty <= 0 or (not force and pos_qty < ceiling):
         return False
-    _key = f'_max_pos_cap_{code}'
+    # WP-B15: 到顶拦截 → 每次拦截都置位同源信号 mute（事件层去重；决策/执行不受影响）。
+    # 置于去重块之外——成交清键后再到顶时，去重块不执行但 mute 必须重新生效（防复发刷屏）
     _today = now.strftime("%Y-%m-%d")
+    if action:
+        setattr(context, f'_sig_muted_{code}_{action}', _today)
+    _key = f'_max_pos_cap_{code}'
     if getattr(context, _key, '') != _today:
         setattr(context, _key, _today)
         _weight = (budget / total_eq) if total_eq > 0 else 0
@@ -451,6 +475,8 @@ def _get_holding(context, code: str, gm_symbol: str) -> dict:
                     _my_cost = mp.get("cost", gm_pos["cost"])
                     context.manual_position[gm_symbol] = gm_pos
                     context.manual_position[gm_symbol]["cost"] = _my_cost
+                    # WP-B15: 对账持仓变化 → 解除信号 mute / 地板去重键
+                    _clear_signal_mute_keys(context, code)
                     _audit_write({"event": "reconcile_fix", "code": code, "time": str(now),
                                   "old_qty": mp.get("qty"), "new_qty": gm_pos["qty"]})
                 # ①-1: manual_position cost=0时用gm vwap修正(市价单price=0兜底)
@@ -472,6 +498,8 @@ def _get_holding(context, code: str, gm_symbol: str) -> dict:
                     mp["qty"] = 0
                     mp["available"] = 0
                     mp["t_qty"] = 0
+                    # WP-B15: 对账持仓归零 → 解除信号 mute / 地板去重键
+                    _clear_signal_mute_keys(context, code)
                     _audit_write({"event": "reconcile_fix", "code": code, "time": str(now),
                                   "old_qty": _old_q, "new_qty": 0})
         except Exception:
@@ -1530,11 +1558,16 @@ def on_bar(context, bars):
 
         # ── 信号事件写入 ──
         if sig is not None:
-            try:
-                write_signal(str(now), code, sig.action, sig.score,
-                             reasons=sig.reasons, pos_qty=pos_qty)
-            except Exception:
-                pass
+            # WP-B15: 信号事件去重——被下游拦截点（地板/到顶）mute 的同源信号静默，
+            # 首条照写；mute 键含日期，日切自清；持仓变化由成交/对账回调清键。
+            # 快照(snapshot)不受 mute 影响（监控底座，非事件流）。
+            _mute_key = f'_sig_muted_{code}_{sig.action}'
+            if getattr(context, _mute_key, '') != now.strftime("%Y-%m-%d"):
+                try:
+                    write_signal(str(now), code, sig.action, sig.score,
+                                 reasons=sig.reasons, pos_qty=pos_qty)
+                except Exception:
+                    pass
             if _hb_live:
                 try: write_snapshot(str(now), code, cp, bar=f"{now:%H:%M}",
                                     buy_score=buy_score, sell_score=sell_score,
@@ -1605,7 +1638,8 @@ def on_bar(context, bars):
 
             # WP-E2: 个股最大仓位闸——到顶直接拦截（堵 sizer 内部 1.5× 兜底洞）
             if _check_max_pos_cap(context, code, now, pos_qty, _base_ref,
-                                  max_pos_shares, _stock_budget, _total_eq):
+                                  max_pos_shares, _stock_budget, _total_eq,
+                                  action=sig.action):
                 continue
 
             qty = context.sizer.calc_buy_qty(code, holding_with_target, sig.score, threshold)
@@ -1616,7 +1650,8 @@ def on_bar(context, bars):
                     qty = 300  # 全新建仓信号的最小交易量兜底
                 else:
                     _check_max_pos_cap(context, code, now, pos_qty, _base_ref,
-                                       max_pos_shares, _stock_budget, _total_eq, force=True)
+                                       max_pos_shares, _stock_budget, _total_eq,
+                                       force=True, action=sig.action)
                     continue
 
             # WP-B07: 高接降档 — 数量减半取整到 min_unit，不足 min_unit 则延迟
@@ -1727,6 +1762,8 @@ def on_order_status(context, order):
             _ifl[symbol] = max(0, int(_ifl[symbol]) - int(volume))
 
     if status == 3:  # 全部成交
+        # WP-B15: 持仓变化（成交）→ 解除信号 mute / 地板去重键（单点清理，防解封后忘清键）
+        _clear_signal_mute_keys(context, code)
         _side = "BUY" if side == 1 else "SELL"
         # O-06(2026-08-11 复盘①轻)：台账在本回调内尚未更新（更新在下方），
         # SELL 分支直接读台账得到的是成交前持仓（0811 实战：卖 200 后 pos_after 仍报 1400）。
@@ -1852,6 +1889,8 @@ def on_order_status(context, order):
         print(f"[ORDER] {symbol} 被拒 status={status} {_rej_detail}")
         # N25-2: 卖出拒单回滚manual_position(下单时已虚减)
         if side == 2 and symbol in context.manual_position:
+            # WP-B15: 持仓回滚 → 解除信号 mute / 地板去重键
+            _clear_signal_mute_keys(context, code)
             mp = context.manual_position[symbol]
             mp["qty"] = mp.get("qty", 0) + volume
             mp["available"] = mp.get("available", 0) + volume
