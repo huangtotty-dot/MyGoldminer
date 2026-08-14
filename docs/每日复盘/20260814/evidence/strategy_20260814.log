@@ -1,0 +1,49 @@
+
+===== strategy run start 2026-08-14T08:46:10 pid=14768 =====
+[ops] 控制台日志已落盘: C:\Users\Lenovo\.goldminer3\projects\e8bb1f4d-87ce-11f1-97f7-98fa9b8df5e7\logs\strategy_20260814.log
+[INIT] 000988 华工科技 持仓对账: 500股 可用500 成本108.11
+[INIT] 600481 双良节能 持仓对账: 1400股 可用1400 成本4.30
+[INIT] 603667 五洲新春 持仓对账: 400股 可用400 成本52.00
+[INIT] 600481 sell_state 恢复: l1=None trail=INACTIVE peak=0.0
+[INIT] 603667 sell_state 恢复: l1=None trail=ARMED peak=58.03
+[INIT] 000988 sell_state 恢复: l1=None trail=INACTIVE peak=0.0
+[init] 大盘日线已缓存: 900 行, 2022-11-28 ~ 2026-08-13
+[init] WP-E2/E3 预算表: equity=231914 reserve=20% 每股预算=46383(按4槽分解) max_pos_shares=000988:400 600481:10600 600176:1100 603667:800 300054:600 300364:1800 002639:3700 300153:2000 300456:1400 002202:2200 002536:1100 002176:4800 600584:500 002261:1700 600089:2200 002451:6200
+[init] 事件桥: C:\Users\Lenovo\.goldminer3\projects\e8bb1f4d-87ce-11f1-97f7-98fa9b8df5e7\runtime\bridge
+[init] 策略初始化完成: 16 只标的
+[ir] 2026-08-14 regime=range score=7.7
+[D6] amount/volume=20.97 close=21.00 → VWAP单位比=0.9984
+[09:31:00] BASE 600089 跳过: MIRROR_HOLDINGS 中无此标的或 qty<100
+[09:31:01] BASE 002261 跳过: MIRROR_HOLDINGS 中无此标的或 qty<100
+[09:31:01] BASE 002202 跳过: MIRROR_HOLDINGS 中无此标的或 qty<100
+[09:31:01] BASE 002176 跳过: MIRROR_HOLDINGS 中无此标的或 qty<100
+[09:31:01] BASE 002536 跳过: MIRROR_HOLDINGS 中无此标的或 qty<100
+[09:31:01] BASE 002451 跳过: MIRROR_HOLDINGS 中无此标的或 qty<100
+[09:31:01] BASE 002639 跳过: MIRROR_HOLDINGS 中无此标的或 qty<100
+[09:31:01] BASE 603667 五洲新春 G4支撑闸→仅观察 G4: RSI=68.3 不在[30,55] 支撑=['daily_ma10']
+[09:31:01] BASE 600584 跳过: MIRROR_HOLDINGS 中无此标的或 qty<100
+[09:31:01] BASE 600176 中国巨石 G4支撑闸→仅观察 G4: 未回踩支撑带 cp=41.95 daily_ma10=40.37 daily_ma20=39.90 daily_ma60=47.45 daily_boll_lower=34.04
+[09:31:02] BASE 300054 跳过: MIRROR_HOLDINGS 中无此标的或 qty<100
+[09:31:02] BASE 300153 跳过: MIRROR_HOLDINGS 中无此标的或 qty<100
+[09:31:02] BASE 300364 跳过: MIRROR_HOLDINGS 中无此标的或 qty<100
+[09:31:02] BASE 300456 跳过: MIRROR_HOLDINGS 中无此标的或 qty<100
+[09:37:00] BUY 000988 个股仓位到顶拦截: budget=37922 equity=189609 weight=20.0% max_pos_shares=300 base_ref=500 pos_qty=500 reason=pos_at_cap
+[11:05:01] BASE 603667 五洲新春 G4支撑闸→仅观察 G4: RSI=68.3 不在[30,55] 支撑=['daily_ma10', 'daily_ma20']
+[11:06:01] BASE 603667 五洲新春 G4支撑闸→仅观察 G4: RSI=68.3 不在[30,55] 支撑=['daily_ma10']
+[11:09:01] BASE 603667 五洲新春 G4支撑闸→仅观察 G4: RSI=68.3 不在[30,55] 支撑=['daily_ma10', 'daily_ma20']
+[11:13:01] BASE 603667 五洲新春 G4支撑闸→仅观察 G4: RSI=68.3 不在[30,55] 支撑=['daily_ma10']
+[11:14:01] BASE 603667 五洲新春 G4支撑闸→仅观察 G4: RSI=68.3 不在[30,55] 支撑=['daily_ma10', 'daily_ma20']
+[11:15:01] BASE 603667 五洲新春 G4支撑闸→仅观察 G4: RSI=68.3 不在[30,55] 支撑=['daily_ma10']
+[13:05:01] BASE 603667 五洲新春 G4支撑闸→仅观察 G4: RSI=68.3 不在[30,55] 支撑=['daily_ma10', 'daily_ma20']
+[13:36:01] BASE 603667 五洲新春 G4支撑闸→仅观察 G4: RSI=68.3 不在[30,55] 支撑=['daily_ma10']
+[13:37:01] BASE 603667 五洲新春 G4支撑闸→仅观察 G4: RSI=68.3 不在[30,55] 支撑=['daily_ma10', 'daily_ma20']
+[13:38:01] BASE 603667 五洲新春 G4支撑闸→仅观察 G4: RSI=68.3 不在[30,55] 支撑=['daily_ma10']
+[13:42:01] BASE 603667 五洲新春 G4支撑闸→仅观察 G4: RSI=68.3 不在[30,55] 支撑=['daily_ma10', 'daily_ma20']
+[13:42:01] SELL 600481 200@4.32 score=66 regime=range
+[13:44:01] BUY 600481 2600@4.32 score=60 regime=range
+[13:45:01] BASE 603667 五洲新春 G4支撑闸→仅观察 G4: RSI=68.3 不在[30,55] 支撑=['daily_ma10']
+[13:46:00] SELL 000988 100@109.29 score=64 regime=range
+[13:49:00] BUY 000988 100@109.13 score=60 regime=range
+[13:49:01] BASE 603667 五洲新春 G4支撑闸→仅观察 G4: RSI=68.3 不在[30,55] 支撑=['daily_ma10', 'daily_ma20']
+[13:51:01] BASE 603667 五洲新春 G4支撑闸→仅观察 G4: RSI=68.3 不在[30,55] 支撑=['daily_ma10']
+[14:50:01] TAIL 600481 尾盘归位 1200股 (pos=3800→2600 target=1400)

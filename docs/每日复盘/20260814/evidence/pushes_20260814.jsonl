@@ -1,0 +1,26 @@
+{"time": "2026-08-14T09:31:03", "title": "⚠️ 风控 — 五洲新春(603667)", "level": "orange", "sent": true, "content": "entry_gate: G4: RSI=68.3 不在[30,55] 支撑=['daily_ma10']"}
+{"time": "2026-08-14T09:31:03", "title": "⚠️ 风控 — 中国巨石(600176)", "level": "orange", "sent": true, "content": "entry_gate: G4: 未回踩支撑带 cp=41.95 daily_ma10=40.37 daily_ma20=39.90 daily_ma60=47.45 daily_boll_lower=34.04"}
+{"time": "2026-08-14T09:37:02", "title": "🟢 低吸信号 — 华工科技(000988)", "level": "green", "sent": true, "content": "动作: BUY_LOW | 评分: 51分 | 持仓: 500股"}
+{"time": "2026-08-14T09:37:03", "title": "⚠️ 风控 — 华工科技(000988)", "level": "orange", "sent": true, "content": "max_pos_cap: budget=37922 equity=189609 weight=20.0% max_pos_shares=300 base_ref=500 pos_qty=500 reason=pos_at_cap"}
+{"time": "2026-08-14T11:05:03", "title": "⚠️ 风控 — 五洲新春(603667)", "level": "orange", "sent": true, "content": "entry_gate: G4: RSI=68.3 不在[30,55] 支撑=['daily_ma10', 'daily_ma20']"}
+{"time": "2026-08-14T11:09:02", "title": "⚠️ 风控 — 五洲新春(603667)", "level": "orange", "sent": true, "content": "entry_gate: G4: RSI=68.3 不在[30,55] 支撑=['daily_ma10', 'daily_ma20']"}
+{"time": "2026-08-14T11:13:03", "title": "⚠️ 风控 — 五洲新春(603667)", "level": "orange", "sent": true, "content": "entry_gate: G4: RSI=68.3 不在[30,55] 支撑=['daily_ma10']"}
+{"time": "2026-08-14T11:15:02", "title": "⚠️ 风控 — 五洲新春(603667)", "level": "orange", "sent": true, "content": "entry_gate: G4: RSI=68.3 不在[30,55] 支撑=['daily_ma10']"}
+{"time": "2026-08-14T13:05:03", "title": "⚠️ 风控 — 五洲新春(603667)", "level": "orange", "sent": true, "content": "entry_gate: G4: RSI=68.3 不在[30,55] 支撑=['daily_ma10', 'daily_ma20']"}
+{"time": "2026-08-14T13:36:03", "title": "⚠️ 风控 — 五洲新春(603667)", "level": "orange", "sent": true, "content": "entry_gate: G4: RSI=68.3 不在[30,55] 支撑=['daily_ma10']"}
+{"time": "2026-08-14T13:38:02", "title": "⚠️ 风控 — 五洲新春(603667)", "level": "orange", "sent": true, "content": "entry_gate: G4: RSI=68.3 不在[30,55] 支撑=['daily_ma10']"}
+{"time": "2026-08-14T13:42:03", "title": "⚠️ 风控 — 五洲新春(603667)", "level": "orange", "sent": true, "content": "entry_gate: G4: RSI=68.3 不在[30,55] 支撑=['daily_ma10', 'daily_ma20']"}
+{"time": "2026-08-14T13:42:04", "title": "🔴 高抛信号 — 双良节能(600481)", "level": "orange", "sent": true, "content": "动作: SELL_HIGH | 评分: 66分 | 持仓: 1400股"}
+{"time": "2026-08-14T13:42:04", "title": "🔴 成交 — 双良节能(600481)", "level": "green", "sent": true, "content": "卖出 200股 @ 4.33 | 成交后持仓: 1200股"}
+{"time": "2026-08-14T13:44:03", "title": "🟢 低吸信号 — 双良节能(600481)", "level": "green", "sent": true, "content": "动作: BUY_LOW | 评分: 60分 | 持仓: 1200股"}
+{"time": "2026-08-14T13:44:03", "title": "🔵 成交 — 双良节能(600481)", "level": "green", "sent": true, "content": "买入 2600股 @ 4.32 | 成交后持仓: 3800股"}
+{"time": "2026-08-14T13:45:02", "title": "⚠️ 风控 — 五洲新春(603667)", "level": "orange", "sent": true, "content": "entry_gate: G4: RSI=68.3 不在[30,55] 支撑=['daily_ma10']"}
+{"time": "2026-08-14T13:46:02", "title": "🔴 高抛信号 — 华工科技(000988)", "level": "orange", "sent": true, "content": "动作: SELL_HIGH | 评分: 64分 | 持仓: 500股"}
+{"time": "2026-08-14T13:46:03", "title": "🔴 成交 — 华工科技(000988)", "level": "green", "sent": true, "content": "卖出 100股 @ 109.26 | 成交后持仓: 400股"}
+{"time": "2026-08-14T13:48:01", "title": "🟢 低吸信号 — 华工科技(000988)", "level": "green", "sent": true, "content": "动作: BUY_LOW | 评分: 34分 | 持仓: 400股"}
+{"time": "2026-08-14T13:49:02", "title": "🟢 低吸信号 — 华工科技(000988)", "level": "green", "sent": true, "content": "动作: BUY_LOW | 评分: 60分 | 持仓: 400股"}
+{"time": "2026-08-14T13:49:02", "title": "🔵 成交 — 华工科技(000988)", "level": "green", "sent": true, "content": "买入 100股 @ 109.13 | 成交后持仓: 500股"}
+{"time": "2026-08-14T13:49:03", "title": "⚠️ 风控 — 五洲新春(603667)", "level": "orange", "sent": true, "content": "entry_gate: G4: RSI=68.3 不在[30,55] 支撑=['daily_ma10', 'daily_ma20']"}
+{"time": "2026-08-14T13:51:02", "title": "⚠️ 风控 — 五洲新春(603667)", "level": "orange", "sent": true, "content": "entry_gate: G4: RSI=68.3 不在[30,55] 支撑=['daily_ma10']"}
+{"time": "2026-08-14T14:15:02", "title": "🟢 低吸信号 — 华工科技(000988)", "level": "green", "sent": true, "content": "动作: BUY_LOW | 评分: 44分 | 持仓: 500股"}
+{"time": "2026-08-14T14:50:03", "title": "🔴 成交 — 双良节能(600481)", "level": "green", "sent": true, "content": "卖出 1200股 @ 4.33 | 成交后持仓: 2600股"}

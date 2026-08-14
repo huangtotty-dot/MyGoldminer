@@ -1,0 +1,23 @@
+{
+  "600481": {
+    "_target_l1_state": null,
+    "_trail_state": "INACTIVE",
+    "_trail_peak": 0.0,
+    "pos_key": "1400@4.3000",
+    "updated": "2026-08-13 14:57:59.340000+08:00"
+  },
+  "603667": {
+    "_target_l1_state": null,
+    "_trail_state": "ARMED",
+    "_trail_peak": 58.03,
+    "pos_key": "400@51.9962",
+    "updated": "2026-08-13 10:27:01.382000+08:00"
+  },
+  "000988": {
+    "_target_l1_state": null,
+    "_trail_state": "INACTIVE",
+    "_trail_peak": 0.0,
+    "pos_key": "500@108.1100",
+    "updated": "2026-08-13 14:58:01.175000+08:00"
+  }
+}
