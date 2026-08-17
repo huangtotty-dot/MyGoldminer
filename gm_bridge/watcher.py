@@ -53,18 +53,16 @@ def _heartbeat_path() -> str:
     return os.path.join(BRIDGE_DIR, "heartbeat.json")
 
 
-# ── 飞书推送（尝试复用 E:\06_T 基建） ──
+# ── 飞书推送（0817 内移：项目内 gm_bridge/feishu.py 优先，去除 E:\06_T 硬依赖） ──
 FEISHU_AVAILABLE = False
 _send_feishu = None
 _FEISHU_KEYWORD = "掘金模拟盘"
 
 try:
-    _06T = r"E:\06_T"
-    if _06T not in sys.path:
-        sys.path.insert(0, _06T)
-    import config as _cfg
-    _send_feishu = _cfg.send_feishu_payload
-    _FEISHU_KEYWORD = getattr(_cfg, 'FEISHU_KEYWORD', '掘金模拟盘')
+    try:
+        from gm_bridge.feishu import send_feishu_payload as _send_feishu, FEISHU_KEYWORD as _FEISHU_KEYWORD
+    except ImportError:  # 脚本方式直接运行 gm_bridge/watcher.py
+        from feishu import send_feishu_payload as _send_feishu, FEISHU_KEYWORD as _FEISHU_KEYWORD
     FEISHU_AVAILABLE = True
 except Exception as e:
     print(f"[watcher] 飞书不可用 ({e}), 降级为 stdout")

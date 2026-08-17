@@ -1868,6 +1868,16 @@ def on_order_status(context, order):
                                   target_price=_bb_armed.get("target_price"))
                 except Exception:
                     pass
+        # O-10(2026-08-17 复盘①轻)：成交回调同步刷新 sell_state 指纹（pos_key）。
+        # 活跃 TRAIL/TARGET 状态期间成交会使 qty/cost 变化，但状态字段不变、
+        # 不触发落盘 → 次日 INIT pos_key 校验不符，活跃状态被静默作废
+        # （0817 实锤：603667 买 200 后文件指纹仍 400@51.9962，0818 将误作废 ARMED）。
+        # 只刷指纹不动状态：persist 镜像的内存状态字段在此刻均未变化。
+        if symbol in (getattr(context, "manual_position", None) or {}):
+            try:
+                _sell_state_persist(context, code, symbol)
+            except Exception:
+                pass
     elif status in (4, 5, 6, 8, 12):  # 拒单/撤单/待撤/已拒绝(8)/已过期(12) —— F2修复: 2026-07-28前漏掉8导致所有拒单静默
         _rej_detail = ""
         try:
