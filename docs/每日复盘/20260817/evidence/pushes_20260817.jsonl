@@ -1,0 +1,12 @@
+{"time": "2026-08-17T09:31:01", "title": "⚠️ 风控 — 中国巨石(600176)", "level": "orange", "sent": false, "content": "entry_gate: G4: 未回踩支撑带 cp=45.33 daily_ma10=41.03 daily_ma20=39.93 daily_ma60=47.60 daily_boll_lower=33.98"}
+{"time": "2026-08-17T09:31:03", "title": "⚠️ 风控 — 五洲新春(603667)", "level": "orange", "sent": false, "content": "entry_gate: G4: RSI=60.7 不在[30,55] 支撑=['daily_ma10']"}
+{"time": "2026-08-17T09:31:05", "title": "🔴 成交 — 双良节能(600481)", "level": "green", "sent": false, "content": "卖出 1000股 @ 4.37 | 成交后持仓: 1600股"}
+{"time": "2026-08-17T09:36:59", "title": "⚠️ 风控 — 华工科技(000988)", "level": "orange", "sent": false, "content": "max_pos_cap: budget=38279 equity=191396 weight=20.0% max_pos_shares=300 base_ref=500 pos_qty=500 reason=pos_at_cap"}
+{"time": "2026-08-17T10:01:59", "title": "🔴 成交 — 双良节能(600481)", "level": "green", "sent": false, "content": "卖出 200股 @ 4.37 | 成交后持仓: 1400股"}
+{"time": "2026-08-17T10:21:01", "title": "⚠️ 风控 — 五洲新春(603667)", "level": "orange", "sent": false, "content": "entry_gate: G4: RSI=60.7 不在[30,55] 支撑=['daily_ma10', 'daily_ma20']"}
+{"time": "2026-08-17T10:22:01", "title": "⚠️ 风控 — 五洲新春(603667)", "level": "orange", "sent": false, "content": "entry_gate: G4: RSI=60.7 不在[30,55] 支撑=['daily_ma10']"}
+{"time": "2026-08-17T10:23:59", "title": "⚠️ 风控 — 五洲新春(603667)", "level": "orange", "sent": false, "content": "entry_gate: G4: RSI=60.7 不在[30,55] 支撑=['daily_ma10', 'daily_ma20']"}
+{"time": "2026-08-17T10:36:00", "title": "⚠️ 风控 — 五洲新春(603667)", "level": "orange", "sent": false, "content": "entry_gate: G4: RSI=60.7 不在[30,55] 支撑=['daily_ma10']"}
+{"time": "2026-08-17T13:06:58", "title": "🔴 成交 — 华工科技(000988)", "level": "green", "sent": false, "content": "卖出 100股 @ 113.11 | 成交后持仓: 400股"}
+{"time": "2026-08-17T13:13:59", "title": "🔵 成交 — 华工科技(000988)", "level": "green", "sent": false, "content": "买入 100股 @ 113.08 | 成交后持仓: 500股"}
+{"time": "2026-08-17T13:31:01", "title": "🔵 成交 — 五洲新春(603667)", "level": "green", "sent": false, "content": "买入 200股 @ 55.85 | 成交后持仓: 600股"}

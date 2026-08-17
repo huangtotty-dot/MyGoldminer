@@ -1,0 +1,40 @@
+
+===== strategy run start 2026-08-17T09:06:31 pid=67436 =====
+[ops] 控制台日志已落盘: C:\Users\Lenovo\.goldminer3\projects\e8bb1f4d-87ce-11f1-97f7-98fa9b8df5e7\logs\strategy_20260817.log
+[ops] watcher 心跳缺失/过期(>90s)，已自动拉起，stdout→C:\Users\Lenovo\.goldminer3\projects\e8bb1f4d-87ce-11f1-97f7-98fa9b8df5e7\logs\watcher_stdout.log
+[INIT] 000988 华工科技 持仓对账: 500股 可用500 成本108.31
+[INIT] 600481 双良节能 持仓对账: 2600股 可用2600 成本4.31
+[INIT] 603667 五洲新春 持仓对账: 400股 可用400 成本52.00
+[INIT] 600481 sell_state 作废: pos_key 不符 file=1400@4.3000 now=2600@4.3137
+[INIT] 603667 sell_state 恢复: l1=None trail=ARMED peak=58.03
+[INIT] 000988 sell_state 作废: pos_key 不符 file=500@108.1100 now=500@108.3140
+[init] 大盘日线已缓存: 900 行, 2022-11-29 ~ 2026-08-14
+[init] WP-E2/E3 预算表: equity=238233 reserve=20% 每股预算=47647(按4槽分解) max_pos_shares=000988:400 600481:11000 600176:1000 603667:800 300054:600 300364:1900 002639:3900 300153:2100 300456:1500 002202:2200 002536:1100 002176:5000 600584:600 002261:1800 600089:2200 002451:6400
+[init] 事件桥: C:\Users\Lenovo\.goldminer3\projects\e8bb1f4d-87ce-11f1-97f7-98fa9b8df5e7\runtime\bridge
+[init] 策略初始化完成: 16 只标的
+[ir] 2026-08-17 regime=range score=7.6
+[D6] amount/volume=79.01 close=78.99 → VWAP单位比=1.0002
+[09:30:58] BASE 600584 跳过: MIRROR_HOLDINGS 中无此标的或 qty<100
+[09:30:58] BASE 002202 跳过: MIRROR_HOLDINGS 中无此标的或 qty<100
+[09:30:58] BASE 002176 跳过: MIRROR_HOLDINGS 中无此标的或 qty<100
+[09:30:58] BASE 002261 跳过: MIRROR_HOLDINGS 中无此标的或 qty<100
+[09:30:58] BASE 002451 跳过: MIRROR_HOLDINGS 中无此标的或 qty<100
+[09:30:58] BASE 002536 跳过: MIRROR_HOLDINGS 中无此标的或 qty<100
+[09:30:58] BASE 002639 跳过: MIRROR_HOLDINGS 中无此标的或 qty<100
+[09:30:59] BASE 300054 跳过: MIRROR_HOLDINGS 中无此标的或 qty<100
+[09:30:59] BASE 300153 跳过: MIRROR_HOLDINGS 中无此标的或 qty<100
+[09:30:59] BASE 300364 跳过: MIRROR_HOLDINGS 中无此标的或 qty<100
+[09:30:59] BASE 300456 跳过: MIRROR_HOLDINGS 中无此标的或 qty<100
+[09:30:59] BASE 600176 中国巨石 G4支撑闸→仅观察 G4: 未回踩支撑带 cp=45.33 daily_ma10=41.03 daily_ma20=39.93 daily_ma60=47.60 daily_boll_lower=33.98
+[09:30:59] BASE 600089 跳过: MIRROR_HOLDINGS 中无此标的或 qty<100
+[09:30:59] BASE 603667 五洲新春 G4支撑闸→仅观察 G4: RSI=60.7 不在[30,55] 支撑=['daily_ma10']
+[09:30:59] SELL 600481 1000@4.36 score=78 regime=range
+[09:36:58] BUY 000988 个股仓位到顶拦截: budget=38279 equity=191396 weight=20.0% max_pos_shares=300 base_ref=500 pos_qty=500 reason=pos_at_cap
+[10:01:59] SELL 600481 200@4.37 score=78 regime=range
+[10:20:59] BASE 603667 五洲新春 G4支撑闸→仅观察 G4: RSI=60.7 不在[30,55] 支撑=['daily_ma10', 'daily_ma20']
+[10:21:59] BASE 603667 五洲新春 G4支撑闸→仅观察 G4: RSI=60.7 不在[30,55] 支撑=['daily_ma10']
+[10:23:59] BASE 603667 五洲新春 G4支撑闸→仅观察 G4: RSI=60.7 不在[30,55] 支撑=['daily_ma10', 'daily_ma20']
+[10:35:59] BASE 603667 五洲新春 G4支撑闸→仅观察 G4: RSI=60.7 不在[30,55] 支撑=['daily_ma10']
+[13:06:57] SELL 000988 100@112.92 score=70 regime=range
+[13:13:57] BUY 000988 100@113.07 score=50 regime=range
+[13:30:59] BUY 603667 200@55.85 score=69 regime=range
