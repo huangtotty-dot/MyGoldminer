@@ -7,7 +7,8 @@ tests/test_wp_b07.py — WP-B07 回补价格记忆（awaiting_buyback 接通 + �
   T2  TTL 过期清除（awaiting_buyback_ttl_minutes=240）
   T3  高接延迟：回补价 > 前卖价×(1+1%) → 不产生 BUY_LOW，last_decision 记 buyback_above_sell_delayed
   T4  高接降档带：溢价 (0, 1%] → 信号保留 + details 带 buyback_downgrade
-  T5  低吸接回：价格 ≤ 前卖价 → 不受限 + 激励加分/降阈值
+  T5  低吸接回：price ≤ target_price（WP-B18 3.3）→ 激励加分/降阈值；
+      cp>target 浅折让 → 不回补触发(HOLD buyback_not_target)；平触 target → 达标
   T6  回补成交清除记忆
   T7  每日清零保留
   T8  main.py 卖出成交回调 → buyback_armed 事件（真实通道名）
@@ -166,15 +167,26 @@ check("T5b 激励接通: 55+15=70 分（≥放宽阈值58）且明细含接回�
       abs(bs5 - 70.0) < 0.01 and len(inc5) == 1,
       f"buy_score={bs5} inc={inc5}")
 
-# T5c: 纯降阈值通道（折让<0.1% 无加分，仅阈值 -10）
+# T5c: WP-B18 3.3 触发价语义——cp > target_price 的浅折让/平价不算回补触发
 eng5c = new_engine("2026-08-05 09:50:00")
 eng5c.record_trade_action("603667", "SELL_HIGH", 300, 52.14)
 se.SIM_NOW = datetime(2026, 8, 5, 10, 30, 0)
-df5c = make_df(52.10, "2026-08-05 10:30:00")  # 折让 0.077% < 0.1%
-bs5c, ss5c, sig5c = eval_with_scores(eng5c, "603667", df5c, buy_score=60.0)
-check("T5c 折让<0.1%: 无加分但阈值放宽10 → 60≥58 仍触发",
-      sig5c is not None and abs(bs5c - 60.0) < 0.01,
-      f"sig={sig5c and sig5c.action} buy_score={bs5c}")
+df5c = make_df(52.10, "2026-08-05 10:30:00")  # 折让 0.077% 但 cp>target 52.04
+bs5c, ss5c, sig5c = eval_with_scores(eng5c, "603667", df5c, buy_score=70.0)
+dec5c = eng5c.last_decision.get("603667", {})
+check("T5c WP-B18: cp>target 浅折让 → 不回补触发(HOLD buyback_not_target)",
+      sig5c is None and dec5c.get("reason") == "buyback_not_target",
+      f"sig={sig5c and sig5c.action} reason={dec5c.get('reason')}")
+
+# T5d: WP-B18 3.3 平触 target → 达标触发（600481 =4.36 平触应达标）
+eng5d = new_engine("2026-08-05 09:50:00")
+eng5d.record_trade_action("603667", "SELL_HIGH", 300, 52.14)
+se.SIM_NOW = datetime(2026, 8, 5, 10, 30, 0)
+df5d = make_df(52.04, "2026-08-05 10:30:00")  # = target 52.04 平触
+bs5d, ss5d, sig5d = eval_with_scores(eng5d, "603667", df5d, buy_score=60.0)
+check("T5d WP-B18: cp=target 平触 → 达标触发 BUY_LOW",
+      sig5d is not None and sig5d.action == "BUY_LOW",
+      f"sig={sig5d and sig5d.action}")
 
 # ══ T6: 回补成交清除记忆 ══
 ret6 = eng5.record_trade_action("603667", "BUY_LOW", 300, 51.50)

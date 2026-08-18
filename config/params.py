@@ -90,6 +90,8 @@ PARAMS = {
     "post_sell_rebuild_price_gap": 0.003,
     "post_sell_rebuild_score_gap": 6,
     "awaiting_buyback_ttl_minutes": 240,
+    # WP-B18: 回补记忆跨日持久化有效期（交易日数，覆盖隔夜+短回踩，拒绝死单；Phase D 寻优域）
+    "buyback_persist_days": 3,
     "awaiting_buyback_score_boost": 15,
     "awaiting_buyback_score_boost_weak": 8,
     "awaiting_buyback_threshold_relax": 10,

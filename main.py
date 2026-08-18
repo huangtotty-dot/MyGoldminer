@@ -351,6 +351,31 @@ def _clear_signal_mute_keys(context, code: str):
         pass
 
 
+def _buyback_mutex_block(context, code, daily_ctx, open_price, cp, now, ab):
+    """WP-B18 3.2: 回补触发互斥矩阵 M1-M4。
+    返回 (action, rule)：action ∈ pass / block(永久作废记忆) / delay(保留记忆但本 bar 不触发)。
+    M2 不拦截——TRAIL ARMED 为不同仓位腿（不互斥）；TRAIL_SELL 已触发(COOLED)由新卖价 arm 覆盖。"""
+    rule = ""
+    # M1: 日线 TREND_DOWN + 卖出通道 TREND_EXIT → 趋势破坏不机械接回（0818 600481 案例）
+    trend = (daily_ctx or {}).get("_stock_trend_state", "TREND_RANGE")
+    if trend == "TREND_DOWN" and ab.get("sell_action") == "TREND_EXIT":
+        return "block", "M1"
+    # M3: 开盘跳空 >2% → 09:35 开盘缓冲后评估（复用 B-13 闸语义）
+    _target = float(ab.get("target_price", 0) or 0)
+    if _target > 0 and open_price > 0 and now.hour == 9 and now.minute <= 35:
+        if abs(open_price - _target) / _target > 0.02:
+            return "delay", "M3"
+    # M4: 深亏背景(< -8% PANIC 域)不回补（回补语义是"接回高抛"，不是"摊平亏损"）
+    try:
+        _cost = float(((getattr(context, "manual_position", None) or {})
+                       .get(STOCKS.get(code, ""), {}) or {}).get("cost", 0) or 0)
+    except Exception:
+        _cost = 0.0
+    if _cost > 0 and cp > 0 and (cp - _cost) / _cost < -0.08:
+        return "block", "M4"
+    return "pass", ""
+
+
 def _check_max_pos_cap(context, code, now, pos_qty: int, base_ref: int,
                        max_pos_shares: int, budget: float, total_eq: float,
                        force: bool = False, action: str = "") -> bool:
@@ -775,12 +800,25 @@ def _sell_state_persist(context, code, gm_sym):
     if qty <= 0:
         state.pop(code, None)
     else:
+        # WP-B18: 回补记忆跨日镜像（同文件同生命周期；pos_key 复用 state 段指纹）
+        _ab = (getattr(context.engine, "awaiting_buyback", {}) or {}).get(code)
+        _buyback = None
+        if _ab and int(_ab.get("sell_qty", 0) or 0) > 0:
+            _buyback = {
+                "sell_price": _ab.get("sell_price"),
+                "sell_qty": _ab.get("sell_qty"),
+                "sell_action": _ab.get("sell_action", ""),
+                "target_price": _ab.get("target_price"),
+                "sell_time": str(_ab.get("sell_time")),
+                "expire_date": _ab.get("expire_date", ""),
+            }
         state[code] = {
             "_target_l1_state": mp.get("_target_l1_state"),
             "_trail_state": mp.get("_trail_state", "INACTIVE"),
             "_trail_peak": mp.get("_trail_peak", 0.0),
             "pos_key": _pos_key(qty, float(mp.get("cost", 0) or 0)),
             "updated": str(getattr(context, "now", None) or datetime.now()),
+            "_buyback": _buyback,
         }
     _sell_state_save(state)
 
@@ -825,6 +863,83 @@ def _sell_state_restore(context):
         context.manual_position[sym]["_trail_peak"] = st.get("_trail_peak", 0.0)
         print(f"[INIT] {code} sell_state 恢复: l1={_l1} trail={st.get('_trail_state')} "
               f"peak={st.get('_trail_peak')}")
+        # WP-B18: 回补记忆跨日恢复（M0 pos_key 已由上方校验；此处 M0b 有效期校验）
+        _bb = st.get("_buyback") or {}
+        if _bb and _bb.get("sell_price"):
+            _exp = str(_bb.get("expire_date", "") or "")
+            _today = datetime.now().strftime("%Y-%m-%d")
+            if _exp and _today > _exp:
+                state[code]["_buyback"] = None
+                _audit_write({"event": "buyback_expired", "code": code,
+                              "sell_price": _bb.get("sell_price"),
+                              "expire_date": _exp, "time": str(datetime.now())})
+                try:
+                    write_buyback(str(datetime.now()), code, "expired",
+                                  detail=(f"sell={_bb.get('sell_price')} "
+                                          f"expire={_exp} 跨日有效期已过"),
+                                  sell_price=_bb.get("sell_price"),
+                                  expire_date=_exp)
+                except Exception:
+                    pass
+                print(f"[INIT] {code} buyback 作废: 有效期已过(expire={_exp})")
+            else:
+                # WP-B18 M4: 恢复时深亏背景(< -8% PANIC 域)不回补（接回高抛≠摊平亏损）
+                _val_px = 0.0
+                _bb_rows = (getattr(context, "bar_cache", None) or {}).get(sym)
+                if _bb_rows:
+                    try:
+                        _val_px = float(_bb_rows[-1].get("close", 0) or 0)
+                    except Exception:
+                        _val_px = 0.0
+                if _val_px <= 0:
+                    _val_px = float(mp.get("pre_close", 0) or 0) or cost
+                if cost > 0 and _val_px > 0 and (_val_px - cost) / cost < -0.08:
+                    state[code]["_buyback"] = None
+                    _audit_write({"event": "buyback_blocked", "code": code, "rule": "M4",
+                                  "sell_price": _bb.get("sell_price"),
+                                  "cost": cost, "val_px": _val_px, "time": str(datetime.now())})
+                    try:
+                        write_buyback(str(datetime.now()), code, "blocked",
+                                      detail=(f"rule=M4 恢复时深亏背景不回补 "
+                                              f"cost={cost} val={_val_px:.2f} "
+                                              f"profit={(_val_px - cost)/cost:.1%}"),
+                                      rule="M4", sell_price=_bb.get("sell_price"))
+                    except Exception:
+                        pass
+                    print(f"[INIT] {code} buyback 作废: 深亏背景(PANIC 域)不回补")
+                else:
+                    _st = str(_bb.get("sell_time", "") or "")
+                    try:
+                        _st_dt = datetime.fromisoformat(_st) if _st else datetime.now()
+                    except Exception:
+                        _st_dt = datetime.now()
+                    context.engine.awaiting_buyback[code] = {
+                        "sell_price": float(_bb.get("sell_price", 0) or 0),
+                        "sell_qty": int(_bb.get("sell_qty", 0) or 0),
+                        "sell_action": _bb.get("sell_action", "SELL_HIGH"),
+                        "target_price": float(_bb.get("target_price", 0) or 0),
+                        "sell_time": _st_dt,
+                        "expire_date": _exp,
+                        "persisted": True,
+                    }
+                    _audit_write({"event": "buyback_restored", "code": code,
+                                  "sell_price": _bb.get("sell_price"),
+                                  "target_price": _bb.get("target_price"),
+                                  "expire_date": _exp, "time": str(datetime.now())})
+                    try:
+                        write_buyback(str(datetime.now()), code, "restored",
+                                      detail=(f"sell={_bb.get('sell_price')} "
+                                              f"qty={_bb.get('sell_qty')} "
+                                              f"target={_bb.get('target_price')} "
+                                              f"expire={_exp}"),
+                                      sell_price=_bb.get("sell_price"),
+                                      qty=_bb.get("sell_qty"),
+                                      target_price=_bb.get("target_price"),
+                                      expire_date=_exp)
+                    except Exception:
+                        pass
+                    print(f"[INIT] {code} buyback 恢复: sell={_bb.get('sell_price')} "
+                          f"target={_bb.get('target_price')} expire={_exp}")
     _sell_state_save(state)
 
 
@@ -1159,6 +1274,10 @@ def on_bar(context, bars):
         context.bar_cache.setdefault(gm_sym, []).append(row)
         if len(context.bar_cache[gm_sym]) > 480:
             context.bar_cache[gm_sym] = context.bar_cache[gm_sym][-480:]
+        # WP-B18 M3: 缓存当日首根 bar 开盘价（跳空判断用）
+        if not hasattr(context, "_day_open"):
+            context._day_open = {}
+        context._day_open.setdefault(code, row["open"])
 
         df = _build_bar_df(context, code, gm_sym)
         if df.empty:
@@ -1597,6 +1716,45 @@ def on_bar(context, bars):
             bc = context.daily_buy_count.get(code, 0)
             if bc >= max_buys:
                 continue
+            # WP-B18 3.2: 回补记忆互斥矩阵（M1-M4）——仅该票有回补记忆时检查
+            _ab_now = (getattr(context.engine, "awaiting_buyback", {}) or {}).get(code)
+            if _ab_now:
+                _day_open = float(getattr(context, "_day_open", {}).get(code, row.get("open", 0)) or 0)
+                _mx_act, _mx_rule = _buyback_mutex_block(context, code, daily_ctx,
+                                                         _day_open, cp, now, _ab_now)
+                if _mx_act == "block":
+                    context.engine.awaiting_buyback.pop(code, None)
+                    try:
+                        write_buyback(str(now), code, "blocked",
+                                      detail=(f"rule={_mx_rule} "
+                                              f"sell={_ab_now.get('sell_price')} "
+                                              f"target={_ab_now.get('target_price')} "
+                                              f"trend={daily_ctx.get('_stock_trend_state', '')}"),
+                                      rule=_mx_rule, sell_price=_ab_now.get("sell_price"),
+                                      target_price=_ab_now.get("target_price"))
+                    except Exception:
+                        pass
+                    _audit_write({"event": "buyback_blocked", "code": code, "rule": _mx_rule,
+                                  "sell_price": _ab_now.get("sell_price"),
+                                  "target_price": _ab_now.get("target_price"),
+                                  "time": str(now)})
+                    try:
+                        _sell_state_persist(context, code, gm_sym)  # 落盘清除镜像
+                    except Exception:
+                        pass
+                    continue
+                if _mx_act == "delay":
+                    try:
+                        write_buyback(str(now), code, "blocked",
+                                      detail=(f"rule=M3 开盘跳空延迟到09:35后评估 "
+                                              f"sell={_ab_now.get('sell_price')}"),
+                                      rule="M3", sell_price=_ab_now.get("sell_price"))
+                    except Exception:
+                        pass
+                    _audit_write({"event": "buyback_blocked", "code": code, "rule": "M3",
+                                  "sell_price": _ab_now.get("sell_price"),
+                                  "time": str(now)})
+                    continue
 
             # WP-E3: 持仓槽位闸（买入执行块）——仅全新建仓(pos_qty<=0)检查；
             # 已持仓票的做T买入不新增持票数，不受槽位闸限制

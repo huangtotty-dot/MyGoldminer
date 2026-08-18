@@ -25,6 +25,17 @@ def _engine_now() -> datetime:
 
 # ===== 工具函数 =====
 
+def _business_day_add(d, n):
+    """WP-B18: 日期加 n 个交易日（跳过周末；节假日不剔除，交易日历留 Phase D）。"""
+    cur = d
+    cnt = 0
+    while cnt < n:
+        cur += timedelta(days=1)
+        if cur.weekday() < 5:
+            cnt += 1
+    return cur
+
+
 def _sp_param(code: str, key: str, default=None):
     """个股专属参数 > 全局 PARAMS > default"""
     v = STOCK_PARAMS.get(code, {}).get(key)
@@ -518,13 +529,23 @@ class SignalEngine:
             ab = self.awaiting_buyback.get(code)
             if ab and float(ab.get("sell_price", 0) or 0) > 0 and feats.get("price", 0) > 0:
                 _ttl = int(p.get("awaiting_buyback_ttl_minutes", 240))
-                _elapsed = (now - ab["sell_time"]).total_seconds() / 60
-                if _elapsed > _ttl:
+                _expired = False
+                if ab.get("persisted"):
+                    # WP-B18: 跨日恢复记忆——日内 TTL 不再适用，按 expire_date 判过期
+                    _exp = str(ab.get("expire_date", "") or "")
+                    if _exp and str(now.date()) > _exp:
+                        _expired = True
+                else:
+                    _elapsed = (now - ab["sell_time"]).total_seconds() / 60
+                    if _elapsed > _ttl:
+                        _expired = True
+                if _expired:
                     self.awaiting_buyback.pop(code, None)  # 过期清除
                     self.diagnostics[code] = {
                         "buyback_ttl_expired": True,
                         "sell_price": ab.get("sell_price"),
-                        "elapsed_min": round(_elapsed, 1),
+                        "elapsed_min": round(_elapsed, 1) if not ab.get("persisted") else None,
+                        "expire_date": ab.get("expire_date"),
                     }
                 else:
                     _sp = float(ab["sell_price"])
@@ -532,8 +553,10 @@ class SignalEngine:
                     _premium = (_cp - _sp) / _sp  # >0=回补价高于前卖价(高接)
                     _delay_pct = float(p.get("buyback_above_sell_delay_pct", 0.01))
                     _dg_pct = float(p.get("buyback_above_sell_downgrade_pct", 0.0))
+                    _target = float(ab.get("target_price", _sp) or _sp)
                     buyback_info = {
                         "sell_price": _sp, "price": _cp,
+                        "target_price": _target,
                         "premium": round(_premium, 6),
                         "sell_time": str(ab.get("sell_time")),
                         "sell_action": ab.get("sell_action", ""),
@@ -542,6 +565,10 @@ class SignalEngine:
                         buyback_gate = "delayed"      # 硬延迟线之上：不接
                     elif _premium > _dg_pct:
                         buyback_gate = "downgrade"    # 软降档带：信号保留、数量减半
+                    elif _cp > _target:
+                        # WP-B18 3.3: 触发价语义——price <= target_price 才达标（平触算达标）。
+                        # 未回踩到 target 的浅折让/平价不算回补触发（600481 =4.36 平触即达标）
+                        buyback_gate = "not_target"
                     else:
                         # 价格不高于前卖价（正常低吸接回）：接通原系统激励
                         # （E:\06_T\signal_engine.py 语义——折让>0.5% 强激励 / >0.1% 弱激励）
@@ -575,6 +602,19 @@ class SignalEngine:
                     self.last_decision[code] = {
                         "action": "HOLD",
                         "reason": "buyback_above_sell_delayed",
+                        "buy_score": buy_score,
+                        "sell_score": sell_score,
+                        "buy_blocks": buy_blocks,
+                        "sell_blocks": sell_blocks,
+                        **buyback_info,
+                    }
+                    return buy_score, sell_score, None
+                if buyback_gate == "not_target":
+                    # WP-B18 3.3: 未回踩到 target → 不作为回补触发，留痕后按 HOLD 返回
+                    self.diagnostics[code] = {"buyback_not_target": buyback_info}
+                    self.last_decision[code] = {
+                        "action": "HOLD",
+                        "reason": "buyback_not_target",
                         "buy_score": buy_score,
                         "sell_score": sell_score,
                         "buy_blocks": buy_blocks,
@@ -637,12 +677,15 @@ class SignalEngine:
         _gap = float(p.get("awaiting_buyback_vwap_gap", 0.998))
         if _gap < 0.1:
             _gap = 1.0 - _gap
+        # WP-B18: 有效期 = 卖出日 + N 交易日（跨日持久化用；日内仍以 TTL 为主判断）
+        _n = int(p.get("buyback_persist_days", 3))
         rec = {
             "sell_price": price,
             "sell_time": now,
             "sell_qty": int(qty or 0),
             "sell_action": action,
             "target_price": round(price * _gap, 2),
+            "expire_date": _business_day_add(now.date(), _n).strftime("%Y-%m-%d"),
         }
         self.awaiting_buyback[code] = rec
         return rec
