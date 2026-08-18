@@ -1,0 +1,4 @@
+{"time": "2026-08-18T09:30:59", "title": "⚠️ 风控 — 五洲新春(603667)", "level": "orange", "sent": true, "content": "entry_gate: G4: RSI=67.0 不在[30,55] 支撑=['daily_ma10']"}
+{"time": "2026-08-18T09:30:59", "title": "⚠️ 风控 — 中国巨石(600176)", "level": "orange", "sent": true, "content": "entry_gate: G4: 未回踩支撑带 cp=45.91 daily_ma10=42.25 daily_ma20=40.27 daily_ma60=47.74 daily_boll_lower=33.68"}
+{"time": "2026-08-18T09:40:01", "title": "⚠️ 风控 — 中国巨石(600176)", "level": "orange", "sent": true, "content": "entry_gate: G4: RSI=66.8 不在[30,55] 支撑=['daily_ma60']"}
+{"time": "2026-08-18T14:29:58", "title": "🔴 成交 — 五洲新春(603667)", "level": "green", "sent": true, "content": "卖出 100股 @ 56.61 | 成交后持仓: 500股"}

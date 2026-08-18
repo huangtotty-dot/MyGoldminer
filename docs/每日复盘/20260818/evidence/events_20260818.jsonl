@@ -1,0 +1,8 @@
+{"event": "risk", "time": "2026-08-18 09:30:57.715000+08:00", "code": "603667", "kind": "entry_gate", "detail": "G4: RSI=67.0 不在[30,55] 支撑=['daily_ma10']", "_ts": 1787016658.3557851}
+{"event": "risk", "time": "2026-08-18 09:30:59.015000+08:00", "code": "600176", "kind": "entry_gate", "detail": "G4: 未回踩支撑带 cp=45.91 daily_ma10=42.25 daily_ma20=40.27 daily_ma60=47.74 daily_boll_lower=33.68", "_ts": 1787016659.1415973}
+{"event": "risk", "time": "2026-08-18 09:39:59.396000+08:00", "code": "600176", "kind": "entry_gate", "detail": "G4: RSI=66.8 不在[30,55] 支撑=['daily_ma60']", "_ts": 1787017199.4163835}
+{"event": "risk", "time": "2026-08-18 09:40:58.663000+08:00", "code": "600176", "kind": "entry_gate", "detail": "G4: 未回踩支撑带 cp=46.73 daily_ma10=42.25 daily_ma20=40.27 daily_ma60=47.74 daily_boll_lower=33.68", "_ts": 1787017258.7215307}
+{"event": "signal", "time": "2026-08-18 14:29:57.458000+08:00", "code": "603667", "action": "SELL_HIGH", "score": 68.9, "reasons": ["评分达标"], "pos_qty": 600, "_ts": 1787034597.5179937}
+{"event": "order", "time": "2026-08-18 14:29:57.458000+08:00", "code": "603667", "side": "SELL", "qty": 100, "price": 56.61, "order_id": "", "order_type": "MKT", "_ts": 1787034597.519992}
+{"event": "fill", "time": "2026-08-18 14:29:57.589533", "code": "603667", "side": "SELL", "qty": 100, "price": 56.61000061035156, "order_id": "", "pos_after": 500, "_ts": 1787034597.5895333}
+{"event": "buyback_armed", "time": "2026-08-18 14:29:57.590000+08:00", "code": "603667", "detail": "sell=56.61000061035156 qty=100 action=SELL_HIGH target=56.5", "sell_price": 56.61000061035156, "qty": 100, "sell_action": "SELL_HIGH", "target_price": 56.5, "_ts": 1787034597.5905225}
