@@ -188,6 +188,18 @@ def _push_throttled(key: str, title: str, content: str, level: str, window: int 
     _push(title, content, level)
 
 
+def _push_risk_throttled(code: str, kind: str, title: str, content: str,
+                         level: str, window: int = 1800):
+    """O-13: 同票同 kind 风控推送节流——每日首次推送 + 之后 window 秒（默认30分钟）节流。
+    事件桥 jsonl 原文照写（审计流不减，只节推送层）；键含日期，日切自清（同 B-15 mute 思路）。"""
+    _k = f'risk_{code}_{kind}_{datetime.now().strftime("%Y-%m-%d")}'
+    _now = time.time()
+    if _now - _last_push.get(_k, 0) < window:
+        return
+    _last_push[_k] = _now
+    _push(title, content, level)
+
+
 def _check_heartbeat():
     global _last_hb_ts, _last_heartbeat_ok
     now = time.time()
@@ -279,11 +291,12 @@ def handle_event(rec: dict):
         elif kind in ("position_limit", "floor_protection"):
             pass  # 不推飞书（噪音），仅记录
         elif kind == "cash_insufficient":
-            if _should_push("risk", dk, code):
-                _push(f"💰 现金不足 — {label}", rec.get("detail", ""), "orange")
+            _push_risk_throttled(code, kind, f"💰 现金不足 — {label}",
+                                 rec.get("detail", ""), "orange")
         else:
-            if _should_push("risk", dk, code):
-                _push(f"⚠️ 风控 — {label}", f"{kind}: {rec.get('detail','')}", "orange")
+            # O-13: 同票同 kind 风控推送节流（每日首次+30分钟；覆盖 entry_gate 等）
+            _push_risk_throttled(code, kind, f"⚠️ 风控 — {label}",
+                                 f"{kind}: {rec.get('detail','')}", "orange")
 
     elif event == "order":
         pass  # 订单事件不单独推送，等 fill 再推

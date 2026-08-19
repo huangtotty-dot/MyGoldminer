@@ -116,7 +116,7 @@ def _sell_arbiter(context, code, sig, pos_qty, cp, now, holding, threshold,
     # 地板检查
     base_ref = getattr(context, f"_base_ref_{code}", pos_qty)
     setattr(context, f"_base_ref_{code}", base_ref)
-    _is_protection = sig.action in ("PANIC_SELL", "TRAIL_SELL", "TREND_EXIT")
+    _is_protection = sig.action in ("PANIC_SELL", "TRAIL_SELL", "TREND_EXIT", "MA5_EXIT")
     sell_floor_ratio = 0.0 if _is_protection else float(PARAMS.get("sell_floor_ratio", 0.5))
     min_hold = int(base_ref * sell_floor_ratio)
     if pos_qty - 100 < min_hold:
@@ -154,20 +154,26 @@ def _sell_arbiter(context, code, sig, pos_qty, cp, now, holding, threshold,
         return False
 
     # sizer 计算卖出量
-    qty = context.sizer.calc_sell_qty(code, holding, sig.score, threshold, used_sells=sc)
-    if qty < 100:
-        qty = min(300, pos_qty)
-    # F13: TREND_EXIT 量封顶到超 base_ref 部分——设计语义"只卖利润仓/超额仓，
-    # 底仓本体永不触发"(WP-F8)，sizer 定量可能越界(WP-B回放包fix4实证:
-    # pos600/base_ref500/excess100 却卖出200→底仓被啃100)
-    if sig.action == "TREND_EXIT":
-        qty = min(qty, max(0, pos_qty - base_ref))
-    # N25-3: T+1 可用量检查 — 区分 None(缺key兜底) 与 0(合法当日全锁)
-    _avail_raw = holding.get("available")
-    _avail = pos_qty if _avail_raw is None else int(_avail_raw)
-    qty = min(qty, pos_qty, _avail)
-    # F9: 扣除在途量，委托总量不得超可用持仓
-    qty = min(qty, max(0, min(pos_qty, _avail) - _inflight))
+    if sig.action == "MA5_EXIT":
+        # WP-B19 a: 全离（可用量，非 sizer 定量；遵守 T+1——当日买入锁定部分次日破位续卖）
+        _avail_raw = holding.get("available")
+        _avail = pos_qty if _avail_raw is None else int(_avail_raw)
+        qty = max(0, min(pos_qty, _avail) - _inflight)
+    else:
+        qty = context.sizer.calc_sell_qty(code, holding, sig.score, threshold, used_sells=sc)
+        if qty < 100:
+            qty = min(300, pos_qty)
+        # F13: TREND_EXIT 量封顶到超 base_ref 部分——设计语义"只卖利润仓/超额仓，
+        # 底仓本体永不触发"(WP-F8)，sizer 定量可能越界(WP-B回放包fix4实证:
+        # pos600/base_ref500/excess100 却卖出200→底仓被啃100)
+        if sig.action == "TREND_EXIT":
+            qty = min(qty, max(0, pos_qty - base_ref))
+        # N25-3: T+1 可用量检查 — 区分 None(缺key兜底) 与 0(合法当日全锁)
+        _avail_raw = holding.get("available")
+        _avail = pos_qty if _avail_raw is None else int(_avail_raw)
+        qty = min(qty, pos_qty, _avail)
+        # F9: 扣除在途量，委托总量不得超可用持仓
+        qty = min(qty, max(0, min(pos_qty, _avail) - _inflight))
     if qty < 100:
         _audit_write({"event": "sell_skip", "code": code, "action": sig.action,
                       "score": sig.score, "reason": "qty",
@@ -786,6 +792,15 @@ def _pos_key(qty, cost):
     return f"{int(qty or 0)}@{float(cost or 0):.4f}"
 
 
+def _split_pos_key(pk):
+    """O-12: 拆解析 pos_key 'qty@cost' → (qty, cost)。异常返回 (None, None)。"""
+    try:
+        q, c = str(pk).split("@")
+        return int(float(q)), float(c)
+    except Exception:
+        return None, None
+
+
 def _sell_state_persist(context, code, gm_sym):
     """把该票内存卖出状态镜像落盘。清仓(qty<=0)时作废该票状态段。"""
     try:
@@ -848,10 +863,23 @@ def _sell_state_restore(context):
             print(f"[INIT] {code} sell_state 作废: 已清仓")
             continue
         if st.get("pos_key") != _pos_key(qty, cost):
-            state.pop(code, None)
-            print(f"[INIT] {code} sell_state 作废: pos_key 不符 "
-                  f"file={st.get('pos_key')} now={_pos_key(qty, cost)}")
-            continue
+            # O-12: pos_key 容差匹配——数量一致且成本差 ≤ max(0.05元, 0.5%) → 视为匹配并
+            # 静默更新指纹（吸收柜台 T+1 清算成本漂移，0818 案例 +0.002 元）；否则作废留痕
+            _fq, _fc = _split_pos_key(st.get("pos_key"))
+            _tol = 0.0
+            if _fc and _fc > 0 and cost > 0 and int(_fq or 0) == int(qty or 0):
+                _tol = max(0.05, 0.005 * max(_fc, cost))
+            if _tol > 0 and abs(_fc - cost) <= _tol:
+                st["pos_key"] = _pos_key(qty, cost)
+                _audit_write({"event": "pos_key_tolerance", "code": code,
+                              "file_cost": _fc, "now_cost": cost,
+                              "diff": abs(_fc - cost), "tol": _tol,
+                              "time": str(datetime.now())})
+            else:
+                state.pop(code, None)
+                print(f"[INIT] {code} sell_state 作废: pos_key 不符 "
+                      f"file={st.get('pos_key')} now={_pos_key(qty, cost)}")
+                continue
         if sym not in context.manual_position:
             continue
         _l1 = st.get("_target_l1_state")
@@ -1309,6 +1337,24 @@ def on_bar(context, bars):
             # R1/A3: 底仓过趋势闸——TREND_BREAKDOWN 延迟到次日（F5: 回退61a19e6激进模式）
             _trend = _dc.get("_stock_trend_state", "TREND_RANGE")
             _topup_blocked = False
+            # WP-B19 c: MA5 破位日禁 BASE 建仓/回补（最先执行，任何门槛前拦截；每票每日去重留痕）
+            _base_ma5 = float(_dc.get("daily_ma5", 0) or 0)
+            if not _topup_blocked and _base_ma5 > 0 and cp < _base_ma5:
+                _bma5k = f'_ma5_block_{code}'
+                if getattr(context, _bma5k, '') != now.strftime("%Y-%m-%d"):
+                    setattr(context, _bma5k, now.strftime("%Y-%m-%d"))
+                    try:
+                        write_risk(str(now), "ma5_break_block",
+                                   f"BASE cp={cp:.2f} < ma5={_base_ma5:.2f}", code=code)
+                    except Exception:
+                        pass
+                    _audit_write({"event": "buy_blocked", "code": code, "reason": "ma5_break",
+                                  "where": "base", "cp": cp, "ma5": _base_ma5,
+                                  "time": str(now)})
+                    print(f"[{now:%H:%M:%S}] BASE {code} MA5破位→禁建仓 cp={cp:.2f}<ma5={_base_ma5:.2f}")
+                if not _is_topup:
+                    return
+                _topup_blocked = True
             if _trend == "TREND_BREAKDOWN":
                 _defer_key = f'_base_deferred_{code}'
                 if getattr(context, _defer_key, '') != now.strftime("%Y-%m-%d"):
@@ -1476,6 +1522,19 @@ def on_bar(context, bars):
         if is_tail and sig and sig.action in ("BUY_LOW", "ADD_POS"):
             sig = None
 
+        # ── WP-B19 a/b/d/e: MA5 破位全离通道（第四类保护，优先级最高，TRAIL 之前） ──
+        # 静态 MA5（daily_ma5，前 5 日收盘均值，日内不变）；破位→全离（可用量）+ 禁一切买入
+        _ma5_val = float(daily_ctx.get("daily_ma5", 0) or 0)
+        if _ma5_val > 0 and cp < _ma5_val and pos_qty > 0:
+            from data.indicators import Signal as _Ma5Sig
+            sig = _Ma5Sig(code=code, name=STOCK_NAMES.get(code, code),
+                          action="MA5_EXIT", price=cp, score=80.0,
+                          reasons=[f"MA5破位离场: cp={cp:.2f} < ma5={_ma5_val:.2f} ({cp/_ma5_val-1:.1%})"])
+            # 破位日标记（供买侧禁令/留痕查询；破位状态每日由 price vs 当日 MA5 动态重建，无需落盘）
+            if not hasattr(context, "_ma5_broken"):
+                context._ma5_broken = {}
+            context._ma5_broken[code] = now.strftime("%Y-%m-%d")
+
         # ── B1/T1: TRAIL_SELL 移动止盈 ──
         # TODO(PhaseD): 寻优 ACT_LINE/k/MIN_BACK/MAX_BACK
         feats_cache = getattr(context.engine, "_last_feats", {}).get(code, {})
@@ -1499,7 +1558,7 @@ def on_bar(context, bars):
             _daily_atr = daily_ctx.get("daily_atr", 0.02) or 0.02
             _back = max(0.03, min(1.5 * _daily_atr, 0.08))  # TODO(PhaseD): MIN_BACK/k/MAX_BACK
             _drawdown = (_trail_peak - cp) / _trail_peak if _trail_peak > 0 else 0
-            if _drawdown > _back and not _panic_on_cooldown:
+            if _drawdown > _back and not _panic_on_cooldown and (sig is None or sig.action != "MA5_EXIT"):
                 from data.indicators import Signal
                 sig = Signal(code=code, name=STOCK_NAMES.get(code, code),
                              action="TRAIL_SELL", price=cp, score=80.0,
@@ -1521,8 +1580,8 @@ def on_bar(context, bars):
         # B2/T3: 趋势破坏止盈 TREND_EXIT
         _profit = feats_cache.get("profit_pct", 0)
         _base_ref = getattr(context, f'_base_ref_{code}', 0) or pos_qty
-        # N20: 不得覆盖更高优先级信号(P1 PANIC/P2 TRAIL)
-        if ((sig is None or sig.action not in ("PANIC_SELL", "TRAIL_SELL"))
+        # N20: 不得覆盖更高优先级信号(P1 PANIC/P2 TRAIL/P0 MA5_EXIT)
+        if ((sig is None or sig.action not in ("PANIC_SELL", "TRAIL_SELL", "MA5_EXIT"))
                 and _profit > 0 and not _panic_on_cooldown
                 and daily_ctx.get("_stock_trend_state") in ("TREND_DOWN", "TREND_BREAKDOWN")):
             from data.indicators import Signal as _Sig
@@ -1552,7 +1611,7 @@ def on_bar(context, bars):
                 context.manual_position[gm_sym]["_target_l1_state"] = None
                 _sell_state_persist(context, code, gm_sym)
 
-        if feats_cache.get("is_deep_loss") and not _panic_on_cooldown:
+        if feats_cache.get("is_deep_loss") and not _panic_on_cooldown and (sig is None or sig.action != "MA5_EXIT"):
             from data.indicators import Signal
             sig = Signal(code=code, name=STOCK_NAMES.get(code, code),
                          action="PANIC_SELL", price=cp, score=75.0,
@@ -1562,7 +1621,7 @@ def on_bar(context, bars):
 
         # ── D5-c: 尾盘回转（14:50-15:00），超底仓部分强制卖出归位 ──
         if is_tail and pos_qty > getattr(context, '_base_ref_' + code, pos_qty) and not _panic_on_cooldown:
-            if sig is None or sig.action not in ('SELL_HIGH', 'PANIC_SELL'):
+            if sig is None or sig.action not in ('SELL_HIGH', 'PANIC_SELL', 'MA5_EXIT'):
                 target = getattr(context, '_base_ref_' + code, pos_qty)
                 excess = pos_qty - target
                 if excess >= 100:
@@ -1699,7 +1758,7 @@ def on_bar(context, bars):
         max_buys = stock_params.get("max_buy_times_per_stock", 3)
 
         # ── D1: 引擎冷却/计数 ──
-        threshold = stock_params.get("notify_sell_threshold", 65) if sig.action in ("SELL_HIGH", "PANIC_SELL", "TRAIL_SELL", "TREND_EXIT", "TARGET_SELL") else \
+        threshold = stock_params.get("notify_sell_threshold", 65) if sig.action in ("SELL_HIGH", "PANIC_SELL", "TRAIL_SELL", "TREND_EXIT", "TARGET_SELL", "MA5_EXIT") else \
                     stock_params.get("notify_buy_threshold", 43)
 
         if sig.score < threshold:
@@ -1707,6 +1766,22 @@ def on_bar(context, bars):
 
         # 执行交易
         if sig.action in ("BUY_LOW", "ADD_POS"):
+            # WP-B19 c: MA5 破位日禁一切买入（BUY_LOW/buyback/ADD_POS 一视同仁；每票每日去重留痕）
+            _ma5_v = float(daily_ctx.get("daily_ma5", 0) or 0)
+            if _ma5_v > 0 and cp < _ma5_v:
+                _mbk = f'_ma5_block_{code}'
+                if getattr(context, _mbk, '') != now.strftime("%Y-%m-%d"):
+                    setattr(context, _mbk, now.strftime("%Y-%m-%d"))
+                    try:
+                        write_risk(str(now), "ma5_break_block",
+                                   f"cp={cp:.2f} < ma5={_ma5_v:.2f}", code=code)
+                    except Exception:
+                        pass
+                    _audit_write({"event": "buy_blocked", "code": code, "reason": "ma5_break",
+                                  "action": sig.action, "cp": cp, "ma5": _ma5_v,
+                                  "time": str(now)})
+                    print(f"[{now:%H:%M:%S}] BUY {code} MA5破位→禁买 cp={cp:.2f}<ma5={_ma5_v:.2f}")
+                continue
             if _killed:
                 try:
                     write_risk(str(now), "kill_switch", f"KILL_SWITCH 阻止 {code} 买入", code=code)
@@ -1895,7 +1970,7 @@ def on_bar(context, bars):
             except Exception as e:
                 print(f"[{now:%H:%M:%S}] BUY {code} 失败: {e}")
 
-        elif sig.action in ("SELL_HIGH", "PANIC_SELL", "TRAIL_SELL", "TREND_EXIT", "TARGET_SELL"):
+        elif sig.action in ("SELL_HIGH", "PANIC_SELL", "TRAIL_SELL", "TREND_EXIT", "TARGET_SELL", "MA5_EXIT"):
             # T4: 仲裁器统一处理（地板 + 阈值 + sizer + 下单 + 审计）
             _sell_arbiter(context, code, sig, pos_qty, cp, now, holding,
                           threshold, stock_params, gm_sym)
@@ -1938,6 +2013,11 @@ def on_order_status(context, order):
         if code in STOCKS:
             _action = 'BUY_LOW' if side == 1 else 'SELL_HIGH'
             _rta = context.engine.record_trade_action(code, _action, volume, price)
+            # WP-B19 f: MA5_EXIT 破位离场不生成回补记忆（破位不回头；
+            # record_trade_action 以 SELL_HIGH 记 arm，此处按真实通道清除）
+            if side == 2 and getattr(context, "_pending_sell_action", {}).get(symbol, ("", 0))[0] == "MA5_EXIT":
+                context.engine.awaiting_buyback.pop(code, None)
+                _rta = None
         _rta = _rta or {}
         if side == 1:  # 买入
             old = context.executed_orders.get(symbol, {"qty": 0, "available": 0, "cost": price})
