@@ -1,0 +1,24 @@
+{
+  "603667": {
+    "_target_l1_state": null,
+    "_trail_state": "COOLED",
+    "_trail_peak": 58.03,
+    "pos_key": "500@53.1085",
+    "updated": "2026-08-19 09:37:58.399000+08:00",
+    "_buyback": null
+  },
+  "600481": {
+    "_target_l1_state": null,
+    "_trail_state": "INACTIVE",
+    "_trail_peak": 0.0,
+    "pos_key": "1400@4.3137",
+    "updated": "2026-08-17 14:57:59.774000+08:00"
+  },
+  "000988": {
+    "_target_l1_state": null,
+    "_trail_state": "INACTIVE",
+    "_trail_peak": 0.0,
+    "pos_key": "500@109.2672",
+    "updated": "2026-08-18 14:57:59.321000+08:00"
+  }
+}

@@ -1,0 +1,50 @@
+
+===== strategy run start 2026-08-19T08:35:27 pid=1728 =====
+[ops] 控制台日志已落盘: C:\Users\Lenovo\.goldminer3\projects\e8bb1f4d-87ce-11f1-97f7-98fa9b8df5e7\logs\strategy_20260819.log
+[ops] watcher 心跳缺失/过期(>90s)，已自动拉起，stdout→C:\Users\Lenovo\.goldminer3\projects\e8bb1f4d-87ce-11f1-97f7-98fa9b8df5e7\logs\watcher_stdout.log
+[INIT] 000988 华工科技 持仓对账: 500股 可用500 成本109.27
+[INIT] 600481 双良节能 持仓对账: 1400股 可用1400 成本4.31
+[INIT] 603667 五洲新春 持仓对账: 500股 可用500 成本53.28
+[INIT] 603667 sell_state 恢复: l1=None trail=ARMED peak=58.03
+[INIT] 600481 sell_state 恢复: l1=None trail=INACTIVE peak=0.0
+[INIT] 000988 sell_state 恢复: l1=None trail=INACTIVE peak=0.0
+[init] 大盘日线已缓存: 900 行, 2022-12-01 ~ 2026-08-18
+[init] WP-E2/E3 预算表: equity=240499 reserve=20% 每股预算=48100(按4槽分解) max_pos_shares=000988:400 600481:10900 600176:1000 603667:800 300054:500 300364:1900 002639:4000 300153:2000 300456:1400 002202:2100 002536:1000 002176:5100 600584:500 002261:1700 600089:2300 002451:6500
+[init] 事件桥: C:\Users\Lenovo\.goldminer3\projects\e8bb1f4d-87ce-11f1-97f7-98fa9b8df5e7\runtime\bridge
+[init] 策略初始化完成: 16 只标的
+[ir] 2026-08-19 regime=range score=10.5
+[D6] amount/volume=107.38 close=107.21 → VWAP单位比=1.0016
+[09:30:57] BASE 002176 跳过: MIRROR_HOLDINGS 中无此标的或 qty<100
+[09:30:57] BASE 002202 跳过: MIRROR_HOLDINGS 中无此标的或 qty<100
+[09:30:57] BASE 002261 跳过: MIRROR_HOLDINGS 中无此标的或 qty<100
+[09:30:57] BASE 002451 跳过: MIRROR_HOLDINGS 中无此标的或 qty<100
+[09:30:57] BASE 002639 跳过: MIRROR_HOLDINGS 中无此标的或 qty<100
+[09:30:58] BASE 002536 跳过: MIRROR_HOLDINGS 中无此标的或 qty<100
+[09:30:58] BASE 600176 中国巨石 G4支撑闸→仅观察 G4: 未回踩支撑带 cp=42.33 daily_ma10=43.12 daily_ma20=40.37 daily_ma60=47.84 daily_boll_lower=33.56
+[09:30:58] BASE 600584 跳过: MIRROR_HOLDINGS 中无此标的或 qty<100
+[09:30:58] BASE 603667 五洲新春 G4支撑闸→仅观察 G4: RSI=70.1 不在[30,55] 支撑=['daily_ma20']
+[09:30:58] BASE 600089 跳过: MIRROR_HOLDINGS 中无此标的或 qty<100
+[09:30:58] BASE 300054 跳过: MIRROR_HOLDINGS 中无此标的或 qty<100
+[09:30:58] BASE 300153 跳过: MIRROR_HOLDINGS 中无此标的或 qty<100
+[09:30:58] BASE 300364 跳过: MIRROR_HOLDINGS 中无此标的或 qty<100
+[09:30:58] BASE 300456 跳过: MIRROR_HOLDINGS 中无此标的或 qty<100
+[09:31:59] SELL 603667 200@54.04 score=80 regime=range
+[09:36:57] BUY 000988 个股仓位到顶拦截: budget=37700 equity=188499 weight=20.0% max_pos_shares=300 base_ref=500 pos_qty=500 reason=pos_at_cap
+[09:36:58] BASE 600176 中国巨石 G4支撑闸→仅观察 G4: RSI=62.2 不在[30,55] 支撑=['daily_ma10']
+[09:37:58] BUY 603667 200@52.85 score=71 regime=range
+[10:13:58] BASE 600176 中国巨石 G4支撑闸→仅观察 G4: 未回踩支撑带 cp=42.40 daily_ma10=43.12 daily_ma20=40.37 daily_ma60=47.84 daily_boll_lower=33.56
+[10:37:58] BASE 600176 中国巨石 G4支撑闸→仅观察 G4: RSI=62.2 不在[30,55] 支撑=['daily_ma20']
+[10:40:58] BASE 600176 中国巨石 G4支撑闸→仅观察 G4: 未回踩支撑带 cp=41.52 daily_ma10=43.12 daily_ma20=40.37 daily_ma60=47.84 daily_boll_lower=33.56
+[11:21:58] BASE 600176 中国巨石 G4支撑闸→仅观察 G4: RSI=62.2 不在[30,55] 支撑=['daily_ma20']
+[11:23:58] BASE 600176 中国巨石 G4支撑闸→仅观察 G4: 未回踩支撑带 cp=41.38 daily_ma10=43.12 daily_ma20=40.37 daily_ma60=47.84 daily_boll_lower=33.56
+[11:26:58] BASE 600176 中国巨石 G4支撑闸→仅观察 G4: RSI=62.2 不在[30,55] 支撑=['daily_ma20']
+[13:29:59] BASE 600176 中国巨石 G4支撑闸→仅观察 G4: 未回踩支撑带 cp=41.40 daily_ma10=43.12 daily_ma20=40.37 daily_ma60=47.84 daily_boll_lower=33.56
+[13:30:58] BASE 600176 中国巨石 G4支撑闸→仅观察 G4: RSI=62.2 不在[30,55] 支撑=['daily_ma20']
+[13:31:57] BASE 600176 中国巨石 G4支撑闸→仅观察 G4: 未回踩支撑带 cp=41.52 daily_ma10=43.12 daily_ma20=40.37 daily_ma60=47.84 daily_boll_lower=33.56
+[13:34:58] BASE 600176 中国巨石 G4支撑闸→仅观察 G4: RSI=62.2 不在[30,55] 支撑=['daily_ma20']
+[13:35:58] BASE 600176 中国巨石 G4支撑闸→仅观察 G4: 未回踩支撑带 cp=41.44 daily_ma10=43.12 daily_ma20=40.37 daily_ma60=47.84 daily_boll_lower=33.56
+[13:36:58] BASE 600176 中国巨石 G4支撑闸→仅观察 G4: RSI=62.2 不在[30,55] 支撑=['daily_ma20']
+[13:38:58] BASE 600176 中国巨石 G4支撑闸→仅观察 G4: 未回踩支撑带 cp=41.49 daily_ma10=43.12 daily_ma20=40.37 daily_ma60=47.84 daily_boll_lower=33.56
+[13:43:58] BASE 600176 中国巨石 G4支撑闸→仅观察 G4: RSI=62.2 不在[30,55] 支撑=['daily_ma20']
+[13:44:58] BASE 600176 中国巨石 G4支撑闸→仅观察 G4: 未回踩支撑带 cp=41.44 daily_ma10=43.12 daily_ma20=40.37 daily_ma60=47.84 daily_boll_lower=33.56
+[13:49:58] BASE 600176 中国巨石 G4支撑闸→仅观察 G4: RSI=62.2 不在[30,55] 支撑=['daily_ma20']

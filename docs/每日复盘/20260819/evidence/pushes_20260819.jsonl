@@ -1,0 +1,21 @@
+{"time": "2026-08-19T09:31:00", "title": "⚠️ 风控 — 中国巨石(600176)", "level": "orange", "sent": true, "content": "entry_gate: G4: 未回踩支撑带 cp=42.33 daily_ma10=43.12 daily_ma20=40.37 daily_ma60=47.84 daily_boll_lower=33.56"}
+{"time": "2026-08-19T09:31:01", "title": "⚠️ 风控 — 五洲新春(603667)", "level": "orange", "sent": true, "content": "entry_gate: G4: RSI=70.1 不在[30,55] 支撑=['daily_ma20']"}
+{"time": "2026-08-19T09:32:01", "title": "🔴 成交 — 五洲新春(603667)", "level": "green", "sent": true, "content": "卖出 200股 @ 54.01 | 成交后持仓: 300股"}
+{"time": "2026-08-19T09:36:58", "title": "⚠️ 风控 — 华工科技(000988)", "level": "orange", "sent": true, "content": "max_pos_cap: budget=37700 equity=188499 weight=20.0% max_pos_shares=300 base_ref=500 pos_qty=500 reason=pos_at_cap"}
+{"time": "2026-08-19T09:37:00", "title": "⚠️ 风控 — 中国巨石(600176)", "level": "orange", "sent": true, "content": "entry_gate: G4: RSI=62.2 不在[30,55] 支撑=['daily_ma10']"}
+{"time": "2026-08-19T09:37:59", "title": "🔵 成交 — 五洲新春(603667)", "level": "green", "sent": true, "content": "买入 200股 @ 52.85 | 成交后持仓: 500股"}
+{"time": "2026-08-19T10:13:59", "title": "⚠️ 风控 — 中国巨石(600176)", "level": "orange", "sent": true, "content": "entry_gate: G4: 未回踩支撑带 cp=42.40 daily_ma10=43.12 daily_ma20=40.37 daily_ma60=47.84 daily_boll_lower=33.56"}
+{"time": "2026-08-19T10:37:59", "title": "⚠️ 风控 — 中国巨石(600176)", "level": "orange", "sent": true, "content": "entry_gate: G4: RSI=62.2 不在[30,55] 支撑=['daily_ma20']"}
+{"time": "2026-08-19T10:41:00", "title": "⚠️ 风控 — 中国巨石(600176)", "level": "orange", "sent": true, "content": "entry_gate: G4: 未回踩支撑带 cp=41.52 daily_ma10=43.12 daily_ma20=40.37 daily_ma60=47.84 daily_boll_lower=33.56"}
+{"time": "2026-08-19T11:22:00", "title": "⚠️ 风控 — 中国巨石(600176)", "level": "orange", "sent": true, "content": "entry_gate: G4: RSI=62.2 不在[30,55] 支撑=['daily_ma20']"}
+{"time": "2026-08-19T11:23:59", "title": "⚠️ 风控 — 中国巨石(600176)", "level": "orange", "sent": true, "content": "entry_gate: G4: 未回踩支撑带 cp=41.38 daily_ma10=43.12 daily_ma20=40.37 daily_ma60=47.84 daily_boll_lower=33.56"}
+{"time": "2026-08-19T11:27:00", "title": "⚠️ 风控 — 中国巨石(600176)", "level": "orange", "sent": true, "content": "entry_gate: G4: RSI=62.2 不在[30,55] 支撑=['daily_ma20']"}
+{"time": "2026-08-19T13:30:02", "title": "⚠️ 风控 — 中国巨石(600176)", "level": "orange", "sent": true, "content": "entry_gate: G4: 未回踩支撑带 cp=41.40 daily_ma10=43.12 daily_ma20=40.37 daily_ma60=47.84 daily_boll_lower=33.56"}
+{"time": "2026-08-19T13:31:00", "title": "⚠️ 风控 — 中国巨石(600176)", "level": "orange", "sent": true, "content": "entry_gate: G4: RSI=62.2 不在[30,55] 支撑=['daily_ma20']"}
+{"time": "2026-08-19T13:34:59", "title": "⚠️ 风控 — 中国巨石(600176)", "level": "orange", "sent": true, "content": "entry_gate: G4: RSI=62.2 不在[30,55] 支撑=['daily_ma20']"}
+{"time": "2026-08-19T13:36:00", "title": "⚠️ 风控 — 中国巨石(600176)", "level": "orange", "sent": true, "content": "entry_gate: G4: 未回踩支撑带 cp=41.44 daily_ma10=43.12 daily_ma20=40.37 daily_ma60=47.84 daily_boll_lower=33.56"}
+{"time": "2026-08-19T13:37:00", "title": "⚠️ 风控 — 中国巨石(600176)", "level": "orange", "sent": true, "content": "entry_gate: G4: RSI=62.2 不在[30,55] 支撑=['daily_ma20']"}
+{"time": "2026-08-19T13:38:59", "title": "⚠️ 风控 — 中国巨石(600176)", "level": "orange", "sent": true, "content": "entry_gate: G4: 未回踩支撑带 cp=41.49 daily_ma10=43.12 daily_ma20=40.37 daily_ma60=47.84 daily_boll_lower=33.56"}
+{"time": "2026-08-19T13:44:00", "title": "⚠️ 风控 — 中国巨石(600176)", "level": "orange", "sent": true, "content": "entry_gate: G4: RSI=62.2 不在[30,55] 支撑=['daily_ma20']"}
+{"time": "2026-08-19T13:45:01", "title": "⚠️ 风控 — 中国巨石(600176)", "level": "orange", "sent": true, "content": "entry_gate: G4: 未回踩支撑带 cp=41.44 daily_ma10=43.12 daily_ma20=40.37 daily_ma60=47.84 daily_boll_lower=33.56"}
+{"time": "2026-08-19T13:49:59", "title": "⚠️ 风控 — 中国巨石(600176)", "level": "orange", "sent": true, "content": "entry_gate: G4: RSI=62.2 不在[30,55] 支撑=['daily_ma20']"}
