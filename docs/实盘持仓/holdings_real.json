@@ -1,0 +1,17 @@
+{
+  "_meta": {
+    "updated": "2026-08-19 08:36",
+    "source": "owner 终端截图 ×2（盘前，市价=08-18 收盘）",
+    "accounts": {"A": "xc-jq9", "B": "LB47"},
+    "total_asset": 301499.09,
+    "total_cash": 261641.09,
+    "total_market_value": 39858.00,
+    "position_pct": 0.132
+  },
+  "588170": {"name": "科创半导体ETF华夏", "cost": 0.627, "qty": 2000, "base": 2000, "t_qty": 2000, "type": "etf", "account": "A", "pre_close": 1.104, "fpnl": 953.95, "fpnl_pct": 0.76077},
+  "600176": {"name": "中国巨石", "cost": 63.403, "qty": 300, "base": 300, "t_qty": 300, "type": "stock", "account": "A", "pre_close": 44.910, "fpnl": -5547.82, "fpnl_pct": -0.29167},
+  "600481": {"name": "双良节能", "cost": 28.216, "qty": 100, "base": 100, "t_qty": 100, "type": "stock", "account": "A", "pre_close": 4.410, "fpnl": -2380.62, "fpnl_pct": -0.84371},
+  "603667": {"name": "五洲新春", "cost": 58.636, "qty": 200, "base": 200, "t_qty": 200, "type": "stock", "account": "A", "pre_close": 56.700, "fpnl": -387.13, "fpnl_pct": -0.03301},
+  "000988": {"name": "华工科技", "cost": 553.574, "qty": 100, "base": 100, "t_qty": 100, "type": "stock", "account": "A", "pre_close": 111.950, "fpnl": -44162.40, "fpnl_pct": -0.79777},
+  "002639": {"name": "雪人集团", "cost": 10.807, "qty": 100, "base": 100, "t_qty": 100, "type": "stock", "account": "B", "pre_close": 12.010, "fpnl": 120.32, "fpnl_pct": 0.11134}
+}
