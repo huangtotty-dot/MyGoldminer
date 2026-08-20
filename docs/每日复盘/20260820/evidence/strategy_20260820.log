@@ -1,0 +1,31 @@
+
+===== strategy run start 2026-08-20T08:48:27 pid=17628 =====
+[ops] 控制台日志已落盘: C:\Users\Lenovo\.goldminer3\projects\e8bb1f4d-87ce-11f1-97f7-98fa9b8df5e7\logs\strategy_20260820.log
+[INIT] 000988 华工科技 持仓对账: 500股 可用500 成本109.27
+[INIT] 600481 双良节能 持仓对账: 1400股 可用1400 成本4.31
+[INIT] 603667 五洲新春 持仓对账: 500股 可用500 成本53.11
+[INIT] 603667 sell_state 恢复: l1=None trail=COOLED peak=58.03
+[INIT] 600481 sell_state 恢复: l1=None trail=INACTIVE peak=0.0
+[INIT] 000988 sell_state 恢复: l1=None trail=INACTIVE peak=0.0
+[init] 大盘日线已缓存: 900 行, 2022-12-02 ~ 2026-08-19
+[init] WP-E2/E3 预算表: equity=232514 reserve=20% 每股预算=46503(按4槽分解) max_pos_shares=000988:400 600481:11100 600176:1100 603667:900 300054:600 300364:2000 002639:4000 300153:2000 300456:1400 002202:2100 002536:1100 002176:5200 600584:500 002261:1800 600089:2200 002451:6400
+[init] 事件桥: C:\Users\Lenovo\.goldminer3\projects\e8bb1f4d-87ce-11f1-97f7-98fa9b8df5e7\runtime\bridge
+[init] 策略初始化完成: 16 只标的
+[ir] 2026-08-20 regime=uni_down score=10.3
+[D6] amount/volume=4.19 close=4.18 → VWAP单位比=1.0029
+[09:30:57] SELL 600481 1400@4.18 score=80 regime=uni_down
+[09:30:57] SELL 000988 500@103.76 score=80 regime=uni_down
+[09:30:58] BASE 002176 跳过: MIRROR_HOLDINGS 中无此标的或 qty<100
+[09:30:58] BASE 002202 跳过: MIRROR_HOLDINGS 中无此标的或 qty<100
+[09:30:58] BASE 002261 跳过: MIRROR_HOLDINGS 中无此标的或 qty<100
+[09:30:58] BASE 002451 跳过: MIRROR_HOLDINGS 中无此标的或 qty<100
+[09:30:58] BASE 002536 跳过: MIRROR_HOLDINGS 中无此标的或 qty<100
+[09:30:58] BASE 002639 跳过: MIRROR_HOLDINGS 中无此标的或 qty<100
+[09:30:58] BASE 600089 跳过: MIRROR_HOLDINGS 中无此标的或 qty<100
+[09:30:58] SELL 603667 500@50.49 score=80 regime=uni_down
+[09:30:58] BASE 600584 跳过: MIRROR_HOLDINGS 中无此标的或 qty<100
+[09:30:58] BASE 600176 MA5破位→禁建仓 cp=40.87<ma5=43.62
+[09:30:58] BASE 300054 跳过: MIRROR_HOLDINGS 中无此标的或 qty<100
+[09:30:58] BASE 300153 跳过: MIRROR_HOLDINGS 中无此标的或 qty<100
+[09:30:58] BASE 300456 跳过: MIRROR_HOLDINGS 中无此标的或 qty<100
+[09:30:58] BASE 300364 跳过: MIRROR_HOLDINGS 中无此标的或 qty<100
