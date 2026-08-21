@@ -1,0 +1,11 @@
+{"time": "2026-08-21T09:31:02", "title": "⚠️ 风控 — 华工科技(000988)", "level": "orange", "sent": true, "content": "ma5_break_block: BASE cp=104.73 < ma5=108.39"}
+{"time": "2026-08-21T09:31:03", "title": "⚠️ 风控 — 双良节能(600481)", "level": "orange", "sent": true, "content": "ma5_break_block: BASE cp=4.13 < ma5=4.29"}
+{"time": "2026-08-21T09:31:04", "title": "⚠️ 风控 — 中国巨石(600176)", "level": "orange", "sent": true, "content": "ma5_break_block: BASE cp=40.41 < ma5=43.52"}
+{"time": "2026-08-21T09:31:04", "title": "⚠️ 风控 — 五洲新春(603667)", "level": "orange", "sent": true, "content": "ma5_break_block: BASE cp=48.82 < ma5=53.69"}
+{"time": "2026-08-21T09:51:02", "title": "⚠️ 风控 — 双良节能(600481)", "level": "orange", "sent": true, "content": "pool_gate: amp=3.5% 仅观察"}
+{"time": "2026-08-21T13:14:02", "title": "🚨 心跳中断", "level": "red", "sent": true, "content": "最后心跳 10 分钟前，策略可能已停止"}
+{"time": "2026-08-21T13:15:01", "title": "⚠️ 风控 — 华工科技(000988)", "level": "orange", "sent": true, "content": "ma5_break_block: BASE cp=106.70 < ma5=108.39"}
+{"time": "2026-08-21T13:15:01", "title": "✅ 心跳恢复", "level": "green", "sent": true, "content": "心跳已恢复 (0s)"}
+{"time": "2026-08-21T13:15:04", "title": "⚠️ 风控 — 双良节能(600481)", "level": "orange", "sent": true, "content": "ma5_break_block: BASE cp=4.19 < ma5=4.29"}
+{"time": "2026-08-21T13:15:04", "title": "⚠️ 风控 — 中国巨石(600176)", "level": "orange", "sent": true, "content": "ma5_break_block: BASE cp=41.54 < ma5=43.52"}
+{"time": "2026-08-21T13:15:05", "title": "⚠️ 风控 — 五洲新春(603667)", "level": "orange", "sent": true, "content": "ma5_break_block: BASE cp=51.20 < ma5=53.69"}

@@ -1,0 +1,10 @@
+{"event": "date_reset", "date": "2026-08-21", "_run_id": "20260821_092023"}
+{"event": "buy_blocked", "code": "000988", "reason": "ma5_break", "where": "base", "cp": 104.73, "ma5": 108.386, "time": "2026-08-21 09:31:00.419000+08:00", "_run_id": "20260821_092023"}
+{"event": "buy_blocked", "code": "600481", "reason": "ma5_break", "where": "base", "cp": 4.13, "ma5": 4.294, "time": "2026-08-21 09:31:01.808000+08:00", "_run_id": "20260821_092023"}
+{"event": "buy_blocked", "code": "600176", "reason": "ma5_break", "where": "base", "cp": 40.41, "ma5": 43.519999999999996, "time": "2026-08-21 09:31:01.965000+08:00", "_run_id": "20260821_092023"}
+{"event": "buy_blocked", "code": "603667", "reason": "ma5_break", "where": "base", "cp": 48.82, "ma5": 53.69, "time": "2026-08-21 09:31:02.175000+08:00", "_run_id": "20260821_092023"}
+{"event": "date_reset", "date": "2026-08-21", "_run_id": "20260821_131421"}
+{"event": "buy_blocked", "code": "000988", "reason": "ma5_break", "where": "base", "cp": 106.7, "ma5": 108.386, "time": "2026-08-21 13:15:00.161000+08:00", "_run_id": "20260821_131421"}
+{"event": "buy_blocked", "code": "600481", "reason": "ma5_break", "where": "base", "cp": 4.19, "ma5": 4.294, "time": "2026-08-21 13:15:01.121000+08:00", "_run_id": "20260821_131421"}
+{"event": "buy_blocked", "code": "600176", "reason": "ma5_break", "where": "base", "cp": 41.54, "ma5": 43.519999999999996, "time": "2026-08-21 13:15:02.120000+08:00", "_run_id": "20260821_131421"}
+{"event": "buy_blocked", "code": "603667", "reason": "ma5_break", "where": "base", "cp": 51.2, "ma5": 53.69, "time": "2026-08-21 13:15:02.302000+08:00", "_run_id": "20260821_131421"}

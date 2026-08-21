@@ -1,0 +1,9 @@
+{"event": "risk", "time": "2026-08-21 09:31:00.419000+08:00", "code": "000988", "kind": "ma5_break_block", "detail": "BASE cp=104.73 < ma5=108.39", "_ts": 1787275860.6913154}
+{"event": "risk", "time": "2026-08-21 09:31:01.808000+08:00", "code": "600481", "kind": "ma5_break_block", "detail": "BASE cp=4.13 < ma5=4.29", "_ts": 1787275861.9644823}
+{"event": "risk", "time": "2026-08-21 09:31:01.965000+08:00", "code": "600176", "kind": "ma5_break_block", "detail": "BASE cp=40.41 < ma5=43.52", "_ts": 1787275862.107267}
+{"event": "risk", "time": "2026-08-21 09:31:02.175000+08:00", "code": "603667", "kind": "ma5_break_block", "detail": "BASE cp=48.82 < ma5=53.69", "_ts": 1787275862.3385878}
+{"event": "risk", "time": "2026-08-21 09:51:01.409000+08:00", "code": "600481", "kind": "pool_gate", "detail": "amp=3.5% 仅观察", "_ts": 1787277061.4463499}
+{"event": "risk", "time": "2026-08-21 13:15:00.161000+08:00", "code": "000988", "kind": "ma5_break_block", "detail": "BASE cp=106.70 < ma5=108.39", "_ts": 1787289300.3096483}
+{"event": "risk", "time": "2026-08-21 13:15:01.121000+08:00", "code": "600481", "kind": "ma5_break_block", "detail": "BASE cp=4.19 < ma5=4.29", "_ts": 1787289301.205041}
+{"event": "risk", "time": "2026-08-21 13:15:02.120000+08:00", "code": "600176", "kind": "ma5_break_block", "detail": "BASE cp=41.54 < ma5=43.52", "_ts": 1787289302.1953735}
+{"event": "risk", "time": "2026-08-21 13:15:02.302000+08:00", "code": "603667", "kind": "ma5_break_block", "detail": "BASE cp=51.20 < ma5=53.69", "_ts": 1787289302.3720021}
