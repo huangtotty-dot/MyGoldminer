@@ -618,19 +618,39 @@ def _refresh_daily_ctx(context, code: str, gm_symbol: str, now: datetime) -> dic
             ctx["daily_macd_dif"] = float(_dif.iloc[-1])
             ctx["daily_macd_dea"] = float(_dea.iloc[-1])
             ctx["daily_macd_bull"] = bool(_dif.iloc[-1] >= _dea.iloc[-1])
+            # WP-B20: 双通道建仓闸字段——近5日 MACD 金叉（冰点通道·转向确认用）
+            _difs = pd.Series(_dif)
+            _deas = pd.Series(_dea)
+            _cross_up = (_difs > _deas) & (_difs.shift(1) <= _deas.shift(1))
+            ctx["daily_macd_golden"] = bool(_cross_up.tail(5).any())
             _mid = c.rolling(20).mean()
             _std = c.rolling(20).std()
             ctx["daily_boll_mid"] = float(_mid.iloc[-1])
             ctx["daily_boll_upper"] = float((_mid + 2 * _std).iloc[-1])
             ctx["daily_boll_lower"] = float((_mid - 2 * _std).iloc[-1])
+            # WP-B20: BOLL 百分比位置（冰点通道·bb_pct≤0.15 用）
+            _bup = (_mid + 2 * _std).iloc[-1]
+            _bdn = (_mid - 2 * _std).iloc[-1]
+            ctx["daily_boll_pct"] = float((c.iloc[-1] - _bdn) / (_bup - _bdn)) if (_bup - _bdn) > 0 else None
         if len(c) >= 60:
             ctx["daily_ma60"] = float(c.rolling(60).mean().iloc[-1])
         if len(c) >= 20 and "volume" in df.columns:
             _v = df["volume"].astype(float)
             ctx["_vol3"] = float(_v.iloc[-3:].mean())
             ctx["_vol20"] = float(_v.iloc[-20:].mean())
+            # WP-B20: 双通道建仓闸字段——当日量/5日均量（冰点缩量 & 突破放量用）
+            ctx["daily_vol_today"] = float(_v.iloc[-1])
+            ctx["daily_vol_ma5"] = float(_v.iloc[-5:].mean())
         prev_close = float(c.iloc[-1]) if len(c) > 0 else 0
         ctx["daily_prev_close"] = prev_close
+        # WP-B20: 日线收盘参考价（冰点·转向确认站上MA5 用；end_time=昨日 → 昨收）
+        ctx["daily_price_ref"] = prev_close
+        # WP-B20: 近60日 OHLC 序列（双通道·箱体突破检测用）
+        ctx["_daily_ohlc"] = {
+            "high": [float(x) for x in h.tail(60).tolist()],
+            "low": [float(x) for x in l.tail(60).tolist()],
+            "close": [float(x) for x in c.tail(60).tolist()],
+        }
         # F7-2(2026-08-10 复盘①)：setdefault 对默认 "unavailable" 无效——
         # _default_daily_context 自带 daily_status="unavailable"，setdefault 永不覆盖，
         # 致 G4 对所有 M2 通过票恒报"日线数据不足→保守拦截"（五要素上线 3 日零运行的
@@ -1399,34 +1419,48 @@ def on_bar(context, bars):
                     context._base_settled.add(code)
                     return
                 _topup_blocked = True  # F8: 回补被M2闸拦截，信号评估照常
-            # G4: 支撑建仓闸（2026-08-05 owner决策：多票池不可能同时买入——
-            # 仅"回踩重要支撑不破 + RSI/MACD/BOLL日线联动 + 缩量"才放行建仓/回补。
-            # 初建仓被拦不归档 settled，下一 bar 继续等回踩，与趋势闸同语义）
+            # WP-B20: 双通道建仓闸（owner 2026-08-19 决策，完全替换 G4 支撑建仓闸；
+            # 同步自 superTrader W33 A1 双通道——冰点反转/突破跟随）。
+            # 仅 verdict=signal（冰点80/突破70 分档）放行建仓；approaching 仅留痕观察（每票每日去重）。
             if not _topup_blocked:
-                _g4_ok, _g4_why = _base_entry_gate(cp, _dc)
-                if not _g4_ok:
-                    _g4_key = f'_g4_last_{code}'
-                    _g4_sig = _g4_why.split(" cp=")[0][:40]
-                    if getattr(context, _g4_key, None) != _g4_sig:
-                        setattr(context, _g4_key, _g4_sig)
-                        print(f"[{now:%H:%M:%S}] BASE {code} {STOCK_NAMES.get(code,code)} G4支撑闸→仅观察 {_g4_why}")
-                        try: write_risk(str(now), "entry_gate", _g4_why, code=code)
-                        except: pass
+                from signals import position_builder as _pb
+                _pb_res = _pb.eval_dual_channels(
+                    _dc, cp, m5_df=_pb.build_m5_df(context.bar_cache.get(gm_sym, [])),
+                    scan_type="intraday")
+                _pb_verdict = _pb_res["verdict"]
+                _pb_channel = _pb_res["channel"]
+                _pb_score = _pb_res["composite_score"]
+                if _pb_verdict != "signal":
+                    _pb_key = f'_pb_last_{code}'
+                    _pb_sig = f"{_pb_channel}|{_pb_verdict}|{_pb_score}"
+                    if getattr(context, _pb_key, None) != _pb_sig:
+                        setattr(context, _pb_key, _pb_sig)
+                        print(f"[{now:%H:%M:%S}] BASE {code} {STOCK_NAMES.get(code,code)} "
+                              f"双通道{_pb_channel}={_pb_verdict}({_pb_score}分)→仅观察")
+                        try:
+                            write_risk(str(now), "build_gate",
+                                       f"channel={_pb_channel} verdict={_pb_verdict} score={_pb_score}", code=code)
+                        except Exception:
+                            pass
+                        _audit_write({"event": "build_gate_block", "code": code,
+                                      "channel": _pb_channel, "verdict": _pb_verdict,
+                                      "score": _pb_score, "cp": cp, "time": str(now)})
                     if _hb_live:
                         try: write_snapshot(str(now), code, cp, bar=f"{now:%H:%M}",
-                                            gate="entry_gate", gate_detail=_g4_why)
+                                            gate="build_gate", gate_detail=f"{_pb_channel}={_pb_verdict}({_pb_score})")
                         except Exception: pass
                     if not _is_topup:
                         return
-                    _topup_blocked = True  # G4 拦截回补，信号评估照常（F8 同模式）
+                    _topup_blocked = True  # 双通道拦截回补，信号评估照常（F8 同模式）
                 else:
                     if _hb_live:
                         try: write_snapshot(str(now), code, cp, bar=f"{now:%H:%M}",
-                                            gate="entry_gate_pass", gate_detail=_g4_why)
+                                            gate="build_gate_pass", gate_detail=f"{_pb_channel}={_pb_verdict}({_pb_score})")
                         except Exception: pass
-                    if getattr(context, f'_g4_last_{code}', None) is not None:
-                        setattr(context, f'_g4_last_{code}', None)
-                        print(f"[{now:%H:%M:%S}] BASE {code} {STOCK_NAMES.get(code,code)} {_g4_why}")
+                    if getattr(context, f'_pb_last_{code}', None) is not None:
+                        setattr(context, f'_pb_last_{code}', None)
+                        print(f"[{now:%H:%M:%S}] BASE {code} {STOCK_NAMES.get(code,code)} "
+                              f"双通道{_pb_channel}=signal({_pb_score}分)")
             if not _topup_blocked:
                 try:
                     try:
