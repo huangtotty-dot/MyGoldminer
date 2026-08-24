@@ -1,0 +1,28 @@
+
+===== strategy run start 2026-08-24T09:18:58 pid=29388 =====
+[ops] 控制台日志已落盘: C:\Users\Lenovo\.goldminer3\projects\e8bb1f4d-87ce-11f1-97f7-98fa9b8df5e7\logs\strategy_20260824.log
+[init] 大盘日线已缓存: 900 行, 2022-12-06 ~ 2026-08-21
+[init] WP-E2/E3 预算表: equity=150000 reserve=20% 每股预算=30000(按4槽分解) max_pos_shares=000988:200 600481:7100 600176:700 603667:500 300054:400 300364:1200 002639:2500 300153:1300 300456:900 002202:1500 002536:600 002176:3300 600584:300 002261:1100 600089:1400 002451:4100
+[init] 事件桥: C:\Users\Lenovo\.goldminer3\projects\e8bb1f4d-87ce-11f1-97f7-98fa9b8df5e7\runtime\bridge
+[init] 策略初始化完成: 16 只标的
+[ir] 2026-08-24 regime=range score=-1.1
+[D6] amount/volume=106.52 close=106.74 → VWAP单位比=0.9979
+[09:30:59] BASE 000988 MA5破位→禁建仓 cp=106.74<ma5=107.78
+[09:30:59] BASE 002261 跳过: MIRROR_HOLDINGS 中无此标的或 qty<100
+[09:30:59] BASE 002176 跳过: MIRROR_HOLDINGS 中无此标的或 qty<100
+[09:31:00] BASE 002202 跳过: MIRROR_HOLDINGS 中无此标的或 qty<100
+[09:31:00] BASE 002451 跳过: MIRROR_HOLDINGS 中无此标的或 qty<100
+[09:31:00] BASE 600089 跳过: MIRROR_HOLDINGS 中无此标的或 qty<100
+[09:31:00] BASE 002536 跳过: MIRROR_HOLDINGS 中无此标的或 qty<100
+[09:31:00] BASE 002639 跳过: MIRROR_HOLDINGS 中无此标的或 qty<100
+[09:31:00] BASE 603667 MA5破位→禁建仓 cp=52.53<ma5=53.00
+[09:31:00] BASE 300364 跳过: MIRROR_HOLDINGS 中无此标的或 qty<100
+[09:31:00] BASE 300153 跳过: MIRROR_HOLDINGS 中无此标的或 qty<100
+[09:31:00] BASE 300054 跳过: MIRROR_HOLDINGS 中无此标的或 qty<100
+[09:31:00] BASE 300456 跳过: MIRROR_HOLDINGS 中无此标的或 qty<100
+[09:31:00] BASE 600584 跳过: MIRROR_HOLDINGS 中无此标的或 qty<100
+[09:31:00] BASE 600176 中国巨石 双通道None=weak(30分)→仅观察
+[09:31:01] BASE 600481 MA5破位→禁建仓 cp=4.23<ma5=4.27
+[09:32:00] BASE 603667 五洲新春 TREND_BREAKDOWN→延迟建仓
+[09:32:01] BASE 600176 MA5破位→禁建仓 cp=42.54<ma5=43.05
+[09:33:00] BASE 600481 双良节能 门槛未过→仅观察 (amp=3.5% amt=2.0亿 lot=421元)
