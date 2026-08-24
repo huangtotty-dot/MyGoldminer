@@ -46,6 +46,8 @@ STOCKS = {
     "002261": "SZSE.002261",
     "600089": "SHSE.600089",
     "002451": "SZSE.002451",
+    # WP-E4(2026-08-24 owner决策): 红利ETF 防守仓纳入做T体系观察做T效率
+    "515180": "SHSE.515180",
 }
 STOCK_NAMES = {
     "000988": "华工科技",
@@ -64,6 +66,7 @@ STOCK_NAMES = {
     "002261": "拓维信息",
     "600089": "特变电工",
     "002451": "摩恩电气",
+    "515180": "红利ETF",
 }
 REVERSE_MAP = {v: k for k, v in STOCKS.items()}
 
@@ -78,6 +81,9 @@ MIRROR_HOLDINGS = {
     "600481": {"qty": 1400, "cost": 0},
     "600176": {"qty": 500,  "cost": 0},
     "603667": {"qty": 800,  "cost": 0},
+    # WP-E4(2026-08-24 owner决策): 红利ETF 防守仓纳入做T体系观察做T效率。
+    # 境内股票型ETF，T+1、最小单位100股，与股票机制一致（无588170的T+0兼容问题）。
+    "515180": {"qty": 50000, "cost": 1.451},
     # 588170 ETF 已移除：T+0机制/最小单位与策略不兼容，首日仅观察
 }
 
@@ -598,9 +604,16 @@ def _refresh_daily_ctx(context, code: str, gm_symbol: str, now: datetime) -> dic
             ctx["_m2_amp20"] = float((tr.rolling(20).mean().iloc[-1] / c.iloc[-1])) if c.iloc[-1] > 0 else 0
             ctx["_m2_amount20"] = float((v * c).rolling(20).mean().iloc[-1]) if len(v) >= 20 else 0
             ctx["_m2_lot_value"] = float(c.iloc[-1] * 100)
-            # 门槛判定（AMP<3% 或 AMT<2亿 或 单手<2000 → 标记仅观察）
-            _pass = (ctx["_m2_amp20"] >= 0.03 and ctx["_m2_amount20"] >= 200000000
-                     and ctx["_m2_lot_value"] >= 2000)  # TODO(PhaseD): 寻优定值
+            # 门槛判定（AMP/AMT/单手价值低于阈值 → 标记仅观察）
+            # WP-E4(2026-08-24 owner决策): 阈值支持 STOCK_PARAMS 个股覆盖
+            # （515180红利ETF 低波动定制：amp20≈0.8%、单手≈145元，硬编码门槛会永久拦截），
+            # 未配置个股参数时保持原硬编码缺省值（0.03 / 2亿 / 2000）。
+            _m2_sp = STOCK_PARAMS.get(code, {})
+            _m2_amp_min = float(_m2_sp.get("m2_amp20_min", 0.03))
+            _m2_amt_min = float(_m2_sp.get("m2_amount20_min", 200000000))
+            _m2_lot_min = float(_m2_sp.get("m2_lot_value_min", 2000))
+            _pass = (ctx["_m2_amp20"] >= _m2_amp_min and ctx["_m2_amount20"] >= _m2_amt_min
+                     and ctx["_m2_lot_value"] >= _m2_lot_min)  # TODO(PhaseD): 寻优定值
             ctx["_m2_pool_pass"] = _pass
             if not _pass:
                 ctx["daily_status"] = "pool_gate_fail"

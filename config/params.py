@@ -295,6 +295,22 @@ STOCK_PARAMS = {
     "002451": {
         "_note": "摩恩电气 - 未适配，沿用全局默认参数（2026-08-05 入池，实盘亏损票）",
     },
+    "515180": {
+        "_note": "红利ETF 防守仓 - WP-E4 2026-08-24 纳入做T观察，低波动定制",
+        # M2 池闸个股覆盖（红利ETF amp20≈0.8%、单手≈145元，全局硬编码门槛会永久拦截）
+        "m2_amp20_min": 0.005,
+        "m2_amount20_min": 30000000,
+        "m2_lot_value_min": 100,
+        # ETF 无印花税，往返佣金约 0.03%，做T目标价差 0.2%
+        "min_profit_per_t": 0.002,
+        "min_profit_space": 0.005,
+        "vwap_buy_deviation": -0.006,
+        "max_sell_times_per_stock": 2,
+        "max_buy_times_per_stock": 2,
+        "cooldown_minutes": 30,
+        # 每笔做T量约 5,000 股（底仓 50,000 的 10%）
+        "stock_qty_base_pct": 0.1,
+    },
     "588170": {
         "_note": "科创芯片ETF - 未适配，沿用全局默认参数",
         "type": "etf",
