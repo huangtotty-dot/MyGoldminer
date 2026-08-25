@@ -1,0 +1,6 @@
+{"time": "2026-08-25T09:31:00", "title": "⚠️ 风控 — 双良节能(600481)", "level": "orange", "sent": true, "content": "ma5_break_block: BASE cp=4.17 < ma5=4.23"}
+{"time": "2026-08-25T09:31:00", "title": "⚠️ 风控 — 华工科技(000988)", "level": "orange", "sent": true, "content": "ma5_break_block: BASE cp=100.98 < ma5=105.72"}
+{"time": "2026-08-25T09:31:01", "title": "⚠️ 风控 — 五洲新春(603667)", "level": "orange", "sent": true, "content": "ma5_break_block: BASE cp=50.89 < ma5=52.00"}
+{"time": "2026-08-25T09:31:01", "title": "⚠️ 风控 — 中国巨石(600176)", "level": "orange", "sent": true, "content": "ma5_break_block: BASE cp=38.19 < ma5=41.76"}
+{"time": "2026-08-25T09:56:59", "title": "⚠️ 风控 — 双良节能(600481)", "level": "orange", "sent": true, "content": "pool_gate: amp=3.6% 仅观察"}
+{"time": "2026-08-25T13:12:59", "title": "⚠️ 风控 — 华工科技(000988)", "level": "orange", "sent": true, "content": "build_gate: channel=None verdict=weak score=30"}

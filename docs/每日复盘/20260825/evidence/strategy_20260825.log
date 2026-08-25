@@ -1,0 +1,28 @@
+
+===== strategy run start 2026-08-25T09:17:30 pid=23028 =====
+[ops] 控制台日志已落盘: C:\Users\Lenovo\.goldminer3\projects\e8bb1f4d-87ce-11f1-97f7-98fa9b8df5e7\logs\strategy_20260825.log
+[INIT] 515180 红利ETF 持仓对账: 50000股 可用50000 成本1.45
+[init] 大盘日线已缓存: 900 行, 2022-12-07 ~ 2026-08-24
+[init] WP-E2/E3 预算表: equity=222650 reserve=20% 每股预算=44530(按4槽分解) max_pos_shares=000988:400 600481:10600 600176:1100 603667:800 300054:600 300364:1900 002639:3800 300153:2100 300456:1400 002202:2400 002536:900 002176:4800 600584:600 002261:1700 600089:2300 002451:6000 515180:30600
+[init] 事件桥: C:\Users\Lenovo\.goldminer3\projects\e8bb1f4d-87ce-11f1-97f7-98fa9b8df5e7\runtime\bridge
+[init] 策略初始化完成: 17 只标的
+[ir] 2026-08-25 regime=range score=-3.6
+[D6] amount/volume=4.17 close=4.17 → VWAP单位比=0.9992
+[09:30:57] BASE 600481 MA5破位→禁建仓 cp=4.17<ma5=4.23
+[09:30:58] BASE 002202 跳过: MIRROR_HOLDINGS 中无此标的或 qty<100
+[09:30:58] BASE 000988 MA5破位→禁建仓 cp=100.98<ma5=105.72
+[09:30:58] BASE 002261 跳过: MIRROR_HOLDINGS 中无此标的或 qty<100
+[09:30:58] BASE 002176 跳过: MIRROR_HOLDINGS 中无此标的或 qty<100
+[09:30:58] BASE 002451 跳过: MIRROR_HOLDINGS 中无此标的或 qty<100
+[09:30:58] BASE 002639 跳过: MIRROR_HOLDINGS 中无此标的或 qty<100
+[09:30:58] BASE 002536 跳过: MIRROR_HOLDINGS 中无此标的或 qty<100
+[09:30:58] BASE 600089 跳过: MIRROR_HOLDINGS 中无此标的或 qty<100
+[09:30:58] BASE 603667 MA5破位→禁建仓 cp=50.89<ma5=52.00
+[09:30:59] BASE 300153 跳过: MIRROR_HOLDINGS 中无此标的或 qty<100
+[09:30:59] BASE 300054 跳过: MIRROR_HOLDINGS 中无此标的或 qty<100
+[09:30:59] BASE 300364 跳过: MIRROR_HOLDINGS 中无此标的或 qty<100
+[09:30:59] BASE 300456 跳过: MIRROR_HOLDINGS 中无此标的或 qty<100
+[09:30:59] BASE 600584 跳过: MIRROR_HOLDINGS 中无此标的或 qty<100
+[09:30:59] BASE 600176 MA5破位→禁建仓 cp=38.19<ma5=41.76
+[09:56:57] BASE 600481 双良节能 门槛未过→仅观察 (amp=3.6% amt=2.0亿 lot=419元)
+[13:12:57] BASE 000988 华工科技 双通道None=weak(30分)→仅观察

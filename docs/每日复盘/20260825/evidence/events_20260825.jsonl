@@ -1,0 +1,6 @@
+{"event": "risk", "time": "2026-08-25 09:30:57.455000+08:00", "code": "600481", "kind": "ma5_break_block", "detail": "BASE cp=4.17 < ma5=4.23", "_ts": 1787621458.4274065}
+{"event": "risk", "time": "2026-08-25 09:30:58.480000+08:00", "code": "000988", "kind": "ma5_break_block", "detail": "BASE cp=100.98 < ma5=105.72", "_ts": 1787621458.723552}
+{"event": "risk", "time": "2026-08-25 09:30:58.973000+08:00", "code": "603667", "kind": "ma5_break_block", "detail": "BASE cp=50.89 < ma5=52.00", "_ts": 1787621459.1624868}
+{"event": "risk", "time": "2026-08-25 09:30:59.345000+08:00", "code": "600176", "kind": "ma5_break_block", "detail": "BASE cp=38.19 < ma5=41.76", "_ts": 1787621459.5363238}
+{"event": "risk", "time": "2026-08-25 09:56:57.424000+08:00", "code": "600481", "kind": "pool_gate", "detail": "amp=3.6% 仅观察", "_ts": 1787623017.4746053}
+{"event": "risk", "time": "2026-08-25 13:12:57.458000+08:00", "code": "000988", "kind": "build_gate", "detail": "channel=None verdict=weak score=30", "_ts": 1787634777.6376204}

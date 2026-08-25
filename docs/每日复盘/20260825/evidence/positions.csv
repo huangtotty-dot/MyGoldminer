@@ -1,0 +1,2 @@
+createdAt,updatedAt,accountId,amount,available,availableNow,changeEventId,changeReason,cost,fpnl,lastPrice,lastVolume,marketValue,price,secName,side,symbol,volume,vwap,fpnlDiluted,vwapDiluted
+2026-08-24 11:30:31,2026-08-25 08:30:00,7e720bfb-8653-11f1-ab08-00163e022aa6,72550,50000,50000,,,72550,-299.99737739563324,1.451,50000,72250.00262260437,1.4450000524520874,易方达中证红利ETF,1,SHSE.515180,50000,1.451,-299.99737739563324,1.451
