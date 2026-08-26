@@ -283,13 +283,16 @@ check("T6a MA5_EXIT 成交后无 buyback_armed 事件", len(arm6) == 0, f"armed=
 check("T6b 不生成回补记忆（awaiting_buyback 无）", CODE not in c6.engine.awaiting_buyback)
 
 # ══ T7: O-12 pos_key 成本容差匹配 ══
-se.SIM_NOW = datetime(2026, 8, 19, 9, 50, 0)
+# 用真实墙钟作为模拟日期：arm 的 expire_date = 卖出日+3交易日，而 _sell_state_restore
+# 用 datetime.now() 判过期。若固定模拟旧日期（如 2026-08-19），随真实日期推移会
+# 落入"已过期"分支导致恢复被作废（date rot），故卖出时间一律取当下。
+_SELL_NOW = datetime.now()
+se.SIM_NOW = _SELL_NOW   # 先于 arm：expire_date 按真实当下 +3 交易日计算
 rm_state(); clear_events()
-c_p = live_ctx(800, 50.0, datetime(2026, 8, 19, 9, 50, 0))
+c_p = live_ctx(800, 50.0, _SELL_NOW)
 c_p.engine.awaiting_buyback[CODE] = c_p.engine.arm_awaiting_buyback(CODE, 52.14, 300, "SELL_HIGH")
 main._sell_state_persist(c_p, CODE, GM_SYM)
-se.SIM_NOW = datetime(2026, 8, 19, 9, 31, 0)
-c_r = live_ctx(800, 50.002, datetime(2026, 8, 19, 9, 31, 0))   # +0.002 容差内
+c_r = live_ctx(800, 50.002, _SELL_NOW)   # +0.002 容差内
 main._sell_state_restore(c_r)
 st7 = main._sell_state_load().get(CODE, {})
 check("T7a +0.002 容差内 → 恢复 + 指纹静默更新",
@@ -300,19 +303,19 @@ check("T7b pos_key_tolerance 留痕",
 
 # +0.04 容差内
 rm_state()
-c_p2 = live_ctx(800, 50.0, datetime(2026, 8, 19, 9, 50, 0))
+c_p2 = live_ctx(800, 50.0, _SELL_NOW)
 c_p2.engine.awaiting_buyback[CODE] = c_p2.engine.arm_awaiting_buyback(CODE, 52.14, 300, "SELL_HIGH")
 main._sell_state_persist(c_p2, CODE, GM_SYM)
-c_r2 = live_ctx(800, 50.04, datetime(2026, 8, 19, 9, 31, 0))   # +0.04 容差内(max 0.05)
+c_r2 = live_ctx(800, 50.04, _SELL_NOW)   # +0.04 容差内(max 0.05)
 main._sell_state_restore(c_r2)
 check("T7c +0.04 容差内 → 恢复", CODE in c_r2.engine.awaiting_buyback)
 
 # +8% 超容差 → 作废
 rm_state()
-c_p3 = live_ctx(800, 50.0, datetime(2026, 8, 19, 9, 50, 0))
+c_p3 = live_ctx(800, 50.0, _SELL_NOW)
 c_p3.engine.awaiting_buyback[CODE] = c_p3.engine.arm_awaiting_buyback(CODE, 52.14, 300, "SELL_HIGH")
 main._sell_state_persist(c_p3, CODE, GM_SYM)
-c_r3 = live_ctx(800, 54.0, datetime(2026, 8, 19, 9, 31, 0))   # +8% 超容差
+c_r3 = live_ctx(800, 54.0, _SELL_NOW)   # +8% 超容差
 main._sell_state_restore(c_r3)
 check("T7d +8% 超容差 → 作废不恢复",
       CODE not in c_r3.engine.awaiting_buyback and CODE not in main._sell_state_load())

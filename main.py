@@ -1372,7 +1372,8 @@ def on_bar(context, bars):
             _topup_blocked = False
             # WP-B19 c: MA5 破位日禁 BASE 建仓/回补（最先执行，任何门槛前拦截；每票每日去重留痕）
             _base_ma5 = float(_dc.get("daily_ma5", 0) or 0)
-            if not _topup_blocked and _base_ma5 > 0 and cp < _base_ma5:
+            _base_ma5_tol = float(STOCK_PARAMS.get(code, {}).get("ma5_break_tolerance", 0.0))
+            if not _topup_blocked and _base_ma5 > 0 and cp < _base_ma5 * (1 - _base_ma5_tol):
                 _bma5k = f'_ma5_block_{code}'
                 if getattr(context, _bma5k, '') != now.strftime("%Y-%m-%d"):
                     setattr(context, _bma5k, now.strftime("%Y-%m-%d"))
@@ -1572,11 +1573,13 @@ def on_bar(context, bars):
         # ── WP-B19 a/b/d/e: MA5 破位全离通道（第四类保护，优先级最高，TRAIL 之前） ──
         # 静态 MA5（daily_ma5，前 5 日收盘均值，日内不变）；破位→全离（可用量）+ 禁一切买入
         _ma5_val = float(daily_ctx.get("daily_ma5", 0) or 0)
-        if _ma5_val > 0 and cp < _ma5_val and pos_qty > 0:
+        _ma5_tol = float(STOCK_PARAMS.get(code, {}).get("ma5_break_tolerance", 0.0))
+        if _ma5_val > 0 and cp < _ma5_val * (1 - _ma5_tol) and pos_qty > 0:
             from data.indicators import Signal as _Ma5Sig
             sig = _Ma5Sig(code=code, name=STOCK_NAMES.get(code, code),
                           action="MA5_EXIT", price=cp, score=80.0,
-                          reasons=[f"MA5破位离场: cp={cp:.2f} < ma5={_ma5_val:.2f} ({cp/_ma5_val-1:.1%})"])
+                          reasons=[f"MA5破位离场: cp={cp:.2f} < ma5={_ma5_val:.2f}×"
+                                   f"(1-{_ma5_tol})={_ma5_val*(1-_ma5_tol):.2f} ({cp/_ma5_val-1:.1%})"])
             # 破位日标记（供买侧禁令/留痕查询；破位状态每日由 price vs 当日 MA5 动态重建，无需落盘）
             if not hasattr(context, "_ma5_broken"):
                 context._ma5_broken = {}
@@ -1641,8 +1644,8 @@ def on_bar(context, bars):
         # B4/T2: 分批目标止盈 TARGET_SELL
         # TODO(PhaseD): 寻优分档 L1/L2/L3 及批次比例
         if (_profit > 0.10 and not _panic_on_cooldown
-                # N20: 不得覆盖更高优先级信号(P1/P2/P3)
-                and not (sig and sig.action in ("PANIC_SELL", "TRAIL_SELL", "TREND_EXIT"))):
+                # N20: 不得覆盖更高优先级信号(P0 MA5_EXIT / P1/P2/P3)
+                and not (sig and sig.action in ("PANIC_SELL", "TRAIL_SELL", "TREND_EXIT", "MA5_EXIT"))):
             # WP-B14: 三段式状态机——state is None 才生成；置位移到下单/成交回调
             # （被缓冲拦/地板拦/未成交的信号不耗档，条件满足后可再触发）
             _l1_state = (context.manual_position.get(gm_sym, {}).get("_target_l1_state")
@@ -1815,7 +1818,8 @@ def on_bar(context, bars):
         if sig.action in ("BUY_LOW", "ADD_POS"):
             # WP-B19 c: MA5 破位日禁一切买入（BUY_LOW/buyback/ADD_POS 一视同仁；每票每日去重留痕）
             _ma5_v = float(daily_ctx.get("daily_ma5", 0) or 0)
-            if _ma5_v > 0 and cp < _ma5_v:
+            _ma5_v_tol = float(STOCK_PARAMS.get(code, {}).get("ma5_break_tolerance", 0.0))
+            if _ma5_v > 0 and cp < _ma5_v * (1 - _ma5_v_tol):
                 _mbk = f'_ma5_block_{code}'
                 if getattr(context, _mbk, '') != now.strftime("%Y-%m-%d"):
                     setattr(context, _mbk, now.strftime("%Y-%m-%d"))
