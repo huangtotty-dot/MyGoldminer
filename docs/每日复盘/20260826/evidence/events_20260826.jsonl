@@ -1,0 +1,9 @@
+{"event": "signal", "time": "2026-08-26 09:30:56.765000+08:00", "code": "515180", "action": "MA5_EXIT", "score": 80.0, "reasons": ["MA5破位离场: cp=1.44 < ma5=1.44 (-0.1%)"], "pos_qty": 50000, "_ts": 1787707857.230804}
+{"event": "order", "time": "2026-08-26 09:30:56.765000+08:00", "code": "515180", "side": "SELL", "qty": 50000, "price": 1.437, "order_id": "", "order_type": "MKT", "_ts": 1787707857.2335796}
+{"event": "risk", "time": "2026-08-26 09:30:57.244000+08:00", "code": "000988", "kind": "build_gate", "detail": "channel=None verdict=weak score=40", "_ts": 1787707857.5669932}
+{"event": "fill", "time": "2026-08-26 09:30:57.851596", "code": "515180", "side": "SELL", "qty": 50000, "price": 1.434999942779541, "order_id": "", "pos_after": 0, "_ts": 1787707857.8525965}
+{"event": "risk", "time": "2026-08-26 09:30:57.883000+08:00", "code": "603667", "kind": "base_deferred", "detail": "_stock_trend_state=TREND_BREAKDOWN", "_ts": 1787707858.0883987}
+{"event": "risk", "time": "2026-08-26 09:30:58.129000+08:00", "code": "600176", "kind": "ma5_break_block", "detail": "BASE cp=39.60 < ma5=40.74", "_ts": 1787707858.3299453}
+{"event": "risk", "time": "2026-08-26 09:30:58.330000+08:00", "code": "600481", "kind": "pool_gate", "detail": "amp=3.6% 仅观察", "_ts": 1787707858.5045168}
+{"event": "risk", "time": "2026-08-26 09:41:56.852000+08:00", "code": "000988", "kind": "ma5_break_block", "detail": "BASE cp=104.34 < ma5=104.39", "_ts": 1787708516.8955057}
+{"event": "risk", "time": "2026-08-26 09:57:57.809000+08:00", "code": "603667", "kind": "ma5_break_block", "detail": "BASE cp=50.75 < ma5=50.83", "_ts": 1787709477.8480575}

@@ -1,0 +1,2 @@
+createdAt,updatedAt,accountId,accountName,amount,clOrdId,cost,execId,execType,orderId,positionEffect,price,secName,side,symbol,volume,orderBusiness
+2026-08-26 09:31:00,-,7e720bfb-8653-11f1-ab08-00163e022aa6,7e720bfb-8653-11f1-ab08-00163e022aa6,71749.99713897705,c96e6a5e-a0ed-11f1-820b-98fa9b8df5e7,71749.99713897705,cb919dac-a0ed-11f1-a947-00163e022aa6,15,cb9194f7-a0ed-11f1-a947-00163e022aa6,4,1.434999942779541,易方达中证红利ETF,2,SHSE.515180,50000,2

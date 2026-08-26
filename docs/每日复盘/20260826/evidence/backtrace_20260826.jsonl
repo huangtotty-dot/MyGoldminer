@@ -1,0 +1,7 @@
+{"event": "reconcile_init", "code": "515180", "qty": 50000, "available": 50000, "cost": 1.451, "time": "2026-08-26 09:04:56.536833", "_run_id": "20260826_090456"}
+{"event": "date_reset", "date": "2026-08-26", "_run_id": "20260826_090456"}
+{"event": "build_gate_block", "code": "000988", "channel": null, "verdict": "weak", "score": 40, "cp": 105.88, "time": "2026-08-26 09:30:57.244000+08:00", "_run_id": "20260826_090456"}
+{"event": "sell", "code": "515180", "qty": 50000, "price": 1.434999942779541, "time": "2026-08-26 09:30:57.852000+08:00", "pos_after_sell": 0, "action": "MA5_EXIT", "score": 80.0, "_run_id": "20260826_090456"}
+{"event": "buy_blocked", "code": "600176", "reason": "ma5_break", "where": "base", "cp": 39.6, "ma5": 40.736000000000004, "time": "2026-08-26 09:30:58.129000+08:00", "_run_id": "20260826_090456"}
+{"event": "buy_blocked", "code": "000988", "reason": "ma5_break", "where": "base", "cp": 104.34, "ma5": 104.38600000000001, "time": "2026-08-26 09:41:56.852000+08:00", "_run_id": "20260826_090456"}
+{"event": "buy_blocked", "code": "603667", "reason": "ma5_break", "where": "base", "cp": 50.75, "ma5": 50.826, "time": "2026-08-26 09:57:57.809000+08:00", "_run_id": "20260826_090456"}
