@@ -1,0 +1,9 @@
+{"event": "risk", "time": "2026-08-27 09:30:58.318000+08:00", "code": "600176", "kind": "ma5_break_block", "detail": "BASE cp=40.20 < ma5=40.52", "_ts": 1787794258.9146166}
+{"event": "order", "time": "2026-08-27 09:30:58.916000+08:00", "code": "515180", "side": "BUY", "qty": 50000, "price": 1.451, "order_id": "base", "order_type": "MKT", "_ts": 1787794259.2034013}
+{"event": "risk", "time": "2026-08-27 09:30:59.216000+08:00", "code": "000988", "kind": "ma5_break_block", "detail": "BASE cp=99.86 < ma5=104.68", "_ts": 1787794259.5325575}
+{"event": "fill", "time": "2026-08-27 09:31:00.003523", "code": "515180", "side": "BUY", "qty": 50000, "price": 1.4509999752044678, "order_id": "", "pos_after": 50000, "_ts": 1787794260.0045245}
+{"event": "risk", "time": "2026-08-27 09:31:00.062000+08:00", "code": "603667", "kind": "base_deferred", "detail": "_stock_trend_state=TREND_BREAKDOWN", "_ts": 1787794260.2604818}
+{"event": "risk", "time": "2026-08-27 09:31:00.262000+08:00", "code": "600481", "kind": "pool_gate", "detail": "amp=3.5% 仅观察", "_ts": 1787794260.4619527}
+{"event": "risk", "time": "2026-08-27 09:46:00.433000+08:00", "code": "600176", "kind": "base_deferred", "detail": "_stock_trend_state=TREND_BREAKDOWN", "_ts": 1787795160.4706614}
+{"event": "risk", "time": "2026-08-27 09:51:58.652000+08:00", "code": "000988", "kind": "build_gate", "detail": "channel=None verdict=weak score=30", "_ts": 1787795518.768298}
+{"event": "risk", "time": "2026-08-27 10:05:00.065000+08:00", "code": "600481", "kind": "ma5_break_block", "detail": "BASE cp=4.23 < ma5=4.24", "_ts": 1787796300.112214}

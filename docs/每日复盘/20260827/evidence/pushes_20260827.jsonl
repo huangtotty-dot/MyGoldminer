@@ -1,0 +1,8 @@
+{"time": "2026-08-27T09:31:01", "title": "⚠️ 风控 — 中国巨石(600176)", "level": "orange", "sent": true, "content": "ma5_break_block: BASE cp=40.20 < ma5=40.52"}
+{"time": "2026-08-27T09:31:01", "title": "⚠️ 风控 — 华工科技(000988)", "level": "orange", "sent": true, "content": "ma5_break_block: BASE cp=99.86 < ma5=104.68"}
+{"time": "2026-08-27T09:31:02", "title": "🔵 成交 — 515180", "level": "green", "sent": true, "content": "买入 50000股 @ 1.45 | 成交后持仓: 50000股"}
+{"time": "2026-08-27T09:31:02", "title": "⚠️ 风控 — 五洲新春(603667)", "level": "orange", "sent": true, "content": "base_deferred: _stock_trend_state=TREND_BREAKDOWN"}
+{"time": "2026-08-27T09:31:03", "title": "⚠️ 风控 — 双良节能(600481)", "level": "orange", "sent": true, "content": "pool_gate: amp=3.5% 仅观察"}
+{"time": "2026-08-27T09:46:01", "title": "⚠️ 风控 — 中国巨石(600176)", "level": "orange", "sent": true, "content": "base_deferred: _stock_trend_state=TREND_BREAKDOWN"}
+{"time": "2026-08-27T09:52:00", "title": "⚠️ 风控 — 华工科技(000988)", "level": "orange", "sent": true, "content": "build_gate: channel=None verdict=weak score=30"}
+{"time": "2026-08-27T10:05:00", "title": "⚠️ 风控 — 双良节能(600481)", "level": "orange", "sent": true, "content": "ma5_break_block: BASE cp=4.23 < ma5=4.24"}
