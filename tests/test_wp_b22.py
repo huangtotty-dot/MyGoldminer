@@ -226,6 +226,9 @@ check("T0b 默认票(603667) ma5_break_tolerance 缺省 0.0",
 check("T0c 600481 m2_lot_value_min==400",
       STOCK_PARAMS["600481"].get("m2_lot_value_min") == 400,
       f"lot_min={STOCK_PARAMS['600481'].get('m2_lot_value_min')}")
+check("T0d 600481 m2_amount20_min==1.5亿（0827 owner 批复）",
+      STOCK_PARAMS["600481"].get("m2_amount20_min") == 150000000,
+      f"amt_min={STOCK_PARAMS['600481'].get('m2_amount20_min')}")
 check("T0d 515180 amp/amt 阈值不受影响",
       STOCK_PARAMS[CODE_ETF].get("m2_amp20_min") == 0.005
       and STOCK_PARAMS[CODE_ETF].get("m2_amount20_min") == 30000000,
@@ -352,6 +355,25 @@ check("T6b 600481 lot=390(<400) → 仅 lot 卡 → _m2_pool_pass=False",
       and ctx_low.get("daily_status") == "pool_gate_fail",
       f"amp={ctx_low.get('_m2_amp20',0):.4f} amt={ctx_low.get('_m2_amount20',0):.2e} "
       f"lot={ctx_low.get('_m2_lot_value',0):.0f} pass={ctx_low.get('_m2_pool_pass')}")
+
+# ── T6c/T6d: 600481 amt 覆盖 1.5 亿（0827 owner 批复；0826-0827 解禁空转 amt=1.97 亿卡全局 2 亿线） ──
+with mock.patch.object(main, "history_n", return_value=make_daily_rows(4.35, 0.10, 39000000)):
+    ctx_amt_ok = main._refresh_daily_ctx(fresh_ctx(), "600481", main.STOCKS["600481"], NOW_PG)
+check("T6c 600481 amt=1.70亿(≥1.5亿,<旧全局2亿) → _m2_pool_pass=True",
+      ctx_amt_ok.get("_m2_pool_pass") is True,
+      f"amt={ctx_amt_ok.get('_m2_amount20',0):.2e} pass={ctx_amt_ok.get('_m2_pool_pass')}")
+with mock.patch.object(main, "history_n", return_value=make_daily_rows(4.35, 0.10, 33000000)):
+    ctx_amt_low = main._refresh_daily_ctx(fresh_ctx(), "600481", main.STOCKS["600481"], NOW_PG)
+check("T6d 600481 amt=1.44亿(<1.5亿) → 仅 amt 卡 → _m2_pool_pass=False",
+      ctx_amt_low.get("_m2_pool_pass") is False,
+      f"amt={ctx_amt_low.get('_m2_amount20',0):.2e} pass={ctx_amt_low.get('_m2_pool_pass')}")
+
+# 默认票不受 600481 覆盖影响（全局 amt 仍 2 亿）
+with mock.patch.object(main, "history_n", return_value=make_daily_rows(10.0, 0.30, 19000000)):
+    ctx_def = main._refresh_daily_ctx(fresh_ctx(), "000988", main.STOCKS["000988"], NOW_PG)
+check("T6e 默认票 000988 amt=1.90亿(<全局2亿) 仍被卡 → _m2_pool_pass=False",
+      ctx_def.get("_m2_pool_pass") is False,
+      f"amt={ctx_def.get('_m2_amount20',0):.2e} pass={ctx_def.get('_m2_pool_pass')}")
 
 
 # ── 汇总 ──
