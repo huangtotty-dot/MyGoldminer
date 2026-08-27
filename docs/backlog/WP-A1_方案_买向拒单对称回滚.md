@@ -1,5 +1,9 @@
 # WP-A1 方案：买向拒单对称回滚（Phase A 放行恢复工作包）
 
+> **施工状态：已完成（2026-08-27，commit `bf42abf`）**——快照法 3 处改动 + `_is_base_reject`
+> 防误滚底仓 + INIT 初始化；`test_phase_a_reject_injection.py` **45/45**（S4a/S4e/S4f/S4h
+> 转绿 + 新增 T-A1~T-A4），全回归无新增红。O-17/O-18 关闭，Phase A 恢复完全放行。
+
 > 立项背景：Phase A 合成拒单注入验证（2026-08-27，`docs/backlog/Phase-A_合成拒单注入验证方案.md`）
 > 结论 31/35——卖向全绿，买向 4 红。按 0814 补遗条款 Phase A 放行证据不成立，
 > 本工作包修复 D1（O-17，高）+ D2（O-18，中）后恢复完全放行。
