@@ -11,6 +11,7 @@ from datetime import datetime, timedelta, time as dtime
 import os
 import sys
 import json
+import copy
 
 PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
 if PROJECT_DIR not in sys.path:
@@ -1104,6 +1105,7 @@ def init(context):
     context._base_ordered = set()
     context._base_settled = set()
     context._inflight_sell = {}   # F9: 在途卖单台账 {gm_sym: qty}
+    context._pending_buy_snapshot = {}  # WP-A1: 做T买入快照 {委托id或symbol: manual_position条目快照}
     context._last_bar_eob = {}    # F9: 重复bar去重 {gm_sym: eob}
     context.cur_date = None
     context._daily_ctx_cache_map = {}
@@ -1987,10 +1989,16 @@ def on_bar(context, bars):
             except Exception:
                 pass
             try:
-                order_volume(symbol=gm_sym, volume=qty,
-                             side=OrderSide_Buy,
-                             order_type=OrderType_Market,
-                             position_effect=PositionEffect_Open)
+                _oid = order_volume(symbol=gm_sym, volume=qty,
+                                    side=OrderSide_Buy,
+                                    order_type=OrderType_Market,
+                                    position_effect=PositionEffect_Open)
+                # WP-A1: 下单副作用之前留存 manual_position 条目快照（含"无此条目"状态）。
+                # 快照法而非逆运算，避免成本加权逆推的浮点漂移；纯日内状态，无需落盘。
+                if not hasattr(context, "_pending_buy_snapshot") or context._pending_buy_snapshot is None:
+                    context._pending_buy_snapshot = {}
+                _snap = context.manual_position.get(gm_sym)
+                context._pending_buy_snapshot[_oid or gm_sym] = copy.deepcopy(_snap) if _snap else None
                 context.daily_buy_count[code] = bc + 1
                 context.daily_trade_price[code] = cp
                 context.total_trade_count += 1
@@ -2025,6 +2033,22 @@ def on_bar(context, bars):
             # T4: 仲裁器统一处理（地板 + 阈值 + sizer + 下单 + 审计）
             _sell_arbiter(context, code, sig, pos_qty, cp, now, holding,
                           threshold, stock_params, gm_sym)
+
+
+# WP-A1: 买向拒单对称回滚哨兵——用于区分"无快照（键缺失）"与"快照为 None（下单前无此条目）"
+_MISSING = object()
+
+
+def _pop_buy_snapshot(context, order, symbol):
+    """WP-A1: 按 委托id(cl_ord_id/order_id)→symbol 顺序弹出买向快照。
+
+    下单侧以 order_volume 返回值键控（无返回值时回退 symbol），回报侧可能有
+    cl_ord_id/order_id 差异，按序尝试；均未命中返回 _MISSING（无快照）。"""
+    pbs = getattr(context, "_pending_buy_snapshot", None) or {}
+    for _k in (order.get("cl_ord_id"), order.get("order_id"), symbol):
+        if _k and _k in pbs:
+            return pbs.pop(_k)
+    return _MISSING
 
 
 def on_order_status(context, order):
@@ -2071,6 +2095,8 @@ def on_order_status(context, order):
                 _rta = None
         _rta = _rta or {}
         if side == 1:  # 买入
+            # WP-A1: 成交即真实，快照使命结束（快照仅服务"纯拒单"场景）
+            _pop_buy_snapshot(context, order, symbol)
             old = context.executed_orders.get(symbol, {"qty": 0, "available": 0, "cost": price})
             old_qty = int(old.get("qty", 0))
             old_cost = float(old.get("cost", price))
@@ -2167,6 +2193,10 @@ def on_order_status(context, order):
                 _sell_state_persist(context, code, symbol)
             except Exception:
                 pass
+    elif status == 2 and side == 1:
+        # WP-A1: 部分成交亦真实——部分成交量按实计，快照仅服务"纯拒单"场景，此处丢弃；
+        # 防止随后剩余量被拒时误按整笔回滚
+        _pop_buy_snapshot(context, order, symbol)
     elif status in (4, 5, 6, 8, 12):  # 拒单/撤单/待撤/已拒绝(8)/已过期(12) —— F2修复: 2026-07-28前漏掉8导致所有拒单静默
         _rej_detail = ""
         try:
@@ -2175,7 +2205,11 @@ def on_order_status(context, order):
             pass
         context.rejected_order_count = getattr(context, 'rejected_order_count', 0) + 1
         # N5: 底仓拒单恢复
-        if code in getattr(context, '_base_ordered', set()):
+        # WP-A1: _is_base_reject 须在 N5 的 discard 之前求值——N5 会把 code 移出
+        # _base_ordered 允许重发，若在其后再判 `code not in _base_ordered` 会误把底仓
+        # 拒单当做T买入拒单回滚（T-A1 实证：1400 条目被兜底逆减误删）
+        _is_base_reject = code in getattr(context, '_base_ordered', set())
+        if _is_base_reject:
             if not hasattr(context, '_base_retry_count'):
                 context._base_retry_count = {}
             retry = context._base_retry_count.get(code, 0) + 1
@@ -2206,6 +2240,40 @@ def on_order_status(context, order):
                 context.daily_sell_count[code] = max(0, context.daily_sell_count.get(code, 0) - 1)
             if hasattr(context, "total_trade_count"):
                 context.total_trade_count = max(0, context.total_trade_count - 1)
+            # OBS-1(WP-A1): _pending_sell_action 拒单残留顺手清理——卖成交分支(:2135)才读该键，
+            # 残留无下游影响，但避免同票新卖单覆盖语义歧义
+            getattr(context, "_pending_sell_action", {}).pop(symbol, None)
+        # WP-A1: 做T买入拒单对称回滚（底仓 BASE 走 N5 重试路径，不碰 manual_position，排除）
+        elif side == 1 and not _is_base_reject:
+            _snap = _pop_buy_snapshot(context, order, symbol)
+            _fb = 0
+            if _snap is _MISSING:
+                # 无快照兜底：按 volume 逆减 qty/t_qty，结果 ≤0 删除条目（进程内遗留/版本热切换防御）
+                _fb = 1
+                if symbol in context.manual_position:
+                    _mp = context.manual_position[symbol]
+                    _nq = int(_mp.get("qty", 0)) - int(volume)
+                    if _nq <= 0:
+                        context.manual_position.pop(symbol, None)
+                    else:
+                        _mp["qty"] = _nq
+                        _mp["t_qty"] = _nq
+            elif _snap is None:
+                # 下单前无 manual_position 条目 → 整条删除
+                context.manual_position.pop(symbol, None)
+            else:
+                # 有快照：deepcopy 恢复（_pending_buy_snapshot 存的即为 deepcopy 副本）
+                context.manual_position[symbol] = copy.deepcopy(_snap)
+            # F14 买向对称：拒单不消耗日买入配额/总成交计数（下限 0）
+            if hasattr(context, "daily_buy_count") and context.daily_buy_count is not None:
+                context.daily_buy_count[code] = max(0, context.daily_buy_count.get(code, 0) - 1)
+            if hasattr(context, "total_trade_count"):
+                context.total_trade_count = max(0, context.total_trade_count - 1)
+            if hasattr(context, "engine") and hasattr(context.engine, "buy_count_per_stock"):
+                context.engine.buy_count_per_stock[code] = context.daily_buy_count.get(code, 0)
+            _audit_write({"event": "buy_rollback", "code": code, "qty": volume,
+                          "time": str(getattr(context, "now", None) or datetime.now()),
+                          "fallback": _fb})
         try:
             _r_code = _raw_code(symbol)
             _r_side = "BUY" if side == 1 else "SELL"

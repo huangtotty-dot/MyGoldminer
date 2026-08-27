@@ -10,8 +10,12 @@ tests/test_phase_a_reject_injection.py — Phase A 合成拒单注入验证
   S1  SELL 拒单全链路（仲裁器真实下单路径 main._sell_arbiter → status=8 注入）
   S2  TARGET_SELL 拒单 → sell_state.json 状态机不被污染（live 落盘）
   S3  终态集合等价性 status∈{4,5,6,12} 入拒单分支 + status=1 阴性对照
-  S4  BUY 拒单（做T 买入方向，main.py:1985-2022 下单时副作用 + status=8 注入）
+  S4  BUY 拒单（做T 买入方向，main.py:1991-2012 下单时副作用 + status=8 注入）
   S5  底仓买入拒单 N5 重试上限（≤MAX_BASE_RETRY）
+  T-A1  底仓 BASE 拒单不回滚 manual_position、N5 重试计数不受影响（WP-A1 排除项）
+  T-A2  无快照兜底路径 → 逆减回滚 + fallback=1 审计（防御：进程内遗留/版本热切换）
+  T-A3  成交后快照丢弃：buy filled → 同票新单拒单 → 只回滚新单（按委托键控）
+  T-A4  计数下限防御：daily_buy_count=0 时拒单不为负
 
 注入点说明：掘金 gm SDK 拒单以 on_order_status(order.status=8) 形式回到策略
 （OrderStatus_Rejected=8 / Expired=12 / Canceled=5 / DoneForDay=4 /
@@ -31,6 +35,7 @@ PendingCancel=6，SDK 常量已在本机核实）。生产实证：2026-08-03 �
 运行：
   "C:/Users/Lenovo/AppData/Local/Programs/Python/Python311/python.exe" tests/test_phase_a_reject_injection.py
 """
+import copy
 import json
 import os
 import sys
@@ -306,18 +311,22 @@ ctx4 = SimpleNamespace(
     engine=mk_engine(),
     _base_ordered=set(), _base_settled={"600481"},
     _pending_sell_action={}, _inflight_sell={},
+    _pending_buy_snapshot={},
     latest_pre_close={"600481": 3.91},
     mode=None,
 )
-# ── 重放 main.py:1994-2004 下单时副作用（qty=300 @ 4.10）──
+# ── 重放 main.py:1991-2012 下单时副作用（qty=300 @ 4.10）──
+# WP-A1: order_volume 之后先留 manual_position 快照（main.py:1996-2001），再改台账
 _bq, _bp = 300, 4.10
-ctx4.daily_buy_count["600481"] = 0 + 1                      # :1994
-ctx4.total_trade_count += 1                                 # :1996
-_old = ctx4.manual_position["SHSE.600481"]                  # :1998-2003
+ctx4._pending_buy_snapshot["SHSE.600481"] = (
+    copy.deepcopy(ctx4.manual_position["SHSE.600481"]))      # :2000-2001
+ctx4.daily_buy_count["600481"] = 0 + 1                      # :2002
+ctx4.total_trade_count += 1                                 # :2004
+_old = ctx4.manual_position["SHSE.600481"]                  # :2006-2011
 _nq = int(_old["qty"]) + _bq
 _nc = (_old["cost"] * _old["qty"] + _bp * _bq) / _nq
 ctx4.manual_position["SHSE.600481"] = dict(_old, qty=_nq, t_qty=_nq, cost=_nc)
-ctx4.engine.buy_count_per_stock["600481"] = 1               # :2004
+ctx4.engine.buy_count_per_stock["600481"] = 1               # :2012
 mp4 = ctx4.manual_position["SHSE.600481"]
 check("S4-pre 夹具保真：下单后qty=1700且available不加(T+1语义)",
       mp4["qty"] == 1700 and mp4["available"] == 1400,
@@ -331,9 +340,10 @@ mp4 = ctx4.manual_position["SHSE.600481"]
 ev4 = read_events()
 
 # 断言方向 = Phase A 放行断言①（拒单不使 pos 变化）与卖方向 N25-2/F14 对称语义
+# WP-A1(2026-08-27): 快照法对称回滚落地后转绿（main.py 拒单分支 elif side==1 回滚）
 check("S4a BUY拒单→manual_position应回滚1400(无幻影持仓)",
       mp4["qty"] == 1400 and mp4["t_qty"] == 1400,
-      f"ACTUAL qty={mp4['qty']} t_qty={mp4['t_qty']}（拒单分支仅 side==2 回滚, main.py:2190）")
+      f"qty={mp4['qty']} t_qty={mp4['t_qty']}（快照恢复，非逆运算）")
 check("S4b BUY拒单→executed_orders台账不变(无幻影成交入台账)",
       ctx4.executed_orders["SHSE.600481"] == ledger4_before,
       f"ledger={ctx4.executed_orders['SHSE.600481'].get('qty')}")
@@ -346,16 +356,16 @@ check("S4d BUY拒单留痕→reject+order_rejected事件带柜台原因(飞书�
       f"events={[(e.get('event'), e.get('kind')) for e in ev4]}")
 check("S4e BUY拒单→daily_buy_count应回补0(F14买向对称)",
       ctx4.daily_buy_count.get("600481") == 0,
-      f"ACTUAL dbc={ctx4.daily_buy_count}")
+      f"dbc={ctx4.daily_buy_count}")
 check("S4f BUY拒单→total_trade_count应回补5(F14买向对称)",
       ctx4.total_trade_count == 5,
-      f"ACTUAL ttc={ctx4.total_trade_count}")
+      f"ttc={ctx4.total_trade_count}")
 check("S4g BUY拒单计数+1", ctx4.rejected_order_count == 1)
 # 污染向下游传播实证：_get_holding 优先读 manual_position（main.py:477/546-548）
 _h4 = main._get_holding(ctx4, "600481", "SHSE.600481")
 check("S4h 幻影持仓向下游传播：_get_holding应读回1400(回测口径无对账自愈)",
       int(_h4.get("qty", 0)) == 1400,
-      f"ACTUAL _get_holding.qty={_h4.get('qty')} → 后续bar以此评估卖出/地板//TARGET均基于幻影")
+      f"_get_holding.qty={_h4.get('qty')}")
 obs("S4: 幻影持仓自愈路径=live 30分钟对账（main.py:495-541，终端无持仓→归零）；"
     "窗口期内地板检查(:128)/TARGET触发/tail归位(:1673 excess=pos_qty-base_ref)均以幻影 qty 计算；"
     "available 未被虚增（T+1语义保持）→ 仲裁器卖出量被 available 封顶(:180)，"
@@ -403,6 +413,163 @@ check("S5d 底仓拒单不置_base_ref_(仅成交时置, :2115)",
 obs("S5: 超上限后 code 滞留 _base_ordered → 当日因 main.py:1505-1507 '已下单未成交跳过' "
     "不再重发，次日 D1 重置恢复——保守有界，非疯狂重试")
 
+# ══════════════════════════════════════════════════════════════════
+# T-A1  底仓 BASE 拒单：不回滚 manual_position、N5 重试计数不受影响（WP-A1 排除项）
+# ══════════════════════════════════════════════════════════════════
+print("\n── T-A1  底仓 BASE 拒单不回滚（WP-A1 排除项）──")
+clear_events()
+ctxA1 = SimpleNamespace(
+    daily_buy_count={"600481": 0}, total_trade_count=0, rejected_order_count=0,
+    daily_sell_count={},
+    manual_position={"SHSE.600481": {"name": "双良节能", "qty": 1400, "available": 1400,
+                                     "t_qty": 1400, "cost": 4.0}},
+    executed_orders={}, engine=mk_engine(),
+    _base_ordered={"600481"}, _base_settled=set(),
+    _pending_sell_action={}, _inflight_sell={},
+    _pending_buy_snapshot={},
+    latest_pre_close={"600481": 3.91},
+    mode=None,
+)
+_buy_rollbacks_before = len([a for a in read_audit() if a.get("event") == "buy_rollback"])
+main.on_order_status(ctxA1, {"symbol": "SHSE.600481", "status": 8, "volume": 1400,
+                             "side": 1, "price": 0,
+                             "ord_rej_reason_detail": "资金不足(BASE)"})
+check("T-A1a BASE拒单→manual_position原样1400(走N5不碰台账)",
+      ctxA1.manual_position["SHSE.600481"]["qty"] == 1400
+      and ctxA1._base_retry_count.get("600481") == 1
+      and "600481" not in ctxA1._base_ordered,
+      f"qty={ctxA1.manual_position['SHSE.600481']['qty']} retry={ctxA1._base_retry_count}")
+check("T-A1b BASE拒单→不新增buy_rollback审计且计数不回补",
+      len([a for a in read_audit() if a.get("event") == "buy_rollback"]) == _buy_rollbacks_before
+      and ctxA1.daily_buy_count.get("600481") == 0,
+      f"buy_rollback_delta={len([a for a in read_audit() if a.get('event')=='buy_rollback']) - _buy_rollbacks_before}")
+
+# ══════════════════════════════════════════════════════════════════
+# T-A2  无快照兜底：逆减回滚 + fallback=1 审计（防御：进程内遗留/版本热切换）
+# ══════════════════════════════════════════════════════════════════
+print("\n── T-A2  无快照兜底（逆减 + fallback=1）──")
+clear_events()
+ctxA2 = SimpleNamespace(
+    daily_buy_count={"600481": 1}, total_trade_count=6, rejected_order_count=0,
+    daily_sell_count={},
+    manual_position={"SHSE.600481": {"name": "双良节能", "qty": 1700, "available": 1400,
+                                     "t_qty": 1700, "cost": 4.0}},
+    executed_orders={}, engine=mk_engine(),
+    _base_ordered=set(), _base_settled={"600481"},
+    _pending_sell_action={}, _inflight_sell={},
+    _pending_buy_snapshot={},   # 无快照 → 触发兜底
+    latest_pre_close={"600481": 3.91},
+    mode=None,
+)
+main.on_order_status(ctxA2, {"symbol": "SHSE.600481", "status": 8, "volume": 300,
+                             "side": 1, "price": 0,
+                             "ord_rej_reason_detail": "资金不足(无快照)"})
+mpA2 = ctxA2.manual_position["SHSE.600481"]
+check("T-A2a 无快照→逆减回滚1700→1400(available不虚增T+1保持)",
+      mpA2["qty"] == 1400 and mpA2["t_qty"] == 1400 and mpA2["available"] == 1400,
+      f"qty={mpA2['qty']} avail={mpA2['available']}")
+check("T-A2b 无快照→审计buy_rollback且fallback=1、qty=300",
+      any(a.get("event") == "buy_rollback" and a.get("fallback") == 1
+          and a.get("qty") == 300 for a in read_audit()),
+      f"audit={[a for a in read_audit() if a.get('event')=='buy_rollback']}")
+check("T-A2c 无快照兜底→计数同样回补",
+      ctxA2.daily_buy_count.get("600481") == 0 and ctxA2.total_trade_count == 5,
+      f"dbc={ctxA2.daily_buy_count} ttc={ctxA2.total_trade_count}")
+
+clear_events()
+ctxA2b = SimpleNamespace(
+    daily_buy_count={"600481": 1}, total_trade_count=6, rejected_order_count=0,
+    daily_sell_count={},
+    manual_position={"SHSE.600481": {"name": "双良节能", "qty": 300, "available": 0,
+                                     "t_qty": 300, "cost": 4.0}},
+    executed_orders={}, engine=mk_engine(),
+    _base_ordered=set(), _base_settled={"600481"},
+    _pending_sell_action={}, _inflight_sell={},
+    _pending_buy_snapshot={},
+    latest_pre_close={"600481": 3.91},
+    mode=None,
+)
+main.on_order_status(ctxA2b, {"symbol": "SHSE.600481", "status": 8, "volume": 300,
+                              "side": 1, "price": 0,
+                              "ord_rej_reason_detail": "资金不足(删条目)"})
+check("T-A2d 逆减≤0→整条删除无残留",
+      "SHSE.600481" not in ctxA2b.manual_position,
+      f"mp={ctxA2b.manual_position}")
+
+# ══════════════════════════════════════════════════════════════════
+# T-A3  成交后快照丢弃：buy filled → 同票新单拒单 → 只回滚新单（按委托键控）
+# ══════════════════════════════════════════════════════════════════
+print("\n── T-A3  成交后快照丢弃（只回滚新单）──")
+clear_events()
+ctxA3 = SimpleNamespace(
+    daily_buy_count={"600481": 1}, total_trade_count=6, rejected_order_count=0,
+    daily_sell_count={},
+    manual_position={"SHSE.600481": {"name": "双良节能", "qty": 1700, "available": 1400,
+                                     "t_qty": 1700, "cost": 4.0}},
+    executed_orders={"SHSE.600481": {"name": "双良节能", "qty": 1700, "available": 1400,
+                                     "t_qty": 1700, "cost": 4.0, "type": "stock",
+                                     "pre_close": 3.91}},
+    engine=mk_engine(),
+    _base_ordered=set(), _base_settled={"600481"},
+    _pending_sell_action={}, _inflight_sell={},
+    _pending_buy_snapshot={},
+    latest_pre_close={"600481": 3.91},
+    mode=None,
+)
+# ① 买入300@4.10 快照(ord1) + 副作用
+_snapA3 = ctxA3.manual_position["SHSE.600481"]
+ctxA3._pending_buy_snapshot["ord1"] = copy.deepcopy(_snapA3)
+ctxA3.manual_position["SHSE.600481"] = dict(_snapA3, qty=2000, t_qty=2000,
+                                            cost=(4.0 * 1700 + 4.10 * 300) / 2000)
+# ② ord1 全部成交 → 快照丢弃
+main.on_order_status(ctxA3, {"symbol": "SHSE.600481", "status": 3, "volume": 300,
+                             "side": 1, "price": 4.10, "cl_ord_id": "ord1"})
+check("T-A3a 成交后ord1快照被丢弃",
+      "ord1" not in ctxA3._pending_buy_snapshot,
+      f"pbs={ctxA3._pending_buy_snapshot}")
+# ③ 新单200(ord2) 快照 + 副作用
+_snapA3b = ctxA3.manual_position["SHSE.600481"]
+ctxA3._pending_buy_snapshot["ord2"] = copy.deepcopy(_snapA3b)
+ctxA3.daily_buy_count["600481"] += 1
+ctxA3.total_trade_count += 1
+ctxA3.manual_position["SHSE.600481"] = dict(_snapA3b, qty=_snapA3b["qty"] + 200,
+                                            t_qty=_snapA3b["qty"] + 200)
+# ④ ord2 拒单 → 只回滚新单（回到成交后 2000 状态，不是 1400）
+main.on_order_status(ctxA3, {"symbol": "SHSE.600481", "status": 8, "volume": 200,
+                             "side": 1, "price": 0, "cl_ord_id": "ord2",
+                             "ord_rej_reason_detail": "资金不足(ord2)"})
+mpA3 = ctxA3.manual_position["SHSE.600481"]
+check("T-A3b ord2拒单只回滚新单→qty回2000(1400+300成交, 非全滚回1400)",
+      mpA3["qty"] == 2000 and mpA3["t_qty"] == 2000,
+      f"qty={mpA3['qty']} t_qty={mpA3['t_qty']}")
+check("T-A3c ord2拒单计数回补(仅本次下单)",
+      ctxA3.daily_buy_count.get("600481") == 1 and ctxA3.total_trade_count == 6,
+      f"dbc={ctxA3.daily_buy_count} ttc={ctxA3.total_trade_count}")
+
+# ══════════════════════════════════════════════════════════════════
+# T-A4  计数下限防御：daily_buy_count=0 时拒单不为负
+# ══════════════════════════════════════════════════════════════════
+print("\n── T-A4  计数下限防御（不为负）──")
+clear_events()
+ctxA4 = SimpleNamespace(
+    daily_buy_count={}, total_trade_count=0, rejected_order_count=0,
+    daily_sell_count={},
+    manual_position={},
+    executed_orders={}, engine=mk_engine(),
+    _base_ordered=set(), _base_settled={"600481"},
+    _pending_sell_action={}, _inflight_sell={},
+    _pending_buy_snapshot={},
+    latest_pre_close={"600481": 3.91},
+    mode=None,
+)
+main.on_order_status(ctxA4, {"symbol": "SHSE.600481", "status": 8, "volume": 100,
+                             "side": 1, "price": 0,
+                             "ord_rej_reason_detail": "资金不足(下限)"})
+check("T-A4a 计数下限→daily_buy_count/ttc/buy_count_per_stock均不为负",
+      ctxA4.daily_buy_count.get("600481", 0) == 0 and ctxA4.total_trade_count == 0
+      and ctxA4.engine.buy_count_per_stock.get("600481", 0) == 0,
+      f"dbc={ctxA4.daily_buy_count} ttc={ctxA4.total_trade_count} bps={ctxA4.engine.buy_count_per_stock}")
+
 main.order_volume = _orig_order_volume
 
 # ══════════════════════════════════════════════════════════════════
@@ -421,4 +588,4 @@ if failed:
     for name, _, detail in failed:
         print(f"  FAIL {name} {detail}")
     sys.exit(1)
-print("全部通过 ✅")
+print("全部通过（45/45，含 WP-A1 新增 T-A1~T-A4）")
