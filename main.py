@@ -2304,6 +2304,8 @@ def on_backtest_finished(context, indicator):
 
 if __name__ == "__main__":
     _AUDIT_RUN_ID = datetime.now().strftime("%Y%m%d_%H%M%S")
+    # 合并方案 P0-2(2026-08-28): token 不再硬编码入库，统一走 utils/gm_token.py
+    from utils.gm_token import load_token
     run(strategy_id="e8bb1f4d-87ce-11f1-97f7-98fa9b8df5e7",
         filename="main.py", mode=MODE_LIVE,
-        token="480a6c84b0f43417ffcc9c15162dd7256ca9c3b0")
+        token=load_token())

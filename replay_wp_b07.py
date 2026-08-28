@@ -30,6 +30,7 @@ writer.BRIDGE_DIR = OUT_DIR
 
 import main
 from gm.api import run, MODE_BACKTEST, ADJUST_PREV
+from utils.gm_token import load_token
 
 main.STOCKS = {"603667": "SHSE.603667"}
 main.STOCK_NAMES = {"603667": "五洲新春"}
@@ -66,7 +67,7 @@ print(f"[replay] 产物目录={OUT_DIR}")
 run(strategy_id="e8bb1f4d-87ce-11f1-97f7-98fa9b8df5e7",
     filename="main.py",
     mode=MODE_BACKTEST,
-    token="480a6c84b0f43417ffcc9c15162dd7256ca9c3b0",
+    token=load_token(),
     backtest_start_time=START,
     backtest_end_time=END,
     backtest_initial_cash=CASH,
